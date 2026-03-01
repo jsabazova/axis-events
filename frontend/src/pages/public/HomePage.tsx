@@ -175,41 +175,6 @@ const ServiceCard = styled(Link)`
   }
 `;
 
-const GreenTeamSection = styled.section`
-  background-color: ${({ theme }) => theme.colors.white};
-  padding: ${({ theme }) => theme.spacing['4xl']} 0;
-  position: relative;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    padding: ${({ theme }) => theme.spacing['3xl']} 0;
-  }
-`;
-
-const TeamImageContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: ${({ theme }) => theme.spacing['2xl']};
-  align-items: center;
-  margin-top: ${({ theme }) => theme.spacing['2xl']};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    grid-template-columns: 1fr;
-    gap: ${({ theme }) => theme.spacing.xl};
-  }
-
-  .image-content {
-    position: relative;
-    border-radius: ${({ theme }) => theme.borderRadius.lg};
-    overflow: hidden;
-    box-shadow: ${({ theme }) => theme.shadows.lg};
-
-    img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-  }
-`;
 
 const AboutSection = styled.section`
   background-color: ${({ theme }) => theme.colors.gray[50]};
@@ -345,76 +310,6 @@ const HomePage: React.FC = () => {
         </div>
       </ServicesSection>
 
-      <GreenTeamSection>
-        <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <h2>The <span className="green-accent">Green Team</span> Difference</h2>
-            <p style={{ fontSize: '1.125rem', maxWidth: '700px', margin: '1rem auto 0', lineHeight: '1.7' }}>
-              When you see green across the loading dock or show floor, you know that's your team.
-              Professional, different, and easy to spot in the busiest environments.
-            </p>
-          </div>
-
-          <TeamImageContainer>
-            <div>
-              <h3 style={{ marginBottom: '1.5rem' }}>Professional Excellence</h3>
-              <p style={{ fontSize: '1.125rem', lineHeight: '1.7', marginBottom: '1.5rem' }}>
-                Our team stands out with distinctive green high-visibility gear, making us instantly
-                recognizable on busy show floors. This isn't just about visibility—it's about building
-                trust and professional recognition.
-              </p>
-              <ul style={{ listStyle: 'none', padding: '0' }}>
-                <li style={{
-                  padding: '0.5rem 0',
-                  position: 'relative',
-                  paddingLeft: '1.5rem',
-                  fontSize: '1.1rem'
-                }}>
-                  <span style={{
-                    position: 'absolute',
-                    left: '0',
-                    color: '#A8E533',
-                    fontWeight: 'bold'
-                  }}>✓</span>
-                  Instantly recognizable green team
-                </li>
-                <li style={{
-                  padding: '0.5rem 0',
-                  position: 'relative',
-                  paddingLeft: '1.5rem',
-                  fontSize: '1.1rem'
-                }}>
-                  <span style={{
-                    position: 'absolute',
-                    left: '0',
-                    color: '#A8E533',
-                    fontWeight: 'bold'
-                  }}>✓</span>
-                  Professional but not corporate
-                </li>
-                <li style={{
-                  padding: '0.5rem 0',
-                  position: 'relative',
-                  paddingLeft: '1.5rem',
-                  fontSize: '1.1rem'
-                }}>
-                  <span style={{
-                    position: 'absolute',
-                    left: '0',
-                    color: '#A8E533',
-                    fontWeight: 'bold'
-                  }}>✓</span>
-                  Easy to spot in crowded venues
-                </li>
-              </ul>
-            </div>
-
-            <div className="image-content">
-              <img src={images.team.logistics} alt="Axis Events green team working at exhibition" />
-            </div>
-          </TeamImageContainer>
-        </div>
-      </GreenTeamSection>
 
       <AboutSection>
         <div className="container">
