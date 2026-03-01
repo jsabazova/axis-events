@@ -1,15 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { images } from '../../utils/assets';
 
 const HomeWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.white};
 `;
 
-const HeroSection = styled.section`
+const HeroSection = styled.section<{ backgroundImage: string }>`
   background:
-    linear-gradient(135deg, rgba(168, 229, 51, 0.9) 0%, rgba(139, 198, 32, 0.9) 100%),
-    url('/men working photo.png') center/cover;
+    linear-gradient(135deg, rgba(124, 181, 24, 0.9) 0%, rgba(90, 138, 15, 0.9) 100%),
+    url('${props => props.backgroundImage}') center/cover;
   color: ${({ theme }) => theme.colors.white};
   padding: ${({ theme }) => theme.spacing['4xl']} 0;
   text-align: center;
@@ -25,7 +26,7 @@ const HeroSection = styled.section`
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(168, 229, 51, 0.85) 0%, rgba(139, 198, 32, 0.85) 100%);
+    background: linear-gradient(135deg, rgba(124, 181, 24, 0.85) 0%, rgba(90, 138, 15, 0.85) 100%);
     z-index: 1;
   }
 
@@ -278,7 +279,7 @@ const FeatureItem = styled.div`
 const HomePage: React.FC = () => {
   return (
     <HomeWrapper>
-      <HeroSection>
+      <HeroSection backgroundImage={images.team.working}>
         <div className="container">
           <HeroContent>
             <h1>Professional Event Logistics Across Australia</h1>
@@ -409,7 +410,7 @@ const HomePage: React.FC = () => {
             </div>
 
             <div className="image-content">
-              <img src="/men working in logistics.png" alt="Axis Events green team working at exhibition" />
+              <img src={images.team.logistics} alt="Axis Events green team working at exhibition" />
             </div>
           </TeamImageContainer>
         </div>

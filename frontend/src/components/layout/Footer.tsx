@@ -1,11 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { images } from '../../utils/assets';
 
 const FooterWrapper = styled.footer`
   background-color: ${({ theme }) => theme.colors.gray[900]};
   color: ${({ theme }) => theme.colors.white};
   padding: ${({ theme }) => theme.spacing['3xl']} 0 ${({ theme }) => theme.spacing.xl};
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 `;
 
 const FooterContainer = styled.div`
@@ -112,7 +116,7 @@ const Footer: React.FC = () => {
         <FooterContent>
           <FooterSection>
             <Logo to="/">
-              <img src="/Axis Logo Black background.png" alt="Axis Events Logo" />
+              <img src={images.logos.dark} alt="Axis Events Logo" />
             </Logo>
             <p style={{ color: '#9CA3AF', marginTop: '1rem', lineHeight: '1.6' }}>
               Australia's trusted logistics partner for events, exhibitions, and trade shows.

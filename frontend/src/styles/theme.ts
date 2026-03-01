@@ -1,9 +1,9 @@
 export const theme = {
   colors: {
     // Brand colors based on actual logo and brand identity
-    primary: '#A8E533', // Lime green from logo - professional web version
-    primaryLight: '#C3F056',
-    primaryDark: '#8BC620',
+    primary: '#7CB518', // More professional green - better contrast
+    primaryLight: '#A8E533', // Original bright green for accents
+    primaryDark: '#5A8A0F',
 
     // Bright accent green for high visibility (equipment/onsite)
     accent: '#D4FF00',

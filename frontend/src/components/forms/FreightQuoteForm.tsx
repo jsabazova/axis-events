@@ -68,15 +68,22 @@ const addressOptions = [
 
 const FormContainer = styled.div`
   max-width: 900px;
+  width: 100%;
   margin: 0 auto;
   background-color: ${({ theme }) => theme.colors.white};
   border-radius: ${({ theme }) => theme.borderRadius.lg};
   box-shadow: ${({ theme }) => theme.shadows.lg};
   padding: ${({ theme }) => theme.spacing['3xl']};
+  box-sizing: border-box;
+  overflow-x: hidden;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
     margin: 0 ${({ theme }) => theme.spacing.md};
     padding: ${({ theme }) => theme.spacing['2xl']};
+  }
+
+  @media (max-width: 950px) {
+    margin: 0 ${({ theme }) => theme.spacing.lg};
   }
 `;
 
@@ -114,6 +121,11 @@ const FormGrid = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: ${({ theme }) => theme.spacing.lg};
   margin-bottom: ${({ theme }) => theme.spacing.xl};
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    grid-template-columns: 1fr;
+    gap: ${({ theme }) => theme.spacing.md};
+  }
 `;
 
 const FormField = styled.div`
@@ -187,10 +199,35 @@ const InfoCard = styled.div`
     .cost-item {
       display: flex;
       justify-content: space-between;
+      align-items: flex-start;
       padding: ${({ theme }) => theme.spacing.sm};
       background-color: ${({ theme }) => theme.colors.white};
       border-radius: ${({ theme }) => theme.borderRadius.sm};
       border: 1px solid ${({ theme }) => theme.colors.gray[100]};
+      flex-wrap: wrap;
+      gap: ${({ theme }) => theme.spacing.xs};
+
+      span {
+        flex: 1;
+        min-width: 0;
+        word-wrap: break-word;
+        line-height: 1.4;
+      }
+
+      strong {
+        flex-shrink: 0;
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+        flex-direction: column;
+        text-align: left;
+
+        strong {
+          text-align: left;
+        }
+      }
     }
   }
 `;
@@ -232,24 +269,58 @@ const SubmitButton = styled.button`
 
 // Custom styles for react-select
 const selectStyles = {
+  container: (provided: any) => ({
+    ...provided,
+    width: '100%',
+    maxWidth: '100%',
+  }),
   control: (provided: any, state: any) => ({
     ...provided,
     padding: '4px',
-    border: `2px solid ${state.isFocused ? '#A8E533' : '#E5E7EB'}`,
+    border: `2px solid ${state.isFocused ? '#7CB518' : '#E5E7EB'}`,
     borderRadius: '8px',
     fontSize: '16px',
-    boxShadow: state.isFocused ? '0 0 0 3px #A8E53320' : 'none',
+    boxShadow: state.isFocused ? '0 0 0 3px #7CB51820' : 'none',
+    minHeight: '44px',
+    width: '100%',
+    maxWidth: '100%',
     '&:hover': {
-      borderColor: state.isFocused ? '#A8E533' : '#D1D5DB'
+      borderColor: state.isFocused ? '#7CB518' : '#D1D5DB'
     }
+  }),
+  menu: (provided: any) => ({
+    ...provided,
+    zIndex: 9999,
+    width: '100%',
+    maxWidth: '100%',
+  }),
+  menuList: (provided: any) => ({
+    ...provided,
+    maxWidth: '100%',
+  }),
+  menuPortal: (provided: any) => ({
+    ...provided,
+    zIndex: 9999,
   }),
   option: (provided: any, state: any) => ({
     ...provided,
-    backgroundColor: state.isSelected ? '#A8E533' : state.isFocused ? '#A8E53320' : 'white',
+    backgroundColor: state.isSelected ? '#7CB518' : state.isFocused ? '#7CB51820' : 'white',
     color: state.isSelected ? 'white' : '#374151',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    maxWidth: '100%',
+    wordBreak: 'break-word',
+    whiteSpace: 'normal',
+    padding: '8px 12px',
     '&:hover': {
-      backgroundColor: state.isSelected ? '#A8E533' : '#A8E53320'
+      backgroundColor: state.isSelected ? '#7CB518' : '#7CB51820'
     }
+  }),
+  singleValue: (provided: any) => ({
+    ...provided,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    maxWidth: '100%',
   }),
 };
 
@@ -430,12 +501,14 @@ const FreightQuoteForm: React.FC = () => {
                 ...selectStyles,
                 control: (provided: any, state: any) => ({
                   ...selectStyles.control(provided, state),
-                  border: `2px solid ${errors.pickupAddress ? '#EF4444' : state.isFocused ? '#A8E533' : '#E5E7EB'}`,
+                  border: `2px solid ${errors.pickupAddress ? '#EF4444' : state.isFocused ? '#7CB518' : '#E5E7EB'}`,
                 }),
               }}
               isSearchable={true}
               placeholder="Type to search for an address..."
               isClearable={true}
+              menuPortalTarget={document.body}
+              menuPlacement="auto"
               filterOption={(option, inputValue) =>
                 option.label.toLowerCase().includes(inputValue.toLowerCase())
               }

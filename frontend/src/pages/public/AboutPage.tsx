@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { images } from '../../utils/assets';
 
 const AboutWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.white};
@@ -215,7 +216,7 @@ const AboutPage: React.FC = () => {
 
           <TeamVisualGrid>
             <div className="team-image">
-              <img src="/men working photo.png" alt="Axis Events team members in green high-vis discussing logistics" />
+              <img src={images.team.working} alt="Axis Events team members in green high-vis discussing logistics" />
             </div>
 
             <div>

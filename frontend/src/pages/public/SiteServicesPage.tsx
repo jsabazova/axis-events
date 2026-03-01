@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { images } from '../../utils/assets';
 
 const SiteServicesWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.white};
@@ -291,19 +292,19 @@ const SiteServicesPage: React.FC = () => {
 
             <div className="equipment-images">
               <div className="equipment-item">
-                <img src="/Green Hi Vi vest.png" alt="Axis Events green high-visibility vest" />
+                <img src={images.equipment.greenVest} alt="Axis Events green high-visibility vest" />
                 <h4>Green High-Vis Vests</h4>
               </div>
               <div className="equipment-item">
-                <img src="/green moving cart.png" alt="Axis Events green moving cart equipment" />
+                <img src={images.equipment.greenCart} alt="Axis Events green moving cart equipment" />
                 <h4>Green Equipment</h4>
               </div>
               <div className="equipment-item">
-                <img src="/lime green hi vi vest.png" alt="Axis Events lime green high-visibility vest" />
+                <img src={images.equipment.limeVest} alt="Axis Events lime green high-visibility vest" />
                 <h4>Lime Green Gear</h4>
               </div>
               <div className="equipment-item">
-                <img src="/lime green moving cart thing.png" alt="Axis Events lime green moving equipment" />
+                <img src={images.equipment.limeCart} alt="Axis Events lime green moving equipment" />
                 <h4>Branded Tools</h4>
               </div>
             </div>

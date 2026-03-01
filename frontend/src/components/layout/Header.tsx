@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+import { images } from '../../utils/assets';
 
 const HeaderWrapper = styled.header`
   background-color: ${({ theme }) => theme.colors.white};
@@ -9,6 +10,9 @@ const HeaderWrapper = styled.header`
   position: sticky;
   top: 0;
   z-index: 1000;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 `;
 
 const HeaderContainer = styled.div`
@@ -204,7 +208,7 @@ const Header: React.FC = () => {
     <HeaderWrapper>
       <HeaderContainer>
         <Logo to="/">
-          <img src="/Axis Logo horizontal white background.png" alt="Axis Events Logo" />
+          <img src={images.logos.horizontal} alt="Axis Events Logo" />
         </Logo>
 
         <Nav isOpen={isMenuOpen}>

@@ -15,6 +15,8 @@ export const GlobalStyles = createGlobalStyle<GlobalStylesProps>`
   html {
     font-size: 16px;
     line-height: 1.5;
+    width: 100%;
+    overflow-x: hidden;
   }
 
   body {
@@ -23,6 +25,31 @@ export const GlobalStyles = createGlobalStyle<GlobalStylesProps>`
     background-color: ${({ theme }) => theme.colors.white};
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    max-width: 100%;
+    min-width: 100%;
+  }
+
+  *, *::before, *::after {
+    max-width: 100%;
+    word-wrap: break-word;
+    box-sizing: border-box;
+  }
+
+  /* Ensure all containers respect viewport width */
+  #root {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
   }
 
   h1, h2, h3, h4, h5, h6 {

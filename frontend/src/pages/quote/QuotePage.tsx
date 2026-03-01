@@ -5,6 +5,9 @@ import FreightQuoteForm from '../../components/forms/FreightQuoteForm';
 const QuoteWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.gray[50]};
   min-height: calc(100vh - 80px);
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 `;
 
 const HeroSection = styled.section`
@@ -20,6 +23,9 @@ const HeroSection = styled.section`
 
 const ContentSection = styled.section`
   padding: ${({ theme }) => theme.spacing['4xl']} 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     padding: ${({ theme }) => theme.spacing['3xl']} 0;
