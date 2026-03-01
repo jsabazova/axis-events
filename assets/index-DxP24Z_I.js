@@ -19,6 +19,8 @@ Please change the parent <Route path="${E}"> to <Route path="${E==="/"?"*":`${E}
   html {
     font-size: 16px;
     line-height: 1.5;
+    width: 100%;
+    overflow-x: hidden;
   }
 
   body {
@@ -27,22 +29,31 @@ Please change the parent <Route path="${E}"> to <Route path="${E==="/"?"*":`${E}
     background-color: ${({theme:n})=>n.colors.white};
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    overflow-x: hidden;
+    width: 100%;
+    margin: 0;
+    padding: 0;
   }
 
   html, body {
     max-width: 100%;
+    min-width: 100%;
   }
 
   *, *::before, *::after {
     max-width: 100%;
     word-wrap: break-word;
+    box-sizing: border-box;
   }
 
   /* Ensure all containers respect viewport width */
   #root {
+    width: 100%;
     max-width: 100vw;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -243,6 +254,9 @@ Please change the parent <Route path="${E}"> to <Route path="${E==="/"?"*":`${E}
   position: sticky;
   top: 0;
   z-index: 1000;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 `,dE=Z.div`
   max-width: ${({theme:n})=>n.breakpoints.xl};
   margin: 0 auto;
@@ -400,6 +414,9 @@ Please change the parent <Route path="${E}"> to <Route path="${E==="/"?"*":`${E}
   background-color: ${({theme:n})=>n.colors.gray[900]};
   color: ${({theme:n})=>n.colors.white};
   padding: ${({theme:n})=>n.spacing["3xl"]} 0 ${({theme:n})=>n.spacing.xl};
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 `,SE=Z.div`
   max-width: ${({theme:n})=>n.breakpoints.xl};
   margin: 0 auto;
@@ -483,8 +500,14 @@ Please change the parent <Route path="${E}"> to <Route path="${E==="/"?"*":`${E}
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 `,RE=Z.main`
   flex: 1;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 `,$E=({children:n})=>d.jsxs(TE,{children:[d.jsx(bE,{}),d.jsx(RE,{children:n}),d.jsx(AE,{})]}),ME=Z.div`
   background-color: ${({theme:n})=>n.colors.white};
 `,zE=Z.section`
