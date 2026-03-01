@@ -92,7 +92,6 @@ const Logo = styled(Link)`
     height: 32px;
     width: auto;
     transition: opacity 0.2s ease;
-    filter: brightness(0) saturate(100%) invert(1);
   }
 
   &:hover {
@@ -113,7 +112,7 @@ const Footer: React.FC = () => {
         <FooterContent>
           <FooterSection>
             <Logo to="/">
-              <img src="/Axis Logo horizontal white background.png" alt="Axis Events Logo" />
+              <img src="/Axis Logo Black background.png" alt="Axis Events Logo" />
             </Logo>
             <p style={{ color: '#9CA3AF', marginTop: '1rem', lineHeight: '1.6' }}>
               Australia's trusted logistics partner for events, exhibitions, and trade shows.

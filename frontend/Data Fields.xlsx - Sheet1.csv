@@ -1,0 +1,17 @@
+Field / Item,Possible Answers / Input Type,Notes / Logic,Notes / Example
+Quote Id,Auto,Auto generated quote number when user begins process / clicks link / clicks quote request,
+Event Address,PreFilled,,
+Event Suburb,PreFilled,"All field/items with ""Event"" are filled out when adding a new show to the database/backend and connected to a unique show id which holds all the info for when a quote calls for the info.",
+Event Post Code,PreFilled,,
+Event Bump In Date,PreFilled,Certain dates that freight can be delivered before the show, 2/10/26  and  3/10/26
+Event Bump Out Date,PreFilled,Certain dates that freight can be picked up after the show , 5/10/26 
+Event Bump In Time,PreFilled,Certain times that freight can be delivered to show ,7am - 5pm 
+Event Bump Out Time,PreFilled,Certain times that freight can be picked up after the show ,7am - 2pm (strict cut offs for everything to be removed from site or charges apply)
+EventForkliftCosts,PreFilled,"Some shows the organiser pays for forklifting and its all free, other shows the logistics provider charges"," 1 lift $90
+       2-4 lifts $80per
+        22 lifts(semi trailer) $55 per lift"
+Pickup Address,Google Maps API,"User types address, Google Maps API suggests and autofills correct address — reduces errors and typos.","Free for a certain amount per month, and not overly expensive after."
+Forklift At Pickup Address,Yes/No,"If yes: Pallets are loaded onto the truck at pickup (customer provides forklift and self loads)
+
+If No: restricts available trucks to those with taillift + driver loading. Affects pricing + truck options","Video for clarity - 
+https://www.youtube.com/watch?v=bSA0_XLTD5A"
