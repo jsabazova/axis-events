@@ -1,11 +1,7 @@
-import React from 'react';
+import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import Header from './Header';
 import Footer from './Footer';
-
-interface LayoutProps {
-  children: React.ReactNode;
-}
 
 const LayoutWrapper = styled.div`
   min-height: 100vh;
@@ -23,12 +19,12 @@ const Main = styled.main`
   overflow-x: hidden;
 `;
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout = () => {
   return (
     <LayoutWrapper>
       <Header />
       <Main>
-        {children}
+        <Outlet />
       </Main>
       <Footer />
     </LayoutWrapper>
