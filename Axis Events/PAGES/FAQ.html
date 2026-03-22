@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAQ — Axis Events</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green:        #00b050;
+      --green-hover:  #009140;
+      --green-dark:   #007a35;
+      --green-mid:    #00c45a;
+      --green-bg:     #e8f9ef;
+      --green-border: rgba(0,176,80,0.22);
+      --dark:         #1a1c1e;
+      --dark-2:       #222527;
+      --dark-card:    #1f2123;
+      --white:        #ffffff;
+      --off-white:    #f5f5f3;
+      --border:       #e5e5e3;
+      --text:         #141414;
+      --text-muted:   #6b7280;
+      --text-faint:   #a0a0a0;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--text); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: rgba(255,255,255,0.97); backdrop-filter: blur(14px); border-bottom: 1.5px solid var(--border); height: 64px; display: flex; align-items: center; padding: 0 40px; }
+    .nav-inner { width: 100%; max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-box { width: 32px; height: 32px; background: var(--dark); border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .logo-box span { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 17px; color: var(--green); line-height: 1; }
+    .logo-words { display: flex; flex-direction: column; line-height: 1.2; }
+    .logo-words strong { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14.5px; color: var(--dark); }
+    .logo-words small { font-size: 10px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); }
+    .nav-links { display: flex; align-items: center; gap: 2px; list-style: none; }
+    .nav-links > li { position: relative; }
+    .nav-links a, .nav-links button { display: inline-flex; align-items: center; gap: 5px; font-size: 14px; font-weight: 500; color: var(--text-muted); background: none; border: none; cursor: pointer; padding: 7px 12px; border-radius: 7px; transition: color 0.18s, background 0.18s; text-decoration: none; white-space: nowrap; }
+    .nav-links a:hover, .nav-links button:hover { color: var(--text); background: var(--off-white); }
+    .nav-links a.active { color: var(--green-dark); font-weight: 600; }
+    .nav-caret { width: 12px; height: 12px; opacity: 0.4; transition: transform 0.2s; flex-shrink: 0; }
+    .has-dropdown.open .nav-caret { transform: rotate(180deg); }
+    .nav-dropdown { display: none; position: absolute; top: calc(100% + 6px); left: 0; min-width: 230px; background: var(--white); border: 1.5px solid var(--border); border-radius: 14px; padding: 7px; box-shadow: 0 12px 40px rgba(0,0,0,0.1); z-index: 300; }
+    .has-dropdown.open .nav-dropdown { display: block; }
+    .nav-dropdown a { display: flex; align-items: center; gap: 9px; font-size: 13.5px; padding: 9px 12px; border-radius: 8px; color: var(--text); width: 100%; }
+    .nav-dropdown a:hover { background: var(--green-bg); color: var(--green-dark); }
+    .dd-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
+    .nav-btns { display: flex; align-items: center; gap: 8px; }
+    .btn-nav-solid { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--white); background: var(--green); border: 1.5px solid var(--green); padding: 8px 18px; border-radius: 7px; text-decoration: none; white-space: nowrap; transition: background 0.18s; }
+    .btn-nav-solid:hover { background: var(--green-hover); border-color: var(--green-hover); }
+
+    /* HERO */
+    .page-hero { background: var(--dark); position: relative; overflow: hidden; padding-top: 64px; }
+    .page-hero::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(0,176,80,0.055) 1px, transparent 1px); background-size: 36px 36px; pointer-events: none; }
+    .page-hero::after { content: ''; position: absolute; top: -80px; right: -120px; width: 520px; height: 520px; background: radial-gradient(ellipse at center, rgba(0,176,80,0.08) 0%, transparent 70%); pointer-events: none; }
+    .hero-lines { position: absolute; top: 0; right: 0; width: 55%; height: 100%; pointer-events: none; overflow: hidden; }
+    .hero-lines svg { position: absolute; top: 0; right: 0; width: 100%; height: 100%; }
+    .page-hero-inner { max-width: 1200px; margin: 0 auto; padding: 72px 40px 80px; position: relative; z-index: 2; }
+    .page-hero-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); background: rgba(0,176,80,0.12); border: 1px solid rgba(0,176,80,0.25); padding: 4px 12px; border-radius: 100px; margin-bottom: 22px; }
+    .page-hero-tag::before { content: ''; width: 5px; height: 5px; background: var(--green); border-radius: 50%; }
+    .page-hero h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(32px, 4vw, 52px); line-height: 1.04; color: var(--white); letter-spacing: -0.03em; margin-bottom: 20px; }
+    .page-hero h1 em { font-style: normal; color: var(--green); }
+    .page-hero-sub { font-size: 15.5px; line-height: 1.75; color: rgba(255,255,255,0.42); max-width: 520px; margin-bottom: 32px; }
+
+    /* QUICK LINKS STRIP */
+    .quicklinks { display: flex; flex-wrap: wrap; gap: 8px; }
+    .quicklink { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 500; color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); padding: 6px 14px; border-radius: 100px; text-decoration: none; transition: color 0.18s, border-color 0.18s, background 0.18s; cursor: pointer; }
+    .quicklink:hover { color: var(--green); border-color: rgba(0,176,80,0.35); background: rgba(0,176,80,0.07); }
+    .quicklink::before { content: '↓'; font-size: 11px; opacity: 0.6; }
+
+    /* MAIN LAYOUT */
+    .faq-page { padding: 80px 40px; }
+    .faq-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 220px 1fr; gap: 64px; align-items: start; }
+
+    /* SIDEBAR */
+    .faq-sidebar { position: sticky; top: 88px; }
+    .sidebar-label { font-size: 10px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 14px; }
+    .sidebar-nav { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-nav a { font-size: 13px; color: var(--text-muted); text-decoration: none; padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; gap: 8px; line-height: 1.4; transition: color 0.15s, background 0.15s; }
+    .sidebar-nav a:hover { color: var(--green-dark); background: var(--green-bg); }
+    .sidebar-nav a.active { color: var(--green-dark); background: var(--green-bg); font-weight: 600; }
+    .sidebar-dot { width: 5px; height: 5px; background: var(--green); border-radius: 50%; flex-shrink: 0; opacity: 0.5; }
+
+    /* FAQ SECTIONS */
+    .faq-sections { display: flex; flex-direction: column; gap: 72px; }
+
+    .faq-section-header { margin-bottom: 32px; }
+    .section-eyebrow { display: inline-flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green-dark); margin-bottom: 10px; }
+    .section-eyebrow::before { content: ''; width: 4px; height: 4px; background: var(--green); border-radius: 50%; }
+    .faq-section-header h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(20px, 2.2vw, 27px); letter-spacing: -0.02em; line-height: 1.12; color: var(--text); margin-bottom: 8px; }
+    .faq-section-header p { font-size: 14.5px; line-height: 1.7; color: var(--text-muted); max-width: 560px; }
+
+    /* ACCORDION */
+    .accordion { display: flex; flex-direction: column; border-top: 1.5px solid var(--border); }
+    .acc-item { border-bottom: 1.5px solid var(--border); }
+    .acc-trigger { width: 100%; display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding: 20px 0; background: none; border: none; cursor: pointer; text-align: left; }
+    .acc-trigger:hover .acc-q { color: var(--green-dark); }
+    .acc-q { font-family: 'DM Sans', sans-serif; font-size: 15.5px; font-weight: 600; color: var(--text); line-height: 1.45; flex: 1; transition: color 0.18s; }
+    .acc-icon { width: 22px; height: 22px; background: var(--off-white); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; transition: background 0.18s, transform 0.25s; }
+    .acc-icon svg { width: 10px; height: 10px; color: var(--text-muted); transition: color 0.18s; }
+    .acc-item.open .acc-icon { background: var(--green-bg); transform: rotate(180deg); }
+    .acc-item.open .acc-icon svg { color: var(--green-dark); }
+    .acc-item.open .acc-q { color: var(--green-dark); }
+    .acc-body { display: none; padding: 0 0 22px 0; max-width: 700px; }
+    .acc-item.open .acc-body { display: block; }
+    .acc-body p { font-size: 15px; line-height: 1.78; color: var(--text-muted); margin-bottom: 12px; }
+    .acc-body p:last-child { margin-bottom: 0; }
+    .acc-body a { color: var(--green-dark); text-decoration: underline; text-underline-offset: 3px; font-weight: 500; }
+    .acc-body a:hover { color: var(--green); }
+    .acc-body ul { list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 8px 0 12px; }
+    .acc-body ul li { font-size: 15px; line-height: 1.72; color: var(--text-muted); display: flex; align-items: flex-start; gap: 10px; }
+    .acc-body ul li::before { content: ''; width: 5px; height: 5px; background: var(--green); border-radius: 50%; flex-shrink: 0; margin-top: 8px; }
+    .acc-tip { display: inline-flex; align-items: flex-start; gap: 10px; background: var(--green-bg); border: 1px solid var(--green-border); border-radius: 9px; padding: 12px 16px; margin-top: 10px; }
+    .acc-tip span { font-size: 13.5px; line-height: 1.65; color: var(--green-dark); }
+
+    /* STILL GOT Qs STRIP */
+    .still-qs { background: var(--off-white); border-top: 1.5px solid var(--border); border-bottom: 1.5px solid var(--border); padding: 56px 40px; }
+    .still-qs-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 40px; }
+    .still-qs h3 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.015em; color: var(--text); margin-bottom: 8px; }
+    .still-qs p { font-size: 15px; line-height: 1.68; color: var(--text-muted); max-width: 440px; }
+    .still-qs-btns { display: flex; gap: 10px; flex-shrink: 0; }
+    .btn-green { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; color: var(--white); background: var(--green); border: 1.5px solid var(--green); padding: 11px 22px; border-radius: 8px; text-decoration: none; transition: background 0.18s; }
+    .btn-green:hover { background: var(--green-hover); border-color: var(--green-hover); }
+    .btn-outline { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; color: var(--text-muted); background: transparent; border: 1.5px solid var(--border); padding: 11px 22px; border-radius: 8px; text-decoration: none; transition: border-color 0.18s, color 0.18s; }
+    .btn-outline:hover { border-color: var(--text-muted); color: var(--text); }
+
+    /* CTA */
+    .cta-section { background: var(--dark); padding: 80px 40px; position: relative; overflow: hidden; }
+    .cta-section::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(0,176,80,0.055) 1px, transparent 1px); background-size: 32px 32px; pointer-events: none; }
+    .cta-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 40px; position: relative; z-index: 1; }
+    .cta-text h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(22px, 2.8vw, 34px); color: var(--white); letter-spacing: -0.02em; margin-bottom: 10px; }
+    .cta-text p { font-size: 15px; color: rgba(255,255,255,0.38); line-height: 1.65; max-width: 460px; }
+    .cta-btns { display: flex; gap: 12px; flex-shrink: 0; }
+    .btn-solid { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; color: var(--dark); background: var(--green); border: 1.5px solid var(--green); padding: 12px 24px; border-radius: 9px; text-decoration: none; white-space: nowrap; transition: background 0.18s; }
+    .btn-solid:hover { background: var(--green-mid); border-color: var(--green-mid); }
+    .btn-ghost { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.55); background: transparent; border: 1.5px solid rgba(255,255,255,0.1); padding: 12px 24px; border-radius: 9px; text-decoration: none; white-space: nowrap; transition: border-color 0.18s, color 0.18s; }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.28); color: var(--white); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    .fu { animation: fadeUp 0.55s ease both; }
+    .fu1{animation-delay:0.04s} .fu2{animation-delay:0.14s} .fu3{animation-delay:0.24s}
+
+    @media (max-width: 1080px) {
+      .faq-inner { grid-template-columns: 1fr; }
+      .faq-sidebar { display: none; }
+    }
+    @media (max-width: 760px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .page-hero-inner { padding: 48px 20px 56px; }
+      .faq-page { padding: 56px 20px; }
+      .still-qs { padding: 40px 20px; }
+      .still-qs-inner { flex-direction: column; align-items: flex-start; }
+      .still-qs-btns { flex-wrap: wrap; }
+      .cta-section { padding: 60px 20px; }
+      .cta-inner { flex-direction: column; align-items: flex-start; }
+      .cta-btns { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-box"><span>A</span></div>
+      <div class="logo-words">
+        <strong>Axis Events</strong>
+        <small>Event Logistics</small>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li class="has-dropdown" id="dd-services">
+        <button onclick="toggleDrop('dd-services')">
+          Services
+          <svg class="nav-caret" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+        </button>
+        <div class="nav-dropdown">
+          <a href="freight-services.html"><span class="dd-dot"></span>Domestic Freight</a>
+          <a href="international-freight.html"><span class="dd-dot"></span>International Freight</a>
+          <a href="site-services.html"><span class="dd-dot"></span>On-Site Logistics &amp; Services</a>
+        </div>
+      </li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="faq.html" class="active">FAQ</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-btns">
+      <a href="quote-page.html" class="btn-nav-solid">Get a Quote</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="hero-lines">
+    <svg viewBox="0 0 600 480" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMid meet">
+      <path d="M 600 40 L 480 40 Q 460 40 460 60 L 460 160" stroke="#00b050" stroke-width="1.5" stroke-opacity="0.3" fill="none"/>
+      <path d="M 600 160 L 520 160 Q 500 160 500 180 L 500 280 Q 500 300 480 300 L 380 300" stroke="#00b050" stroke-width="1.5" stroke-opacity="0.18" fill="none"/>
+      <path d="M 600 80 L 550 80" stroke="#00b050" stroke-width="1.5" stroke-opacity="0.5" fill="none"/>
+      <path d="M 600 260 L 540 260 Q 520 260 520 240 L 520 220" stroke="#00b050" stroke-width="1" stroke-opacity="0.15" fill="none"/>
+    </svg>
+  </div>
+  <div class="page-hero-inner">
+    <div class="page-hero-tag fu fu1">FAQ</div>
+    <h1 class="fu fu2">Everything you need<br>to know before <em>the show.</em></h1>
+    <p class="page-hero-sub fu fu3">Answers to the most common questions about freight, on-site logistics, and working with Axis Events. Can't find what you're after? Just ask.</p>
+
+  </div>
+</section>
+
+<!-- FAQ BODY -->
+<section class="faq-page">
+  <div class="faq-inner">
+
+    <!-- SIDEBAR -->
+    <aside class="faq-sidebar">
+      <div class="sidebar-label">Jump to</div>
+      <ul class="sidebar-nav">
+        <li><a href="#freight"><span class="sidebar-dot"></span>Freight</a></li>
+        <li><a href="#packing"><span class="sidebar-dot"></span>Packing &amp; Packaging</a></li>
+        <li><a href="#onsite"><span class="sidebar-dot"></span>Freight Handling &amp; On-Site</a></li>
+        <li><a href="#returns"><span class="sidebar-dot"></span>Post-Event &amp; Returns</a></li>
+        <li><a href="#axis-shows"><span class="sidebar-dot"></span>Axis Shows</a></li>
+        <li><a href="#site-services"><span class="sidebar-dot"></span>On-Site Services</a></li>
+        <li><a href="#costs"><span class="sidebar-dot"></span>Costs &amp; Billing</a></li>
+        <li><a href="#international"><span class="sidebar-dot"></span>International</a></li>
+        <li><a href="#general"><span class="sidebar-dot"></span>General</a></li>
+      </ul>
+    </aside>
+
+    <!-- ACCORDION SECTIONS -->
+    <div class="faq-sections">
+
+      <!-- FREIGHT -->
+      <div id="freight">
+        <div class="faq-section-header">
+          <div class="section-eyebrow">Freight</div>
+          <h2>Booking, pickups &amp; getting your freight to the show</h2>
+          <p>Everything you need to know before your freight leaves the building.</p>
+        </div>
+        <div class="accordion">
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">How do I get a quote for domestic freight?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>Use our online quote tool — <a href="quote-page.html">get a quote here</a>. For complex shipments, unusual items, or anything you're unsure about, just <a href="contact.html">contact us</a> directly and we'll figure it out together.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">When do I need to submit my freight booking by?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>The sooner the better. A safe rule is at least 2 weeks before bump-in to make sure everything is sorted and confirmed in time.</p>
+              <p>It's not worth leaving it to the last minute — you've already spent thousands on your attendance at the show. Having your freight not arrive in time would be a nightmare, and it's entirely avoidable.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">How do I label my freight?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>The more detail the better — things get lost with poor labelling. At minimum, each item should clearly show:</p>
+              <ul>
+                <li>Event name</li>
+                <li>Venue name and full address</li>
+                <li>Your stand name and number</li>
+                <li>Your contact number</li>
+                <li>Item count (e.g. 1 of 4, 2 of 4, 3 of 4)</li>
+              </ul>
+              <p>If you're booking transport through us, we'll send you labels directly.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">Can you pick up from any address?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>Yes — we have a range of vehicles available including vans with ramps for loading pallets from hard-to-reach or residential locations, right through to B-double trucks for the largest consignments.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">What if I don't know the exact dimensions or weight of my freight?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>Getting it right matters more than you might think. If you under-declare, there can be surcharges, delays, and real problems — the vehicle booked may not fit your goods. Depending on how close to the event that happens, you might not make it at all.</p>
+              <p>Be as accurate as possible when filling out your details. If you're genuinely unsure, <a href="contact.html">contact us</a> before booking and we can help work it out.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">My freight is oversized. What do I do?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>Make sure to fill out your freight measurements accurately and enter the correct weight. Oversized freight can require specialised forklifts, crane equipment, or adjusted bump-in scheduling — some venues even require cranes for specific items.</p>
+              <p>If you're unsure at all, <a href="contact.html">contact us before booking</a> and we can clarify exactly what's needed.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">What if my freight is delayed and won't arrive during bump-in?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>Contact us immediately. We'll look at the most practical way to get it there in time. Last-resort options like next-flight air freight exist but come at a cost — the earlier you flag it, the more options we have.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">Do I need to be present at pickup?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>In most cases, yes — missed pickups will incur fees. See our <a href="terms.html">Terms &amp; Conditions</a> for details.</p>
+              <p>For show bump-outs, if everything is clearly labelled our on-site freight team can usually manage the return without you needing to be present.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- PACKING -->
+      <div id="packing">
+        <div class="faq-section-header">
+          <div class="section-eyebrow">Packing &amp; Packaging</div>
+          <h2>Getting your freight protected for the journey</h2>
+          <p>Transport is rough. The way you pack your freight makes a bigger difference than most people realise.</p>
+        </div>
+        <div class="accordion">
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">How should I pack my freight?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>Properly. We regularly see goods arrive in varying states of damage — transport is a bumpy, dirty, dusty environment and proper protection goes a long way.</p>
+              <p>Palletise anything with multiple items and wrap it securely to the base. For fragile or high-value gear, use bubble wrap, foam padding, and crating. If you're unsure how to pack something specific, <a href="contact.html">ask us</a> — we'd rather help upfront than deal with a damage claim later.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">I forgot to bring shrink wrap. What do I do?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>If it's an Axis show, we stock pallet wrap, tape, markers, and other essentials at the on-site service desk. That said — it costs us significantly to transport and keep these supplies on hand, and pricing reflects that. It's much cheaper to come prepared and grab your supplies before the show.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">Who is responsible for packing up my freight after the event?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>That's on you — it's your responsibility to make sure all your goods are packed correctly, safely, and in a way that minimises damage risk before they go back on a truck.</p>
+              <p>We do offer services to fully pack up your freight, palletise, and wrap it. There are waivers to sign as we cannot accept liability for your goods. See our <a href="terms.html">Terms &amp; Conditions</a> and <a href="site-services.html">On-Site Services</a> for more information.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">Do you offer pallet wrapping on-site?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>Yes. Where wrapping is required for safety or handling, we'll do it and charge accordingly. This is non-negotiable — it's a safety requirement, not an optional extra.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ON-SITE HANDLING -->
+      <div id="onsite">
+        <div class="faq-section-header">
+          <div class="section-eyebrow">Freight Handling &amp; On-Site</div>
+          <h2>From the loading dock to your stand</h2>
+          <p>What to expect once your freight arrives at the venue.</p>
+        </div>
+        <div class="accordion">
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">What is material handling and will I be charged for it?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>Material handling is the process of moving your freight from the loading dock to your stand — and back again at bump-out. For pallets, crates, or anything too heavy to hand-carry, we use forklifts.</p>
+              <p>On some shows this is covered by the event organiser. On others it's a charged service. Goods cannot be unloaded from vehicles unless Terms &amp; Conditions have been agreed to and payment received — we're not legally able to unload without these being met.</p>
+              <p>If you've sent freight in with your own carrier, be aware that carrier may charge for delays if you're not on-site or pre-booked. Make sure you're organised before the truck shows up.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">Do I need to pre-book forklift handling?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>Yes, and if you don't, there can be extensive delays on bigger shows. On certain shows, surcharges apply for late or unbooked services. Pre-booking guarantees your availability and avoids the on-the-day premium.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">Do I need to book a loading dock timeslot?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>It varies by show — you'll be informed through our communications leading up to the event.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">Will there be trolleys available on-site?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>It depends on the show and what package the organiser is using. Even when trolleys are supplied, they're in extremely high demand during bump-in and you may find yourself waiting.</p>
+              <div class="acc-tip">
+                <span>We strongly recommend bringing your own trolley. A simple fold-down trolley will save you serious time and stress on the big shows — the last thing you want is to arrive already running late and then wait an hour to get one.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">Can I access my stored freight during the event?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>Access to stored freight varies by event — some events have accessible storage, some don't. Our pre-show communications will inform you of what's available for your specific event.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">My freight has arrived damaged. What do I do?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>If our team spots damage on arrival, we'll document it with photos immediately. If you discover damage after unpacking, photograph everything straight away and notify our team on the spot.</p>
+              <p>It's also best practice to photograph your goods before loading at your end — for your own protection in any future claim. See our <a href="terms.html">Terms &amp; Conditions</a> for full details.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- POST-EVENT -->
+      <div id="returns">
+        <div class="faq-section-header">
+          <div class="section-eyebrow">Post-Event &amp; Returns</div>
+          <h2>Getting your freight home after the show</h2>
+        </div>
+        <div class="accordion">
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">When will my freight be returned after the event?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>We aim to return items as swiftly as possible to minimise holding costs, but delays can happen on the bigger shows. If you need a fast return — or have another show coming up back-to-back — let us know in advance and we'll expedite it.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">Can you store my freight between events?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>Yes — we have depot access across all major states and can hold your freight close to an upcoming show, making sure it's positioned to arrive on time. <a href="contact.html">Get in touch</a> to discuss your requirements.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- AXIS SHOWS -->
+      <div id="axis-shows">
+        <div class="faq-section-header">
+          <div class="section-eyebrow">Axis Shows</div>
+          <h2>If we're running the logistics at your event</h2>
+          <p>For event organisers and venues using Axis Events for full on-site logistics management.</p>
+        </div>
+        <div class="accordion">
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">What does on-site logistics management involve?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>We run the full logistics operation for your event floor — loading dock management, dock traffic control, forklift and crew coordination, freight scheduling, exhibitor support, and bump-out operations. The goal is smooth movement, no bottlenecks, and everything where it needs to be when it needs to be there.</p>
+              <p>See <a href="site-services.html">On-Site Logistics &amp; Services</a> for full detail on what we offer.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">Can I hire crew without taking on full site management?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>Yes. If you just need a forklift operator, spotter, dock supervisor, or general labour for bump-in or bump-out, we can scope that separately — no full logistics contract required. See <a href="site-services.html">On-Site Services</a>.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">How do you source your crew?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>We handpick people we know and trust, and pay above standard rates because quality matters more than cutting corners on labour. Our crew includes forklift operators, spotters, dock supervisors, and general labour — deployed based on what your show actually needs.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">What is a service desk?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>For larger, full-service events we operate an on-site service desk during bump-in and bump-out. All deliveries come through the desk, enabling recording and tracking of every item that arrives on-site. It's also where exhibitors can get storage labels, purchase supplies, and raise any issues.</p>
+              <p>Whether your event has a service desk depends on the scope of services engaged. See <a href="site-services.html">On-Site Services</a>.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SITE SERVICES -->
+      <div id="site-services">
+        <div class="faq-section-header">
+          <div class="section-eyebrow">On-Site Services</div>
+          <h2>Hands-on help at the show</h2>
+          <p>Add-on services for exhibitors who need a bit more support on the day.</p>
+        </div>
+        <div class="accordion">
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">What on-site services do you offer exhibitors?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>We offer a range of hands-on services including unboxing freight, pallet wrapping, stand pack-down, and palletising goods for return. These can be pre-booked or arranged on the day. See <a href="site-services.html">On-Site Services</a> for the full list.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">I need help setting up or packing down my stand. Can you help?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>Yes — contact us before the event to pre-book, or speak to our team at the service desk on-site. Note that liability for your goods remains with you and waivers are involved. See <a href="site-services.html">On-Site Services</a> and our <a href="terms.html">Terms &amp; Conditions</a>.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- COSTS -->
+      <div id="costs">
+        <div class="faq-section-header">
+          <div class="section-eyebrow">Costs &amp; Billing</div>
+          <h2>How freight is priced and what to expect</h2>
+          <p>We aim to be as transparent as possible — no surprises if we can help it.</p>
+        </div>
+        <div class="accordion">
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">What affects the cost of my freight?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>Freight pricing is complex, but the main factors include:</p>
+              <ul>
+                <li>Distance between pickup and delivery</li>
+                <li>Freight dimensions and volumetric weight</li>
+                <li>Actual weight (whichever is greater between actual and volumetric)</li>
+                <li>Delivery speed required</li>
+                <li>Type of vehicle or equipment needed</li>
+                <li>Whether specialised handling is required</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">What is volumetric (cubic) weight?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>On certain shipments — usually interstate and international — carriers charge based on the greater of actual weight or cubic (volumetric) weight. Cubic weight accounts for the space your freight takes up in a vehicle, not just how heavy it is.</p>
+              <p>A large but lightweight display stand can be surprisingly expensive to ship purely because of the space it occupies. This is why accurate dimensions are important when getting a quote.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">What is a tailgate vehicle?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>If your freight is too heavy or bulky to load by hand but you don't have a forklift at your end, we can arrange a tailgate truck — a vehicle with a hydraulic platform that lowers to ground level, making it easy to load pallets and heavy items without a forklift on your end.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">Are there extra charges I should know about?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>We'll always try to inform you of any costs or surprises before you agree to anything with us. Common additional charges include:</p>
+              <ul>
+                <li>Surcharges for incorrect dimensions or weight declarations</li>
+                <li>Missed pickup fees</li>
+                <li>Weekend and public holiday rates</li>
+                <li>Delays caused by missing or incorrect documentation</li>
+                <li>On-site add-on services arranged on the day</li>
+              </ul>
+              <p>See our <a href="terms.html">Terms &amp; Conditions</a> for full details.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- INTERNATIONAL -->
+      <div id="international">
+        <div class="faq-section-header">
+          <div class="section-eyebrow">International Freight</div>
+          <h2>Shipping to and from Australia for events</h2>
+        </div>
+        <div class="accordion">
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">Do you handle international freight?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>Yes — we handle international shipments. Every job is different, so reach out via our <a href="contact.html">contact page</a> and we'll walk you through exactly what's involved for your shipment.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">What is an ATA Carnet?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>An ATA Carnet is a customs document that allows goods to be temporarily imported into a country — including Australia — without paying duties and taxes. It's commonly used for trade show exhibits and display equipment, and is valid for up to 12 months with goods required to be re-exported within that period.</p>
+              <p>Important note: promotional items like giveaways and samples generally don't qualify. ATA Carnets cover exhibit items and stands only.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">What's the difference between air freight and sea freight for events?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>Air freight is faster and suited for time-sensitive or high-value exhibit materials. Sea freight is more cost-effective for bulk or large items but has significantly longer transit times. For events with fixed move-in dates, the timeline usually makes the decision for you.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- GENERAL -->
+      <div id="general">
+        <div class="faq-section-header">
+          <div class="section-eyebrow">General</div>
+          <h2>Everything else</h2>
+        </div>
+        <div class="accordion">
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">Is my freight insured?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>All freight is covered for up to $5,000 AUD. If your goods are worth more than that or you require additional coverage, let us know and we can point you in the right direction.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-trigger" onclick="toggleAcc(this)">
+              <span class="acc-q">Do you work at any event, or just specific shows?</span>
+              <span class="acc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></span>
+            </button>
+            <div class="acc-body">
+              <p>We work across exhibitions, trade shows, and events of all sizes Australia-wide. Not sure if we cover your event or city? Just <a href="contact.html">ask us</a>.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /faq-sections -->
+  </div><!-- /faq-inner -->
+</section>
+
+
+
+<script>
+  function toggleDrop(id) {
+    const el = document.getElementById(id);
+    const isOpen = el.classList.contains('open');
+    document.querySelectorAll('.has-dropdown').forEach(d => d.classList.remove('open'));
+    if (!isOpen) el.classList.add('open');
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.has-dropdown')) {
+      document.querySelectorAll('.has-dropdown').forEach(d => d.classList.remove('open'));
+    }
+  });
+
+  function toggleAcc(btn) {
+    const item = btn.closest('.acc-item');
+    const isOpen = item.classList.contains('open');
+    // close all in same accordion
+    const siblings = item.closest('.accordion').querySelectorAll('.acc-item');
+    siblings.forEach(s => s.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  function scrollTo(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      const offset = 88;
+      const top = el.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  }
+
+  // Highlight active sidebar link on scroll
+  const sections = document.querySelectorAll('.faq-sections > div[id]');
+  const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    });
+    sidebarLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+</body>
+</html>

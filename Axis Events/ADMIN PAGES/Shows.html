@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shows — Axis Events</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --dark:#16181a;
+  --green:#00c05a;--green-bg:rgba(0,192,90,.10);--green-dark:#007a35;--green-border:rgba(0,192,90,.22);
+  --white:#fff;--offwhite:#f5f5f3;--border:#eaeae8;--border2:#e0e0de;
+  --text:#111214;--muted:#6b7280;--faint:#b0b0b0;
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,.12);--amber-dark:#92400e;
+  --red:#ef4444;--red-bg:rgba(239,68,68,.08);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,.10);--blue-dark:#1d4ed8;
+  --ease:cubic-bezier(.22,.68,0,1.2);--ease-std:cubic-bezier(.4,0,.2,1);
+}
+html,body{height:100%;overflow:hidden;background:var(--offwhite);color:var(--text);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased}
+
+/* ── APP SHELL ── */
+.shell{display:flex;flex-direction:column;height:100vh}
+
+/* ── TOPBAR ── */
+.topbar{height:56px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 26px;background:var(--white);flex-shrink:0;gap:10px;z-index:5}
+.topbar-logo{display:flex;align-items:center;gap:9px;margin-right:16px}
+.logo-box{width:30px;height:30px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#000}
+.logo-name{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--text)}
+.topbar-divider{width:1px;height:20px;background:var(--border)}
+.page-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--text)}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px}
+.breadcrumb-link{color:var(--muted);cursor:pointer;font-weight:500;transition:color .13s;background:none;border:none;font-family:'DM Sans',sans-serif;font-size:13px;padding:0}
+.breadcrumb-link:hover{color:var(--text)}
+.breadcrumb-sep{color:var(--faint)}
+.breadcrumb-cur{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--text)}
+.topbar-actions{margin-left:auto;display:flex;gap:6px;align-items:center}
+
+/* ── VIEWS ── */
+.view-wrap{position:relative;flex:1;min-height:0;overflow:hidden}
+.view{position:absolute;inset:0;overflow-y:auto;transition:opacity .2s var(--ease-std),transform .2s var(--ease-std)}
+.view.hidden{opacity:0;pointer-events:none;transform:translateY(6px)}
+#viewDetail{overflow:hidden;display:flex;flex-direction:column}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;border-radius:8px;padding:8px 15px;transition:all .15s}
+.btn-dark{background:var(--dark);color:white}.btn-dark:hover{opacity:.85}
+.btn-green{background:var(--green);color:#000;font-weight:700}.btn-green:hover{background:#00a84e}
+.btn-outline{background:none;color:var(--muted);border:1.5px solid var(--border)}.btn-outline:hover{border-color:var(--text);color:var(--text)}
+.btn-sm{padding:5px 11px;font-size:12px;border-radius:6px}
+.act-btn{padding:5px 11px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;border:1.5px solid var(--border);background:none;color:var(--muted);transition:all .13s}
+.act-btn:hover{border-color:var(--text);color:var(--text);background:var(--offwhite)}
+.act-btn.del:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+.act-btn.log-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
+
+/* status filter tabs */
+.status-tabs{display:flex;gap:4px;padding:16px 26px 0;background:var(--offwhite)}
+.status-tab{padding:7px 14px;border-radius:8px 8px 0 0;border:1.5px solid transparent;border-bottom:none;background:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:7px}
+.status-tab:hover{color:var(--text);background:rgba(0,0,0,.04)}
+.status-tab.active{background:var(--white);color:var(--text);font-weight:600;border-color:var(--border)}
+.status-tab-count{font-size:11px;font-weight:700;padding:1px 7px;border-radius:100px;background:var(--offwhite);color:var(--muted)}
+.status-tab.active .status-tab-count{background:var(--green-bg);color:var(--green-dark)}
+
+/* list card sits flush against tabs */
+#viewList .card{border-top-left-radius:0;margin:0 26px 26px}
+#viewList{padding:0}
+
+
+.card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--border)}
+.card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13.5px}
+.card-count{font-size:11.5px;color:var(--muted);font-weight:500;background:var(--offwhite);border:1px solid var(--border);padding:2px 9px;border-radius:100px;margin-left:8px}
+table{width:100%;border-collapse:collapse}
+thead th{padding:10px 16px;text-align:left;font-size:10.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);background:var(--offwhite);border-bottom:1px solid var(--border)}
+tbody td{padding:12px 16px;border-bottom:1px solid var(--border);font-size:13.5px;vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background .1s;cursor:pointer}
+tbody tr:hover td{background:#fafaf8}
+tbody tr.confirm-delete td{background:var(--red-bg)!important}
+tbody tr.confirm-delete td:first-child{border-left:3px solid var(--red)}
+.show-name{font-weight:600;font-size:13.5px}
+.show-meta{font-size:11.5px;color:var(--muted);margin-top:2px}
+.date-main{font-size:13px}
+.date-sub{font-size:11.5px;color:var(--faint);margin-top:2px}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:100px;font-size:11px;font-weight:600}
+.tag::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+.tag.active{background:var(--green-bg);color:var(--green-dark);border:1px solid var(--green-border)}
+.tag.draft{background:var(--amber-bg);color:var(--amber-dark);border:1px solid rgba(245,158,11,.28)}
+.tag.completed{background:var(--offwhite);color:var(--muted);border:1px solid var(--border)}
+.confirm-label{font-size:12.5px;font-weight:600;color:var(--red)}
+.confirm-sub{font-size:11.5px;color:var(--muted);margin-left:8px}
+.btn-danger-sm{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:var(--red);color:white;border:none}
+.empty-state{padding:60px 20px;text-align:center;color:var(--muted)}
+.empty-state .ei{font-size:32px;margin-bottom:10px;opacity:.4}
+
+/* ── FORM VIEW ── */
+#viewForm{padding:32px}
+.form-wrap{max-width:860px;margin:0 auto;padding-bottom:120px}
+.fcard{background:var(--white);border:1.5px solid var(--border);border-radius:14px;margin-bottom:20px;overflow:hidden}
+.fcard-head{padding:15px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.fcard-icon{font-size:15px}
+.fcard-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13.5px}
+.fcard-sub{font-size:12px;color:var(--muted);margin-left:auto}
+.fcard-body{padding:22px}
+.fg{display:grid;gap:14px}
+.fg-2{grid-template-columns:1fr 1fr}
+.fg-3{grid-template-columns:1fr 1fr 1fr}
+.fg-4{grid-template-columns:1fr 1fr 1fr 1fr}
+.mb14{margin-bottom:14px}
+.field-label{display:block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.req{color:var(--red)}
+.field-hint{font-size:11.5px;color:var(--faint);margin-top:5px;line-height:1.4}
+.fi{width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--border2);background:var(--white);font-family:'DM Sans',sans-serif;font-size:13.5px;color:var(--text);transition:border-color .15s,box-shadow .15s;outline:none}
+.fi:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-bg)}
+.fi::placeholder{color:var(--faint)}
+.fi.error{border-color:var(--red);box-shadow:0 0 0 3px var(--red-bg)}
+select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:32px}
+textarea.fi{resize:vertical;min-height:78px;line-height:1.55}
+.sdiv{height:1px;background:var(--border);margin:18px 0}
+/* add new button */
+.sublabel{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.sublabel-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sublabel-row .sublabel{margin-bottom:0}
+.add-new-btn{font-size:12px;font-weight:600;color:var(--green-dark);background:none;border:1.5px solid var(--green-border);border-radius:6px;padding:3px 10px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .13s;white-space:nowrap}
+.add-new-btn:hover{background:var(--green-bg)}
+
+
+
+/* two-col contact layout */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.col-block{display:flex;flex-direction:column;gap:12px}
+
+
+/* locked / auto-fill fields */
+.fi-locked{background:var(--offwhite)!important;color:var(--muted)!important;cursor:default!important;border-color:var(--border)!important}
+.fi-locked::placeholder{color:var(--faint)!important}
+.fi:disabled{background:var(--offwhite)!important;color:var(--faint)!important;cursor:not-allowed!important;border-color:var(--border)!important}
+.fi:disabled::placeholder{color:var(--faint)!important}
+
+/* venue access badges */
+.venue-access-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;border:1.5px solid var(--border);background:var(--offwhite);color:var(--faint);min-width:64px}
+.venue-access-badge.yes{background:var(--green-bg);color:var(--green-dark);border-color:var(--green-border)}
+.venue-access-badge.no{background:var(--red-bg);color:var(--red);border-color:rgba(239,68,68,.25)}
+.venue-access-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0;opacity:.6}
+
+/* search dropdown */
+.search-dd{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--white);border:1.5px solid var(--border);border-radius:9px;box-shadow:0 8px 28px rgba(0,0,0,.10);z-index:100;max-height:260px;overflow-y:auto}
+.search-dd-item{padding:10px 14px;font-size:13.5px;cursor:pointer;transition:background .1s;display:flex;flex-direction:column;gap:2px}
+.search-dd-item:hover,.search-dd-item.focused{background:var(--offwhite)}
+.search-dd-item-main{font-weight:600;color:var(--text)}
+.search-dd-item-sub{font-size:11.5px;color:var(--muted)}
+.search-dd-empty{padding:12px 14px;font-size:13px;color:var(--faint);font-style:italic}
+
+/* yn toggle */
+.yn-group{display:flex}
+.yn-btn{padding:7px 16px;border:1.5px solid var(--border);background:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:var(--muted);transition:all .13s}
+.yn-btn:first-child{border-radius:8px 0 0 8px;border-right:none}
+.yn-btn:last-child{border-radius:0 8px 8px 0}
+.yn-btn.yes{background:var(--green-bg);color:var(--green-dark);border-color:var(--green-border);font-weight:600}
+.yn-btn.no{background:var(--red-bg);color:var(--red);border-color:rgba(239,68,68,.25);font-weight:600}
+
+/* payment opts */
+.pay-opts{display:flex;gap:8px}
+.pay-opt{padding:6px 14px;border-radius:100px;border:1.5px solid var(--border);background:none;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;color:var(--muted);transition:all .13s}
+.pay-opt:hover{border-color:var(--text);color:var(--text)}
+.pay-opt.sel{background:var(--green-bg);color:var(--green-dark);border-color:var(--green-border);font-weight:600}
+
+/* rate card preview */
+.rate-preview{background:var(--offwhite);border:1px solid var(--border);border-radius:9px;padding:12px 14px;margin-top:10px}
+.rate-preview-name{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.rate-table{width:100%;border-collapse:collapse}
+.rate-table th{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:4px 0 4px;border-bottom:1px solid var(--border)}
+.rate-table td{font-size:13px;padding:6px 0;border-bottom:1px solid var(--border)}
+.rate-table tr:last-child td{border-bottom:none}
+.rate-price{font-weight:600;color:var(--green-dark)}
+
+/* rate tiers */
+.tier-table-wrap{margin-top:4px;margin-bottom:14px}
+.tier-header{display:grid;grid-template-columns:80px 16px 80px 1fr 32px;gap:8px;align-items:center;padding:0 4px 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.tier-header span{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.tier-row{display:grid;grid-template-columns:80px 16px 80px 1fr 32px;gap:8px;align-items:center;margin-bottom:6px}
+.tier-sep{font-size:13px;color:var(--faint);text-align:center;line-height:1}
+.tier-del{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--faint);font-size:15px;transition:all .13s;line-height:1;padding:0}
+.tier-del:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+.tier-add-btn{font-size:12.5px;font-weight:600;color:var(--green-dark);background:none;border:1.5px dashed var(--green-border);border-radius:8px;padding:7px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .13s;width:100%;text-align:left}
+.tier-add-btn:hover{background:var(--green-bg)}
+/* price input */
+.price-input-wrap{position:relative;display:flex;align-items:center}
+.price-prefix{position:absolute;left:12px;font-size:13.5px;color:var(--muted);pointer-events:none}
+.price-input{padding-left:24px!important}
+
+
+.day-rows{display:flex;flex-direction:column;gap:8px}
+.day-rows-empty{font-size:12.5px;color:var(--faint);padding:8px 0;font-style:italic}
+.day-row{display:grid;grid-template-columns:160px 1fr 1fr;align-items:center;gap:12px;background:var(--offwhite);border:1px solid var(--border);border-radius:9px;padding:10px 14px}
+.day-row-label{font-size:13px;font-weight:600;color:var(--text)}
+.day-row-label small{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:1px}
+
+/* sticky save bar */
+.action-bar{position:sticky;bottom:0;background:rgba(245,245,243,.96);backdrop-filter:blur(10px);border-top:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;z-index:10}
+.action-bar-note{font-size:12px;color:var(--muted)}
+
+/* ── DETAIL VIEW ── */
+#viewDetail{overflow:hidden}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:900px}
+.dcard{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
+.dcard-head{padding:14px 20px;border-bottom:1px solid var(--border)}
+.dcard-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px}
+.dcard-body{padding:20px}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:8px 20px;align-items:baseline}
+.dt{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.dd{font-size:13.5px;color:var(--text)}
+.dd a{color:var(--blue-dark);text-decoration:none}
+.dd a:hover{text-decoration:underline}
+
+/* pane toolbar — used in equipment + labour tabs */
+.pane-toolbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.pane-title{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;color:var(--text);margin-bottom:3px}
+.pane-sub{font-size:13px;color:var(--muted)}
+.pane-empty{padding:60px 20px;text-align:center;color:var(--muted)}
+.pane-empty-icon{font-size:36px;margin-bottom:12px;opacity:.35}
+.pane-empty p{font-size:14px;margin-bottom:16px}
+
+/* equipment / labour */
+.equip-table-wrap{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
+.unit-nums{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.8}
+.equip-status{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:100px;white-space:nowrap}
+.s-needed{background:var(--offwhite);color:var(--muted);border:1px solid var(--border)}
+.s-request-sent{background:var(--blue-bg);color:var(--blue-dark);border:1px solid rgba(59,130,246,.2)}
+.s-awaiting{background:var(--amber-bg);color:var(--amber-dark);border:1px solid rgba(245,158,11,.25)}
+.s-delivered{background:var(--green-bg);color:var(--green-dark);border:1px solid var(--green-border)}
+.supplier-cell{display:flex;flex-direction:column;gap:5px}
+.supplier-name{font-size:13px;font-weight:500}
+.contact-btn{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--blue-dark);text-decoration:none;font-weight:500}
+.send-req-btn{font-size:11.5px;padding:3px 9px;border-radius:6px;border:1.5px solid var(--blue);color:var(--blue-dark);background:var(--blue-bg);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;margin-left:8px}
+.labour-coordinator{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--offwhite);border:1px solid var(--border);border-radius:9px;margin-bottom:16px;font-size:13px}
+.labour-coordinator-label{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.labour-coordinator-name{font-size:13.5px;font-weight:600}
+.labour-day{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px}
+.labour-day-head{padding:13px 18px;background:var(--offwhite);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.labour-day-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13.5px}
+.labour-day-summary{font-size:12px;color:var(--muted)}
+.labour-role-row{display:grid;grid-template-columns:80px 160px 120px 1fr auto;align-items:start;border-bottom:1px solid var(--border)}
+.labour-role-row:last-child{border-bottom:none}
+.lrc{padding:13px 16px;font-size:13px}
+.lrc-qty{font-weight:700;font-size:14px}
+.lrc-pos{font-weight:600}
+.lrc-time{color:var(--muted);font-size:12.5px}
+.lrc-staff{display:flex;flex-direction:column;gap:3px}
+.staff-name{font-size:13px;line-height:1.6}
+.staff-tba{font-size:12.5px;color:var(--faint);font-style:italic}
+.lrc-status{display:flex;align-items:flex-start;padding-top:13px;padding-right:16px;gap:8px}
+.labour-status{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:100px;white-space:nowrap}
+.ls-needed{background:var(--offwhite);color:var(--muted);border:1px solid var(--border)}
+.ls-requested{background:var(--blue-bg);color:var(--blue-dark);border:1px solid rgba(59,130,246,.2)}
+.ls-confirmed{background:var(--green-bg);color:var(--green-dark);border:1px solid var(--green-border)}
+
+/* ── MODALS ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.28);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(3px)}
+.modal-bg.open{opacity:1;pointer-events:all}
+.modal{background:var(--white);border-radius:16px;width:560px;max-height:82vh;display:flex;flex-direction:column;border:1.5px solid var(--border);box-shadow:0 24px 80px rgba(0,0,0,.18);transform:translateY(12px);transition:transform .25s var(--ease)}
+.modal-bg.open .modal{transform:translateY(0)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);flex-shrink:0}
+.modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px}
+.modal-close{width:30px;height:30px;border-radius:7px;border:1.5px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:16px;transition:all .13s}
+.modal-close:hover{border-color:var(--text);color:var(--text)}
+.modal-body{flex:1;overflow-y:auto;padding:4px 22px 18px}
+.modal-foot{padding:16px 22px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.log-entry{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:12px}
+.log-entry:last-child{border-bottom:none}
+.log-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.log-dot.created{background:var(--green)}.log-dot.updated{background:var(--amber)}.log-dot.deleted{background:var(--red)}
+.log-meta{font-size:11.5px;color:var(--muted);margin-bottom:5px}
+.log-meta strong{color:var(--text);font-weight:600}
+.log-change{font-size:12.5px;line-height:1.7}
+.log-field{color:var(--muted)}
+.log-from{color:var(--red);text-decoration:line-through}
+.log-to{color:var(--green-dark);font-weight:500}
+.log-empty{padding:40px 0;text-align:center;color:var(--muted);font-size:13.5px}
+
+/* ── TOAST ── */
+.toast-wrap{position:fixed;bottom:28px;right:28px;z-index:300;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.toast{background:var(--dark);color:white;padding:11px 16px;border-radius:10px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.08);box-shadow:0 8px 32px rgba(0,0,0,.25);animation:toastIn .3s var(--ease) both}
+.toast.out{animation:toastOut .3s var(--ease-std) both}
+.toast-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.toast-dot.g{background:var(--green)}.toast-dot.r{background:var(--red)}
+@keyframes toastIn{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateY(-8px)}}
+@keyframes rowIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.row-new td{animation:rowIn .28s var(--ease) both}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-box">A</div>
+      <span class="logo-name">Axis Events</span>
+    </div>
+    <div class="topbar-divider"></div>
+
+    <!-- List topbar -->
+    <div id="tb-list" style="display:flex;align-items:center;width:100%;gap:10px">
+      <span class="page-title">Shows</span>
+      <div class="topbar-actions">
+        <button class="btn btn-dark" onclick="showForm()">
+          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 2v12M2 8h12"/></svg>
+          Add Show
+        </button>
+      </div>
+    </div>
+
+    <!-- Form topbar -->
+    <div id="tb-form" style="display:none;align-items:center;width:100%;gap:8px">
+      <div class="breadcrumb">
+        <button class="breadcrumb-link" onclick="showList()">Shows</button>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-cur" id="formTitle">Add Show</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline" onclick="showList()">Cancel</button>
+        <button class="btn btn-green" onclick="doSave()">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l4 4 6-7"/></svg>
+          Save Show
+        </button>
+      </div>
+    </div>
+
+    <!-- Detail topbar -->
+    <div id="tb-detail" style="display:none;align-items:center;width:100%;gap:8px">
+      <div class="breadcrumb">
+        <button class="breadcrumb-link" onclick="showList()">Shows</button>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-cur" id="detailName"></span>
+      </div>
+      <div class="topbar-actions">
+        <button class="act-btn log-btn" id="btnLog">Log</button>
+        <button class="act-btn" id="btnStatus" style="display:none"></button>
+        <button class="act-btn" id="btnEdit">Edit</button>
+        <button class="act-btn del" id="btnDelete">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEWS -->
+  <div class="view-wrap">
+
+    <!-- LIST VIEW -->
+    <div class="view" id="viewList">
+        <div class="status-tabs" id="statusTabs">
+          <button class="status-tab active" data-filter="" onclick="setFilter(this)">All <span class="status-tab-count" id="cnt-all">0</span></button>
+          <button class="status-tab" data-filter="draft" onclick="setFilter(this)">Draft <span class="status-tab-count" id="cnt-draft">0</span></button>
+          <button class="status-tab" data-filter="active" onclick="setFilter(this)">Active <span class="status-tab-count" id="cnt-active">0</span></button>
+          <button class="status-tab" data-filter="completed" onclick="setFilter(this)">Completed <span class="status-tab-count" id="cnt-completed">0</span></button>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr>
+              <th>Show</th><th>Organiser</th><th>Venue</th><th>Show Dates</th><th>Bump In</th><th>Bump Out</th><th>Provider</th><th>Status</th>
+            </tr></thead>
+            <tbody id="showsTable"></tbody>
+          </table>
+          <div class="empty-state" id="emptyState" style="display:none">
+            <div class="ei">📅</div>
+            <p>No shows yet. <span style="color:var(--green-dark);font-weight:600;cursor:pointer" onclick="showForm()">Add the first one.</span></p>
+          </div>
+        </div>
+    </div>
+
+    <!-- FORM VIEW -->
+    <div class="view hidden" id="viewForm">
+      <div class="form-wrap">
+
+        <!-- SHOW INFO -->
+        <div class="fcard">
+          <div class="fcard-head"><span class="fcard-icon">📋</span><span class="fcard-title">Show Information</span></div>
+          <div class="fcard-body">
+            <div class="fg fg-2 mb14">
+              <div>
+                <label class="field-label">Show Name <span class="req">*</span></label>
+                <input class="fi" id="f-name" placeholder="e.g. DesignEx Sydney" maxlength="100">
+              </div>
+            </div>
+            <div class="sdiv"></div>
+            <div class="two-col">
+              <div class="col-block">
+                <div class="sublabel-row">
+                  <span class="sublabel">Organiser</span>
+                  <!-- TODO: trigger <OrganiserModal /> — same component as Organisers page -->
+                  <button class="add-new-btn" type="button" onclick="alert('TODO: open OrganiserModal component')">+ New</button>
+                </div>
+                <div style="position:relative">
+                  <label class="field-label">Company Name <span class="req">*</span></label>
+                  <!-- TODO: replace with <SearchSelect> pulling from GET /api/organisers?q= -->
+                  <!-- Selecting an organiser auto-fills contact name, phone + email below -->
+                  <input class="fi" id="f-organiser" placeholder="Start typing to search…" autocomplete="off" oninput="filterOrgDropdown(this.value)" onfocus="filterOrgDropdown(this.value)">
+                  <div id="org-dd" class="search-dd" style="display:none"></div>
+                </div>
+                <div>
+                  <label class="field-label">Contact Name</label>
+                  <input class="fi fi-locked" id="f-orgContactName" placeholder="Auto-fills from organiser" readonly tabindex="-1">
+                </div>
+                <div>
+                  <label class="field-label">Phone</label>
+                  <input class="fi fi-locked" id="f-orgPhone" inputmode="tel" placeholder="Auto-fills from organiser" readonly tabindex="-1">
+                </div>
+                <div>
+                  <label class="field-label">Email</label>
+                  <input class="fi fi-locked" id="f-orgEmail" type="email" placeholder="Auto-fills from organiser" readonly tabindex="-1">
+                </div>
+              </div>
+              <div class="col-block">
+                <div class="sublabel-row">
+                  <span class="sublabel">Show Contact <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--faint)">person running this show</span></span>
+                  <!-- TODO: trigger <OrganiserContactModal /> — filtered to selected organiser -->
+                  <button class="add-new-btn" type="button" onclick="alert('TODO: open OrganiserContactModal component')">+ New</button>
+                </div>
+                <div style="position:relative">
+                  <label class="field-label">Name <span class="req">*</span></label>
+                  <!-- TODO: replace with <SearchSelect> pulling from GET /api/contacts?orgId=&q= -->
+                  <!-- Only available after organiser is selected. Selecting auto-fills phone + email -->
+                  <input class="fi" id="f-contact" placeholder="Select organiser first…" autocomplete="off" oninput="filterContactDropdown(this.value)" onfocus="filterContactDropdown(this.value)" disabled>
+                  <div id="contact-dd" class="search-dd" style="display:none"></div>
+                </div>
+                <div>
+                  <label class="field-label">Phone</label>
+                  <input class="fi fi-locked" id="f-phone" inputmode="tel" placeholder="Auto-fills from contact" readonly tabindex="-1">
+                </div>
+                <div>
+                  <label class="field-label">Email</label>
+                  <input class="fi fi-locked" id="f-email" type="email" placeholder="Auto-fills from contact" readonly tabindex="-1">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VENUE -->
+        <div class="fcard">
+          <div class="fcard-head"><span class="fcard-icon">🏛️</span><span class="fcard-title">Venue</span></div>
+          <div class="fcard-body">
+            <div class="fg fg-2 mb14">
+              <div style="position:relative">
+                <label class="field-label">Venue Name <span class="req">*</span></label>
+                <!-- TODO: replace with <SearchSelect> pulling from GET /api/venues?q= -->
+                <!-- Selecting a venue auto-fills address + vehicle access below -->
+                <input class="fi" id="f-venue" placeholder="Start typing to search…" autocomplete="off" oninput="filterVenueDropdown(this.value)" onfocus="filterVenueDropdown(this.value)">
+                <div id="venue-dd" class="search-dd" style="display:none"></div>
+              </div>
+              <div>
+                <label class="field-label">Address</label>
+                <input class="fi fi-locked" id="f-venueAddr" placeholder="Auto-fills from venue" readonly tabindex="-1">
+              </div>
+            </div>
+            <!-- TODO: + New Venue button → trigger <VenueModal /> — same component as Venues page -->
+            <div style="margin-bottom:14px">
+              <button class="add-new-btn" type="button" onclick="alert('TODO: open VenueModal component')">+ New Venue</button>
+            </div>
+            <div class="sdiv"></div>
+            <div class="sublabel" style="margin-bottom:12px">Vehicle Access <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--faint)">auto-fills from venue record</span></div>
+            <div class="fg fg-3" style="margin-bottom:14px">
+              <div>
+                <label class="field-label">Forklift Access</label>
+                <div class="venue-access-badge" id="badge-fork">—</div>
+              </div>
+              <div>
+                <label class="field-label">B-Double</label>
+                <div class="venue-access-badge" id="badge-bd">—</div>
+              </div>
+              <div>
+                <label class="field-label">Semi</label>
+                <div class="venue-access-badge" id="badge-semi">—</div>
+              </div>
+            </div>
+            <div class="sdiv"></div>
+            <div class="sublabel">Entry Point</div>
+            <div class="fg fg-2 mb14">
+              <div>
+                <label class="field-label">Dock / Area <span class="req">*</span></label>
+                <input class="fi" id="f-dock" placeholder="e.g. Lower Dock, Expansion Dock">
+              </div>
+              <div>
+                <label class="field-label">Door / Gate <span class="req">*</span></label>
+                <input class="fi" id="f-door" placeholder="e.g. 4, B, Hall 7">
+              </div>
+            </div>
+            <div>
+              <label class="field-label">Drop-off Instructions <span class="req">*</span></label>
+              <textarea class="fi" id="f-dropoff" rows="3" placeholder="e.g. Go to lower dock, report to loading supervisor. Quote show name on arrival."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- SHOW DATES -->
+        <div class="fcard">
+          <div class="fcard-head"><span class="fcard-icon">📅</span><span class="fcard-title">Show Dates</span><span class="fcard-sub">Open to the public</span></div>
+          <div class="fcard-body">
+            <div class="fg fg-4">
+              <div>
+                <label class="field-label">Open Date <span class="req">*</span></label>
+                <input class="fi" type="date" id="f-showStart">
+              </div>
+              <div>
+                <label class="field-label">Close Date <span class="req">*</span></label>
+                <input class="fi" type="date" id="f-showEnd">
+              </div>
+              <div>
+                <label class="field-label">Open Time</label>
+                <input class="fi" type="time" id="f-showStartTime">
+                <div class="field-hint">For quotes only</div>
+              </div>
+              <div>
+                <label class="field-label">Close Time</label>
+                <input class="fi" type="time" id="f-showEndTime">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BUMP IN -->
+        <div class="fcard">
+          <div class="fcard-head"><span class="fcard-icon">📦</span><span class="fcard-title">Bump In</span><span class="fcard-sub">Freight &amp; contractor access</span></div>
+          <div class="fcard-body">
+            <div class="fg fg-2 mb14">
+              <div>
+                <label class="field-label">From Date <span class="req">*</span></label>
+                <input class="fi" type="date" id="f-biStart" onchange="rebuildDayRows('bi')">
+              </div>
+              <div>
+                <label class="field-label">To Date <span class="req">*</span></label>
+                <input class="fi" type="date" id="f-biEnd" onchange="rebuildDayRows('bi')">
+              </div>
+            </div>
+            <div class="sdiv"></div>
+            <div class="sublabel">Hours per Day</div>
+            <div class="day-rows" id="biDayRows">
+              <div class="day-rows-empty">Set the date range above to add daily hours.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BUMP OUT -->
+        <div class="fcard">
+          <div class="fcard-head"><span class="fcard-icon">🚛</span><span class="fcard-title">Bump Out</span><span class="fcard-sub">Breakdown &amp; removal</span></div>
+          <div class="fcard-body">
+            <div class="fg fg-2 mb14">
+              <div>
+                <label class="field-label">From Date <span class="req">*</span></label>
+                <input class="fi" type="date" id="f-boStart" onchange="rebuildDayRows('bo')">
+              </div>
+              <div>
+                <label class="field-label">To Date <span class="req">*</span></label>
+                <input class="fi" type="date" id="f-boEnd" onchange="rebuildDayRows('bo')">
+              </div>
+            </div>
+            <div class="sdiv"></div>
+            <div class="sublabel">Hours per Day</div>
+            <div class="day-rows" id="boDayRows">
+              <div class="day-rows-empty">Set the date range above to add daily hours.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LOGISTICS -->
+        <div class="fcard">
+          <div class="fcard-head"><span class="fcard-icon">🏗️</span><span class="fcard-title">Logistics &amp; Rates</span></div>
+          <div class="fcard-body">
+
+            <div class="sublabel-row" style="margin-bottom:12px">
+              <span class="sublabel">Rate Card</span>
+              <div style="display:flex;gap:6px">
+                <button class="add-new-btn" type="button" id="btn-editRateCard" style="display:none" onclick="alert('TODO: open RateCardEditModal — same component as Rate Cards page')">Edit</button>
+                <!-- TODO: + New → RateCardModal, same component as Rate Cards page -->
+                <button class="add-new-btn" type="button" onclick="alert('TODO: open RateCardModal — same component as Rate Cards page')">+ New</button>
+              </div>
+            </div>
+
+            <!-- Single search: type provider name or card name, results show full card name e.g. "GEL (Standard 2026)" -->
+            <!-- TODO: replace with <SearchSelect> pulling from GET /api/ratecards?q= -->
+            <!-- Each rate card record belongs to a provider and carries fork tiers + storage price -->
+            <div class="mb14" style="position:relative">
+              <label class="field-label">Search rate cards</label>
+              <div style="display:flex;gap:8px;align-items:center">
+                <input class="fi" id="f-rateCard" placeholder="e.g. GEL, Standard, Free…" autocomplete="off" style="flex:1"
+                  oninput="filterRateCardDropdown(this.value)"
+                  onfocus="filterRateCardDropdown(this.value)">
+                <button class="add-new-btn" id="btn-clearRateCard" style="display:none;white-space:nowrap" type="button" onclick="clearRateCard()">✕ Clear</button>
+              </div>
+              <div id="rateCard-dd" class="search-dd" style="display:none"></div>
+            </div>
+
+            <!-- Rate card output — hidden until a card is selected -->
+            <div id="rateCardOutput" style="display:none">
+              <div class="sdiv"></div>
+
+              <div class="sublabel" style="margin-bottom:10px">Forklifting</div>
+              <div class="tier-table-wrap">
+                <div class="tier-header">
+                  <span class="tier-col-from">From</span>
+                  <span class="tier-col-sep"></span>
+                  <span class="tier-col-to">To</span>
+                  <span class="tier-col-price">Price per lift</span>
+                  <span class="tier-col-del"></span>
+                </div>
+                <div id="forkTiers"></div>
+              </div>
+
+              <div class="sdiv"></div>
+
+              <div class="sublabel" style="margin-bottom:10px">Storage</div>
+              <div class="fg fg-2">
+                <div>
+                  <label class="field-label">Price per Pallet Space</label>
+                  <div class="price-input-wrap">
+                    <span class="price-prefix">$</span>
+                    <input class="fi price-input fi-locked" id="f-storagePrice" type="number" min="0" step="0.01" placeholder="0.00" readonly tabindex="-1">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- NOTES -->
+        <div class="fcard">
+          <div class="fcard-head"><span class="fcard-icon">📝</span><span class="fcard-title">Notes</span><span class="fcard-sub">Internal only</span></div>
+          <div class="fcard-body">
+            <textarea class="fi" id="f-notes" rows="4" placeholder="Loading dock restrictions, special handling, contacts on the day…"></textarea>
+          </div>
+        </div>
+
+      </div><!-- /form-wrap -->
+
+      <!-- STICKY SAVE BAR -->
+      <div class="action-bar">
+        <span class="action-bar-note">Fields marked <span style="color:var(--red)">*</span> are required</span>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-outline" onclick="showList()">Cancel</button>
+          <button class="btn btn-outline" onclick="doSave('draft')">Save as Draft</button>
+          <button class="btn btn-green" onclick="doSave()">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l4 4 6-7"/></svg>
+            Save Show
+          </button>
+        </div>
+      </div>
+    </div><!-- /viewForm -->
+
+    <!-- DETAIL VIEW -->
+    <div class="view hidden" id="viewDetail">
+      <div style="padding:28px;overflow-y:auto;height:100%">
+        <div class="detail-grid" id="detailCards"></div>
+      </div>
+    </div><!-- /viewDetail -->
+
+  </div><!-- /view-wrap -->
+</div><!-- /shell -->
+
+<!-- LOG MODAL -->
+<div class="modal-bg" id="logModal">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="logTitle">Activity Log</span>
+      <button class="modal-close" onclick="closeModal('logModal')">✕</button>
+    </div>
+    <div class="modal-body" id="logBody"></div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+
+<script>
+/*
+ * SHOWS — AXIS EVENTS
+ * This is a static HTML prototype. All data is hardcoded.
+ *
+ * FOR DEV: Convert to React + real backend.
+ * Each TODO comment below marks an API endpoint to implement.
+ * The data shapes here define the expected DB schema.
+ *
+ * Field reference (one show record):
+ * {
+ *   id, name,
+ *   organiser, organiserPhone, organiserEmail,          -- org-level contact
+ *   showContactName, showContactPhone, showContactEmail, -- person running this show
+ *   venue, venueAddress,
+ *   vcName, vcRole, vcPhone, vcEmail,                   -- venue contact for this show
+ *   dock, door, dropoff,                                -- entry point (show-specific)
+ *   bdouble, semi, forklift,                             -- vehicle access (bool)
+ *   showStart, showEnd, showStartTime, showEndTime,
+ *   bumpInStart, bumpInEnd,
+ *   bumpInDays:  [{date, start, end}],                  -- one row per bump-in day
+ *   bumpOutStart, bumpOutEnd,
+ *   bumpOutDays: [{date, start, end}],                  -- one row per bump-out day
+ *   provider,                                           -- logistics provider
+ *   forkPayment: 'rate'|'free',
+ *   forkRate,                                           -- rate card name (free text for now)
+ *   storagePayment: 'rate'|'free',
+ *   storageRate,
+ *   notes, quotes
+ * }
+ *
+ * Autocomplete fields (organiser, show contact, venue, rate card)
+ * should pull from their respective DB tables via API when implemented:
+ *   TODO: GET /api/organisers?q=:query  → {id, name, contactName, phone, email, contacts:[{id,name,phone,email}]}
+ *   TODO: GET /api/contacts?orgId=:id&q=:query → {id, name, phone, email}
+ *   TODO: GET /api/suppliers?type=venue&q=:query → {id, name, address, forklift, bdouble, semi}
+ *         (venues live in the Suppliers table — see Suppliers.html)
+ *   TODO: GET /api/ratecards?q=:query → {id, name, provider, forkTiers:[{from,to,price}], storagePrice}
+ *         (rate card shape defined in Rate_Cards.html)
+ */
+
+/* ── SAMPLE DATA (one show to document the shape) ── */
+/* TODO: replace with GET /api/shows */
+let shows = [
+  {
+    id:1, name:'DesignEx Sydney', code:'DESEX-SYD-MAR26',
+    organiser:'Informa Markets', organiserContactName:'Informa Admin',
+    organiserPhone:'02 9080 4300', organiserEmail:'info@informamarkets.com.au',
+    showContactName:'Sarah Chen', showContactPhone:'0412 000 111', showContactEmail:'sarah.chen@informa.com',
+    showStart:'2026-03-15', showEnd:'2026-03-17', showStartTime:'09:00', showEndTime:'17:00',
+    venue:'ICC Sydney', venueAddress:'14 Darling Drive, Sydney NSW 2000',
+    dock:'Lower Dock', door:'4', dropoff:'Go to main dock and ask for DesignEx show.',
+    bdouble:false, semi:true, forklift:true,
+    bumpInStart:'2026-03-13', bumpInEnd:'2026-03-14',
+    bumpInDays:[{date:'2026-03-13',start:'07:00',end:'17:00'},{date:'2026-03-14',start:'07:00',end:'09:00'}],
+    bumpOutStart:'2026-03-17', bumpOutEnd:'2026-03-18',
+    bumpOutDays:[{date:'2026-03-17',start:'17:00',end:'21:00'},{date:'2026-03-18',start:'07:00',end:'14:00'}],
+    provider:'GEL', rateCard:'GEL (Standard 2026)',
+    forkPayment:'rate',
+    forkTiers:[{from:'1',to:'4',price:'75.00'},{from:'5',to:'10',price:'65.00'},{from:'11',to:'',price:'55.00'}],
+    storagePayment:'rate', storagePrice:'60.00',
+    notes:'', quotes:2, status:'active'
+  },
+];
+let nextId = 2;
+
+/* ── SAMPLE ORGANISER DB (simulates GET /api/organisers?q=) ── */
+/* TODO: replace with real API */
+const orgDB = [
+  { id:1, name:'Informa Markets', contactName:'Informa Admin', phone:'02 9080 4300', email:'info@informamarkets.com.au',
+    contacts:[
+      {id:1,name:'Sarah Chen',phone:'0412 000 111',email:'sarah.chen@informa.com'},
+      {id:2,name:'James Barker',phone:'0411 222 333',email:'j.barker@informa.com'},
+    ]
+  },
+  { id:2, name:'Reed Exhibitions', contactName:'Reed Admin', phone:'02 9422 2500', email:'info@reedexpo.com.au',
+    contacts:[
+      {id:3,name:'Michelle Park',phone:'0421 555 666',email:'m.park@reedexpo.com.au'},
+    ]
+  },
+  { id:3, name:'Expertise Events', contactName:'Events Team', phone:'03 9654 7977', email:'info@expertiseevents.com.au',
+    contacts:[
+      {id:4,name:'David Nguyen',phone:'0433 111 222',email:'d.nguyen@expertiseevents.com.au'},
+      {id:5,name:'Kate Morrison',phone:'0444 777 888',email:'k.morrison@expertiseevents.com.au'},
+    ]
+  },
+];
+
+/* ── SAMPLE VENUE DB (simulates GET /api/venues?q=) ── */
+/* TODO: replace with real API */
+const venueDB = [
+  {id:1,name:'ICC Sydney',address:'14 Darling Drive, Sydney NSW 2000',forklift:true,bdouble:false,semi:true},
+  {id:2,name:'Melbourne Convention & Exhibition Centre',address:'1 Convention Centre Pl, South Wharf VIC 3006',forklift:true,bdouble:true,semi:true},
+  {id:3,name:'Brisbane Convention & Exhibition Centre',address:'Cnr Merivale & Glenelg St, South Brisbane QLD 4101',forklift:true,bdouble:false,semi:true},
+  {id:4,name:'Adelaide Convention Centre',address:'North Terrace, Adelaide SA 5000',forklift:true,bdouble:false,semi:false},
+  {id:5,name:'Perth Convention & Exhibition Centre',address:'21 Mounts Bay Rd, Perth WA 6000',forklift:true,bdouble:false,semi:true},
+];
+
+/* ── ACTIVITY LOG ── */
+/* TODO: GET /api/shows/:id/logs */
+let actLog = [
+  {id:1,showId:1,user:'Axis Admin',action:'created',changes:[],ts:'2026-01-10T09:14:00'},
+];
+let nextLogId = 2;
+
+/* ── STATE ── */
+const today = new Date().toISOString().slice(0,10);
+let editingId = null;
+let deleteConfirmId = null;
+let selectedOrgId = null;       // ID of currently selected organiser
+let selectedContactId = null;   // ID of currently selected show contact
+let selectedVenueId = null;     // ID of currently selected venue
+let selectedRateCardId = null;  // ID of currently selected rate card
+let venueAccess = {forklift:null, bdouble:null, semi:null}; // read-only, set from venue record
+let payState = {fork:'rate', storage:'rate'};
+let pendingShow = null;
+let currentFilter = '';
+
+/* ── VIEW SWITCHING ── */
+function showList() {
+  document.getElementById('viewList').classList.remove('hidden');
+  document.getElementById('viewForm').classList.add('hidden');
+  document.getElementById('viewDetail').classList.add('hidden');
+  document.getElementById('tb-list').style.display = 'flex';
+  document.getElementById('tb-form').style.display = 'none';
+  document.getElementById('tb-detail').style.display = 'none';
+  editingId = null;
+  renderTable();
+}
+function showForm(id=null, presetCode=null) {
+  editingId = id;
+  document.getElementById('formTitle').textContent = id ? 'Edit Show' : 'Add Show';
+  document.getElementById('viewList').classList.add('hidden');
+  document.getElementById('viewForm').classList.remove('hidden');
+  document.getElementById('viewDetail').classList.add('hidden');
+  document.getElementById('tb-list').style.display = 'none';
+  document.getElementById('tb-form').style.display = 'flex';
+  document.getElementById('tb-detail').style.display = 'none';
+  clearForm();
+  if (id) { const s = shows.find(x=>x.id===id); if (s) fillForm(s); }
+  if (presetCode) { document.getElementById('f-code').value = presetCode; }
+  document.getElementById('viewForm').scrollTop = 0;
+}
+function showDetail(id) {
+  const s = shows.find(x=>x.id===id);
+  if (!s) return;
+  document.getElementById('viewList').classList.add('hidden');
+  document.getElementById('viewForm').classList.add('hidden');
+  document.getElementById('viewDetail').classList.remove('hidden');
+  document.getElementById('tb-list').style.display = 'none';
+  document.getElementById('tb-form').style.display = 'none';
+  document.getElementById('tb-detail').style.display = 'flex';
+  document.getElementById('detailName').textContent = s.name;
+  document.getElementById('btnLog').onclick = () => openLog(s.id);
+  document.getElementById('btnEdit').onclick = () => showForm(s.id);
+  document.getElementById('btnDelete').onclick = () => { showList(); setTimeout(()=>startDelete(s.id),50); };
+  const btnStatus = document.getElementById('btnStatus');
+  if (s.status === 'draft') {
+    btnStatus.textContent = 'Mark as Active';
+    btnStatus.style.display = 'inline-flex';
+    btnStatus.onclick = () => setShowStatus(s.id, 'active');
+  } else if (s.status === 'active') {
+    btnStatus.textContent = 'Mark as Completed';
+    btnStatus.style.display = 'inline-flex';
+    btnStatus.onclick = () => setShowStatus(s.id, 'completed');
+  } else if (s.status === 'completed') {
+    btnStatus.textContent = 'Reopen';
+    btnStatus.style.display = 'inline-flex';
+    btnStatus.onclick = () => setShowStatus(s.id, 'active');
+  } else {
+    btnStatus.style.display = 'none';
+  }
+  renderDetailCards(s);
+}
+
+/* ── DATE HELPERS ── */
+function fmtD(str) { if(!str) return '—'; return new Date(str+'T00:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'}); }
+function fmtDShort(str) { if(!str) return '—'; return new Date(str+'T00:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'}); }
+function fmtRange(s,e) {
+  if (!s) return '—';
+  const sd=new Date(s+'T00:00:00'), ed=new Date(e+'T00:00:00');
+  const mo=d=>d.toLocaleDateString('en-AU',{month:'short'}), dy=d=>d.getDate(), yr=d=>d.getFullYear();
+  if (yr(sd)===yr(ed)&&mo(sd)===mo(ed)) return `${mo(sd)} ${dy(sd)}–${dy(ed)}, ${yr(sd)}`;
+  return `${fmtDShort(s)} – ${fmtDShort(e)}, ${yr(sd)}`;
+}
+function fmtTs(ts) {
+  const d=new Date(ts);
+  return d.toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'})+' at '+d.toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
+}
+
+/* ── LIST RENDER ── */
+function setFilter(el) {
+  currentFilter = el.dataset.filter;
+  document.querySelectorAll('.status-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderTable();
+}
+
+function renderTable() {
+  const tbody=document.getElementById('showsTable');
+  const empty=document.getElementById('emptyState');
+
+  // update tab counts
+  document.getElementById('cnt-all').textContent = shows.length;
+  ['draft','active','completed'].forEach(s=>{
+    document.getElementById('cnt-'+s).textContent = shows.filter(x=>(x.status||'active')===s).length;
+  });
+
+  const filtered = currentFilter ? shows.filter(s=>(s.status||'active')===currentFilter) : shows;
+  if (!filtered.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display = 'none';
+  tbody.innerHTML = filtered.sort((a,b)=>(a.showStart||'').localeCompare(b.showStart||'')).map(s => {
+    const tag = s.status==='draft' ? '<span class="tag draft">Draft</span>'
+               : s.status==='completed' ? '<span class="tag completed">Completed</span>'
+               : '<span class="tag active">Active</span>';
+    if (s.id===deleteConfirmId) {
+      return `<tr class="confirm-delete" data-id="${s.id}">
+        <td colspan="7"><span class="confirm-label">Delete "${s.name}"?</span><span class="confirm-sub">Cannot be undone.</span></td>
+        <td><div style="display:flex;gap:6px">
+          <button class="btn-danger-sm" onclick="confirmDelete(${s.id})">Yes, delete</button>
+          <button class="act-btn" onclick="cancelDelete()">Cancel</button>
+        </div></td></tr>`;
+    }
+    return `<tr data-id="${s.id}" onclick="showDetail(${s.id})">
+      <td><div class="show-name">${s.name}</div>${s.code?`<div style="font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-top:2px;font-family:monospace">${s.code}</div>`:''}</td>
+      <td><div class="date-main">${s.organiser||'—'}</div></td>
+      <td><div class="date-main">${s.venue||'—'}</div></td>
+      <td><div class="date-main">${fmtRange(s.showStart,s.showEnd)}</div></td>
+      <td><div class="date-main">${fmtRange(s.bumpInStart,s.bumpInEnd)}</div></td>
+      <td><div class="date-main">${fmtRange(s.bumpOutStart,s.bumpOutEnd)}</div></td>
+      <td><div class="date-main">${s.provider||'—'}</div></td>
+      <td>${tag}</td></tr>`;
+  }).join('');
+}
+
+/* ── DELETE ── */
+function startDelete(id) { deleteConfirmId=id; renderTable(); }
+function cancelDelete() { deleteConfirmId=null; renderTable(); }
+function confirmDelete(id) {
+  const s=shows.find(x=>x.id===id);
+  shows=shows.filter(x=>x.id!==id);
+  deleteConfirmId=null;
+  renderTable();
+  toast(`"${s?.name}" deleted`,'r');
+}
+
+/* ── DETAIL CARDS ── */
+function renderDetailCards(s) {
+  const fmt = d => d ? new Date(d+'T00:00:00').toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',year:'numeric'}) : '—';
+  const fmtDay = d => new Date(d+'T00:00:00').toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'});
+  const tel = (p,label) => p ? `<a href="tel:${p.replace(/\s/g,'')}">${label||p}</a>` : '—';
+  const mail = (e) => e ? `<a href="mailto:${e}">${e}</a>` : '—';
+  document.getElementById('detailCards').innerHTML = `
+    <div class="dcard"><div class="dcard-head"><span class="dcard-title">Show Information</span></div><div class="dcard-body"><div class="dl">
+      <span class="dt">Show Name</span><span class="dd">${s.name}</span>
+      <span class="dt">Show Code</span><span class="dd" style="font-family:monospace;font-weight:600;letter-spacing:.04em">${s.code||'—'}</span>
+      <span class="dt">Status</span><span class="dd">${s.status==='draft'?'<span style="color:var(--amber-dark);font-weight:600">Draft</span>':s.status==='completed'?'<span style="color:var(--muted);font-weight:600">Completed</span>':'<span style="color:var(--green-dark);font-weight:600">Active</span>'}</span>
+      <span class="dt">Organiser</span><span class="dd">${s.organiser||'—'}</span>
+      ${s.organiserContactName?`<span class="dt">Org Contact</span><span class="dd">${s.organiserContactName}</span>`:''}
+      <span class="dt">Org Phone</span><span class="dd">${tel(s.organiserPhone)}</span>
+      <span class="dt">Org Email</span><span class="dd">${mail(s.organiserEmail)}</span>
+      <span class="dt">Show Contact</span><span class="dd">${s.showContactName||'—'}</span>
+      <span class="dt">Contact Phone</span><span class="dd">${tel(s.showContactPhone)}</span>
+      <span class="dt">Contact Email</span><span class="dd">${mail(s.showContactEmail)}</span>
+    </div></div></div>
+    <div class="dcard"><div class="dcard-head"><span class="dcard-title">Venue</span></div><div class="dcard-body"><div class="dl">
+      <span class="dt">Venue</span><span class="dd">${s.venue||'—'}</span>
+      <span class="dt">Address</span><span class="dd">${s.venueAddress||'—'}</span>
+      <span class="dt">Forklift</span><span class="dd">${s.forklift===true?'<span style="color:var(--green-dark);font-weight:600">Yes</span>':s.forklift===false?'No':'—'}</span>
+      <span class="dt">B-Double</span><span class="dd">${s.bdouble===true?'<span style="color:var(--green-dark);font-weight:600">Yes</span>':s.bdouble===false?'No':'—'}</span>
+      <span class="dt">Semi</span><span class="dd">${s.semi===true?'<span style="color:var(--green-dark);font-weight:600">Yes</span>':s.semi===false?'No':'—'}</span>
+      <span class="dt">Dock / Area</span><span class="dd">${s.dock||'—'}</span>
+      <span class="dt">Door / Gate</span><span class="dd">${s.door||'—'}</span>
+      <span class="dt">Drop-off</span><span class="dd">${s.dropoff||'—'}</span>
+    </div></div></div>
+    <div class="dcard"><div class="dcard-head"><span class="dcard-title">Show Dates</span></div><div class="dcard-body"><div class="dl">
+      <span class="dt">Opens</span><span class="dd">${fmt(s.showStart)}${s.showStartTime?' · '+s.showStartTime:''}</span>
+      <span class="dt">Closes</span><span class="dd">${fmt(s.showEnd)}${s.showEndTime?' · '+s.showEndTime:''}</span>
+    </div></div></div>
+    <div class="dcard"><div class="dcard-head"><span class="dcard-title">Bump In</span></div><div class="dcard-body">
+      ${s.bumpInDays&&s.bumpInDays.length
+        ? '<div class="dl">'+s.bumpInDays.map(d=>`<span class="dt">${fmtDay(d.date)}</span><span class="dd">${d.start} – ${d.end}</span>`).join('')+'</div>'
+        : '<span style="color:var(--faint);font-size:13px">No days set</span>'}
+    </div></div>
+    <div class="dcard"><div class="dcard-head"><span class="dcard-title">Bump Out</span></div><div class="dcard-body">
+      ${s.bumpOutDays&&s.bumpOutDays.length
+        ? '<div class="dl">'+s.bumpOutDays.map(d=>`<span class="dt">${fmtDay(d.date)}</span><span class="dd">${d.start} – ${d.end}</span>`).join('')+'</div>'
+        : '<span style="color:var(--faint);font-size:13px">No days set</span>'}
+    </div></div>
+    <div class="dcard"><div class="dcard-head"><span class="dcard-title">Rates & Provider</span></div><div class="dcard-body"><div class="dl">
+      <span class="dt">Rate Card</span><span class="dd">${s.rateCard||'—'}</span>
+      ${s.forkTiers&&s.forkTiers.length?`<span class="dt" style="align-self:start">Fork Pricing</span><span class="dd"><table style="border-collapse:collapse;font-size:12.5px;width:auto"><thead><tr><th style="text-align:left;padding:3px 12px 3px 0;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">From</th><th style="text-align:left;padding:3px 12px 3px 0;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">To</th><th style="text-align:left;padding:3px 0;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">Price / lift</th></tr></thead><tbody>${s.forkTiers.map(t=>`<tr><td style="padding:4px 12px 4px 0">${t.from||'—'}</td><td style="padding:4px 12px 4px 0">${t.to||'+'}</td><td style="padding:4px 0;font-weight:600;color:var(--green-dark)">$${parseFloat(t.price||0).toFixed(2)}</td></tr>`).join('')}</tbody></table></span>`:''}
+      ${s.storagePrice?`<span class="dt">Storage</span><span class="dd" style="font-weight:600;color:var(--green-dark)">$${parseFloat(s.storagePrice).toFixed(2)} per pallet space</span>`:''}
+    </div></div></div>
+    ${s.notes?`<div class="dcard" style="grid-column:1/-1"><div class="dcard-head"><span class="dcard-title">Notes</span></div><div class="dcard-body"><p style="font-size:13.5px;color:var(--muted);line-height:1.6">${s.notes}</p></div></div>`:''}`;
+}
+
+/* ── FORM HELPERS ── */
+function setYN(key,val) {
+  ynState[key] = val;
+  document.getElementById(key+'Y').className = 'yn-btn'+(val===true?' yes':'');
+  document.getElementById(key+'N').className = 'yn-btn'+(val===false?' no':'');
+  const hint=document.getElementById(key+'-hint');
+  if (hint&&val!==null) hint.style.display='none';
+}
+function setPayment(group,val) {
+  payState[group] = val;
+  document.querySelectorAll(`#${group}Pay .pay-opt`).forEach(b=>b.classList.remove('sel'));
+  const idx = {rate:0,free:1}[val];
+  if (idx!==undefined) document.querySelectorAll(`#${group}Pay .pay-opt`)[idx].classList.add('sel');
+  document.getElementById(group+'RateWrap').style.display = val==='rate'?'block':'none';
+}
+
+/* ── FORK TIER ROWS ── */
+function addTierRow(group, from='', to='', price='', locked=false) {
+  const container = document.getElementById(group+'Tiers');
+  const row = document.createElement('div');
+  row.className = 'tier-row';
+  if (locked) {
+    row.innerHTML = `
+      <input class="fi fi-locked" type="number" min="0" placeholder="1" value="${from}" data-t="from" readonly tabindex="-1">
+      <span class="tier-sep">–</span>
+      <input class="fi fi-locked" type="number" min="0" placeholder="4" value="${to}" data-t="to" readonly tabindex="-1">
+      <div class="price-input-wrap">
+        <span class="price-prefix">$</span>
+        <input class="fi price-input fi-locked" type="number" min="0" step="0.01" placeholder="0.00" value="${price}" data-t="price" readonly tabindex="-1">
+      </div>
+      <span style="width:28px"></span>`;
+  } else {
+    row.innerHTML = `
+      <input class="fi" type="number" min="0" placeholder="1" value="${from}" data-t="from">
+      <span class="tier-sep">–</span>
+      <input class="fi" type="number" min="0" placeholder="4" value="${to}" data-t="to">
+      <div class="price-input-wrap">
+        <span class="price-prefix">$</span>
+        <input class="fi price-input" type="number" min="0" step="0.01" placeholder="0.00" value="${price}" data-t="price">
+      </div>
+      <button class="tier-del" onclick="this.closest('.tier-row').remove()" title="Remove">×</button>`;
+  }
+  container.appendChild(row);
+}
+function getTiers(group) {
+  return [...document.getElementById(group+'Tiers').querySelectorAll('.tier-row')].map(row=>({
+    from: row.querySelector('[data-t=from]').value.trim(),
+    to:   row.querySelector('[data-t=to]').value.trim(),
+    price:row.querySelector('[data-t=price]').value.trim()
+  })).filter(r=>r.from||r.to||r.price);
+}
+function fillTiers(group, tiers) {
+  document.getElementById(group+'Tiers').innerHTML = '';
+  if (tiers&&tiers.length) tiers.forEach(t=>addTierRow(group,t.from,t.to,t.price));
+}
+
+/* ── DAY ROWS ── */
+function rebuildDayRows(prefix) {
+  const s=document.getElementById('f-'+prefix+'Start').value;
+  const e=document.getElementById('f-'+prefix+'End').value;
+  const container=document.getElementById(prefix+'DayRows');
+  if (!s||!e||s>e) { container.innerHTML='<div class="day-rows-empty">Set the date range above to add daily hours.</div>'; return; }
+  const days=[], cur=new Date(s+'T00:00:00'), end=new Date(e+'T00:00:00');
+  while(cur<=end){days.push(cur.toISOString().slice(0,10));cur.setDate(cur.getDate()+1);}
+  const existing={};
+  container.querySelectorAll('.day-row').forEach(row=>{
+    existing[row.dataset.date]={start:row.querySelector('[data-f=start]').value,end:row.querySelector('[data-f=end]').value};
+  });
+  const defStart=prefix==='bi'?'07:00':'17:00', defEnd=prefix==='bi'?'17:00':'21:00';
+  container.innerHTML = days.map((d,i)=>{
+    const dt=new Date(d+'T00:00:00');
+    const label=dt.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'});
+    const tag=i===0?'Day 1':i===days.length-1?`Day ${i+1} (last)`:`Day ${i+1}`;
+    const sv=existing[d]?.start||defStart, ev=existing[d]?.end||defEnd;
+    return `<div class="day-row" data-date="${d}">
+      <div class="day-row-label">${label}<small>${tag}</small></div>
+      <div><label class="field-label" style="margin-bottom:4px">Start</label><input class="fi" type="time" data-f="start" value="${sv}"></div>
+      <div><label class="field-label" style="margin-bottom:4px">End</label><input class="fi" type="time" data-f="end" value="${ev}"></div>
+    </div>`;
+  }).join('');
+}
+function getDayRows(prefix) {
+  return [...document.getElementById(prefix+'DayRows').querySelectorAll('.day-row')].map(row=>({
+    date:row.dataset.date,
+    start:row.querySelector('[data-f=start]').value,
+    end:row.querySelector('[data-f=end]').value
+  }));
+}
+function fillDayRows(prefix,days) {
+  if (!days||!days.length) return;
+  document.getElementById('f-'+prefix+'Start').value = days[0].date;
+  document.getElementById('f-'+prefix+'End').value = days[days.length-1].date;
+  rebuildDayRows(prefix);
+  days.forEach(d=>{
+    const row=document.getElementById(prefix+'DayRows').querySelector(`.day-row[data-date="${d.date}"]`);
+    if(row){row.querySelector('[data-f=start]').value=d.start;row.querySelector('[data-f=end]').value=d.end;}
+  });
+}
+
+/* ── CLEAR / FILL FORM ── */
+function clearForm() {
+  ['f-name',
+   'f-organiser','f-orgContactName','f-orgPhone','f-orgEmail',
+   'f-contact','f-phone','f-email',
+   'f-venue','f-venueAddr',
+   'f-dock','f-door','f-dropoff',
+   'f-showStart','f-showEnd','f-showStartTime','f-showEndTime',
+   'f-biStart','f-biEnd','f-boStart','f-boEnd',
+   'f-rateCard','f-storagePrice','f-notes'
+  ].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.classList.remove('error');}});
+  document.getElementById('biDayRows').innerHTML='<div class="day-rows-empty">Set the date range above to add daily hours.</div>';
+  document.getElementById('boDayRows').innerHTML='<div class="day-rows-empty">Set the date range above to add daily hours.</div>';
+  // Reset search state
+  selectedOrgId = null; selectedContactId = null; selectedVenueId = null; selectedRateCardId = null;
+  venueAccess = {forklift:null, bdouble:null, semi:null};
+  // Lock show contact until org is selected
+  const fc = document.getElementById('f-contact');
+  if(fc){fc.disabled=true;fc.placeholder='Select organiser first…';}
+  // Reset vehicle access badges
+  setVenueBadge('fork',null); setVenueBadge('bd',null); setVenueBadge('semi',null);
+  // Reset rate card
+  const rcEl = document.getElementById('f-rateCard');
+  if(rcEl){rcEl.classList.remove('fi-locked');rcEl.readOnly=false;}
+  document.getElementById('btn-clearRateCard').style.display='none';
+  document.getElementById('btn-editRateCard').style.display='none';
+  document.getElementById('rateCardOutput').style.display='none';
+  document.getElementById('forkTiers').innerHTML='';
+  document.getElementById('f-code').dataset.manual = 'false';
+}
+function fillForm(s) {
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||'';};
+  set('f-name',s.name);
+  // Organiser
+  set('f-organiser',s.organiser);
+  set('f-orgContactName',s.organiserContactName||'');
+  set('f-orgPhone',s.organiserPhone); set('f-orgEmail',s.organiserEmail);
+  const orgMatch = orgDB.find(o=>o.name===s.organiser);
+  selectedOrgId = orgMatch ? orgMatch.id : null;
+  // Show contact
+  set('f-contact',s.showContactName); set('f-phone',s.showContactPhone); set('f-email',s.showContactEmail);
+  const fc = document.getElementById('f-contact');
+  if(fc){fc.disabled=!selectedOrgId;fc.placeholder=selectedOrgId?'Search contacts…':'Select organiser first…';}
+  // Venue
+  set('f-venue',s.venue); set('f-venueAddr',s.venueAddress);
+  const venueMatch = venueDB.find(v=>v.name===s.venue);
+  selectedVenueId = venueMatch ? venueMatch.id : null;
+  venueAccess = {forklift:s.forklift, bdouble:s.bdouble, semi:s.semi};
+  setVenueBadge('fork',s.forklift); setVenueBadge('bd',s.bdouble); setVenueBadge('semi',s.semi);
+  // Dock / dates
+  set('f-dock',s.dock); set('f-door',s.door); set('f-dropoff',s.dropoff);
+  set('f-showStart',s.showStart); set('f-showEnd',s.showEnd);
+  set('f-showStartTime',s.showStartTime); set('f-showEndTime',s.showEndTime);
+  fillDayRows('bi',s.bumpInDays||[]);
+  fillDayRows('bo',s.bumpOutDays||[]);
+  // Rate card
+  const rcMatch = rateCardDB.find(r=>r.name===s.rateCard);
+  selectedRateCardId = rcMatch ? rcMatch.id : null;
+  if (s.rateCard) {
+    const rcEl = document.getElementById('f-rateCard');
+    rcEl.value = s.rateCard; rcEl.readOnly=true; rcEl.classList.add('fi-locked');
+    document.getElementById('btn-clearRateCard').style.display='inline-flex';
+    document.getElementById('btn-editRateCard').style.display='inline-flex';
+    document.getElementById('rateCardOutput').style.display='block';
+    document.getElementById('forkTiers').innerHTML='';
+    (s.forkTiers||[]).forEach(t=>addTierRow('fork',t.from,t.to,t.price,true));
+    set('f-storagePrice',s.storagePrice);
+  }
+  set('f-notes',s.notes);
+}
+
+/* ── VENUE BADGE HELPER ── */
+function setVenueBadge(key, val) {
+  const idMap = {fork:'badge-fork', bd:'badge-bd', semi:'badge-semi'};
+  const el = document.getElementById(idMap[key]);
+  if (!el) return;
+  if (val === true)  { el.className='venue-access-badge yes'; el.textContent='Yes'; }
+  else if (val === false) { el.className='venue-access-badge no'; el.textContent='No'; }
+  else { el.className='venue-access-badge'; el.textContent='—'; }
+}
+
+/* ── AUTOCOMPLETE HELPERS ── */
+function hideDropdown(id) { const el=document.getElementById(id); if(el) el.style.display='none'; }
+
+function buildDropdown(ddId, items, onSelect) {
+  const dd = document.getElementById(ddId);
+  if (!items.length) {
+    dd.innerHTML='<div class="search-dd-empty">No matches found</div>';
+  } else {
+    dd.innerHTML = items.map((item,i)=>`
+      <div class="search-dd-item" data-idx="${i}" onmousedown="event.preventDefault()">${item.html}</div>
+    `).join('');
+    dd.querySelectorAll('.search-dd-item').forEach((el,i)=>{
+      el.addEventListener('mousedown',()=>{ onSelect(items[i]); dd.style.display='none'; });
+    });
+  }
+  dd.style.display='block';
+}
+
+/* Organiser search */
+function filterOrgDropdown(q) {
+  if (!q.trim()) { hideDropdown('org-dd'); return; }
+  const matches = orgDB.filter(o=>o.name.toLowerCase().includes(q.toLowerCase()));
+  buildDropdown('org-dd', matches.map(o=>({...o, html:`<div class="search-dd-item-main">${o.name}</div><div class="search-dd-item-sub">${o.phone} · ${o.email}</div>`})), (item)=>{
+    selectedOrgId = item.id;
+    document.getElementById('f-organiser').value = item.name;
+    document.getElementById('f-orgContactName').value = item.contactName||'';
+    document.getElementById('f-orgPhone').value = item.phone||'';
+    document.getElementById('f-orgEmail').value = item.email||'';
+    // Unlock show contact search
+    const fc = document.getElementById('f-contact');
+    fc.disabled = false; fc.placeholder='Search contacts…'; fc.value='';
+    document.getElementById('f-phone').value='';
+    document.getElementById('f-email').value='';
+    selectedContactId = null;
+  });
+}
+
+/* Show contact search (filtered to selected org) */
+function filterContactDropdown(q) {
+  if (!selectedOrgId) return;
+  const org = orgDB.find(o=>o.id===selectedOrgId);
+  if (!org) return;
+  const matches = org.contacts.filter(c=>c.name.toLowerCase().includes(q.toLowerCase()));
+  buildDropdown('contact-dd', matches.map(c=>({...c, html:`<div class="search-dd-item-main">${c.name}</div><div class="search-dd-item-sub">${c.phone} · ${c.email}</div>`})), (item)=>{
+    selectedContactId = item.id;
+    document.getElementById('f-contact').value = item.name;
+    document.getElementById('f-phone').value = item.phone||'';
+    document.getElementById('f-email').value = item.email||'';
+  });
+}
+
+/* Venue search */
+function filterVenueDropdown(q) {
+  if (!q.trim()) { hideDropdown('venue-dd'); return; }
+  const matches = venueDB.filter(v=>v.name.toLowerCase().includes(q.toLowerCase()));
+  buildDropdown('venue-dd', matches.map(v=>({...v, html:`<div class="search-dd-item-main">${v.name}</div><div class="search-dd-item-sub">${v.address}</div>`})), (item)=>{
+    selectedVenueId = item.id;
+    document.getElementById('f-venue').value = item.name;
+    document.getElementById('f-venueAddr').value = item.address||'';
+    venueAccess = {forklift:item.forklift, bdouble:item.bdouble, semi:item.semi};
+    setVenueBadge('fork',item.forklift); setVenueBadge('bd',item.bdouble); setVenueBadge('semi',item.semi);
+  });
+}
+
+/* ── RATE CARD DB (simulates GET /api/ratecards?q=) ── */
+/* TODO: replace with real API — search by provider name or card name */
+const rateCardDB = [
+  { id:1, name:'GEL (Standard 2026)',
+    tiers:[{from:'1',to:'4',price:'75.00'},{from:'5',to:'10',price:'65.00'},{from:'11',to:'',price:'55.00'}],
+    storagePrice:'60.00' },
+  { id:2, name:'GEL (Premium 2026)',
+    tiers:[{from:'1',to:'3',price:'95.00'},{from:'4',to:'8',price:'82.00'},{from:'9',to:'',price:'70.00'}],
+    storagePrice:'85.00' },
+  { id:3, name:'GEL Free',
+    tiers:[{from:'1',to:'',price:'0.00'}],
+    storagePrice:'0.00' },
+  { id:4, name:'Axis (In-House 2026)',
+    tiers:[{from:'1',to:'5',price:'60.00'},{from:'6',to:'',price:'50.00'}],
+    storagePrice:'45.00' },
+];
+
+function filterRateCardDropdown(q) {
+  const matches = rateCardDB.filter(r=>r.name.toLowerCase().includes((q||'').toLowerCase()));
+  if (!matches.length) { hideDropdown('rateCard-dd'); return; }
+  buildDropdown('rateCard-dd', matches.map(r=>({
+    ...r,
+    html:`<div class="search-dd-item-main">${r.name}</div><div class="search-dd-item-sub">Fork: ${r.tiers.length} tier${r.tiers.length!==1?'s':''} · Storage: $${r.storagePrice}/pallet</div>`
+  })), (item) => {
+    selectedRateCardId = item.id;
+    const rc = document.getElementById('f-rateCard');
+    rc.value = item.name;
+    rc.classList.add('fi-locked');
+    rc.readOnly = true;
+    document.getElementById('btn-clearRateCard').style.display='inline-flex';
+    document.getElementById('btn-editRateCard').style.display='inline-flex';
+    // Show output block and fill
+    document.getElementById('rateCardOutput').style.display='block';
+    document.getElementById('forkTiers').innerHTML='';
+    item.tiers.forEach(t=>addTierRow('fork',t.from,t.to,t.price,true));
+    document.getElementById('f-storagePrice').value = item.storagePrice||'';
+  });
+}
+
+function clearRateCard() {
+  selectedRateCardId = null;
+  const rc = document.getElementById('f-rateCard');
+  rc.value=''; rc.classList.remove('fi-locked'); rc.readOnly=false;
+  document.getElementById('btn-clearRateCard').style.display='none';
+  document.getElementById('btn-editRateCard').style.display='none';
+  document.getElementById('rateCardOutput').style.display='none';
+  document.getElementById('forkTiers').innerHTML='';
+  document.getElementById('f-storagePrice').value='';
+  rc.focus();
+}
+
+/* ── VALIDATION ── */
+function req(id,label) {
+  const el=document.getElementById(id);
+  if(!el||!el.value.trim()){
+    if(el){el.classList.add('error');el.scrollIntoView({block:'center',behavior:'smooth'});}
+    toast(label+' is required','r'); return false;
+  }
+  return true;
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.fi').forEach(el=>el.addEventListener('input',()=>el.classList.remove('error')));
+});
+
+/* ── SAVE ── */
+/* TODO: POST /api/shows (new) or PATCH /api/shows/:id (edit) */
+function doSave(mode) {
+  const isDraft = mode === 'draft';
+  if(!req('f-name','Show name')) return;
+  if(!isDraft) {
+    if(!req('f-organiser','Organiser company')) return;
+    if(!req('f-contact','Show contact name')) return;
+    if(!req('f-dock','Dock / area')) return;
+    if(!req('f-door','Door / gate')) return;
+    if(!req('f-dropoff','Drop-off instructions')) return;
+    if(!req('f-showStart','Show open date')) return;
+    if(!req('f-showEnd','Show close date')) return;
+    if(!req('f-biStart','Bump in from date')) return;
+    if(!req('f-biEnd','Bump in to date')) return;
+    if(!req('f-boStart','Bump out from date')) return;
+    if(!req('f-boEnd','Bump out to date')) return;
+    const _ss=document.getElementById('f-showStart').value, _se=document.getElementById('f-showEnd').value;
+    if(_ss>_se){toast('Show close must be after open date','r');return;}
+  }
+  const ss=document.getElementById('f-showStart').value, se=document.getElementById('f-showEnd').value;
+  const data = {
+    id: editingId||nextId++,
+    name: document.getElementById('f-name').value.trim(),
+    code: editingId ? (shows.find(s=>s.id===editingId)?.code || genCode(document.getElementById('f-name').value.trim())) : genCode(document.getElementById('f-name').value.trim()),
+    organiser: document.getElementById('f-organiser').value.trim(),
+    organiserContactName: document.getElementById('f-orgContactName').value.trim(),
+    organiserPhone: document.getElementById('f-orgPhone').value.trim(),
+    organiserEmail: document.getElementById('f-orgEmail').value.trim(),
+    showContactName: document.getElementById('f-contact').value.trim(),
+    showContactPhone: document.getElementById('f-phone').value.trim(),
+    showContactEmail: document.getElementById('f-email').value.trim(),
+    venue: document.getElementById('f-venue').value.trim(),
+    venueAddress: document.getElementById('f-venueAddr').value.trim(),
+    dock: document.getElementById('f-dock').value.trim(),
+    door: document.getElementById('f-door').value.trim(),
+    dropoff: document.getElementById('f-dropoff').value.trim(),
+    bdouble: venueAccess.bdouble,
+    semi: venueAccess.semi,
+    forklift: venueAccess.forklift,
+    showStart: ss, showEnd: se,
+    showStartTime: document.getElementById('f-showStartTime').value,
+    showEndTime: document.getElementById('f-showEndTime').value,
+    bumpInStart: document.getElementById('f-biStart').value,
+    bumpInEnd: document.getElementById('f-biEnd').value,
+    bumpInDays: getDayRows('bi'),
+    bumpOutStart: document.getElementById('f-boStart').value,
+    bumpOutEnd: document.getElementById('f-boEnd').value,
+    bumpOutDays: getDayRows('bo'),
+    rateCard: document.getElementById('f-rateCard').value.trim(),
+    forkTiers: getTiers('fork'),
+    storagePrice: document.getElementById('f-storagePrice').value.trim(),
+    notes: document.getElementById('f-notes').value.trim(),
+    status: isDraft ? 'draft' : (editingId ? (shows.find(s=>s.id===editingId)?.status||'active') : 'active'),
+    quotes: editingId?(shows.find(s=>s.id===editingId)?.quotes||0):0,
+  };
+
+  const TRACKED = {name:'Show Name',showStart:'Show Open',showEnd:'Show Close',venue:'Venue',rateCard:'Rate Card'};
+  if (editingId) {
+    const old=shows.find(s=>s.id===editingId);
+    const changes=Object.keys(TRACKED).filter(k=>String(old[k])!==String(data[k])).map(k=>({field:TRACKED[k],from:old[k]||'—',to:data[k]||'—'}));
+    shows[shows.findIndex(s=>s.id===editingId)] = data;
+    actLog.push({id:nextLogId++,showId:editingId,user:'Axis Admin',action:'updated',changes,ts:new Date().toISOString()});
+    toast('Show updated');
+    showList();
+  } else {
+    shows.push(data);
+    actLog.push({id:nextLogId++,showId:data.id,user:'Axis Admin',action:'created',changes:[],ts:new Date().toISOString()});
+    toast(isDraft ? 'Draft saved' : 'Show added');
+    showList();
+  }
+}
+
+/* ── STATUS ── */
+function setShowStatus(id, status) {
+  const s = shows.find(x=>x.id===id);
+  if (!s) return;
+  s.status = status;
+  actLog.push({id:nextLogId++,showId:id,user:'Axis Admin',action:'updated',changes:[{field:'Status',from:s.status,to:status}],ts:new Date().toISOString()});
+  toast(status==='completed'?'Marked as Completed':status==='active'?'Marked as Active':'Reopened');
+  showDetail(id);
+}
+
+/* ── LOG MODAL ── */
+function openLog(showId) {
+  const s=shows.find(x=>x.id===showId);
+  const logs=actLog.filter(l=>l.showId===showId).sort((a,b)=>b.ts.localeCompare(a.ts));
+  document.getElementById('logTitle').textContent = 'Activity Log — '+(s?.name||'Show');
+  const body=document.getElementById('logBody');
+  if (!logs.length) { body.innerHTML='<div class="log-empty">No activity recorded yet.</div>'; }
+  else body.innerHTML=logs.map(l=>`
+    <div class="log-entry">
+      <div class="log-dot ${l.action}"></div>
+      <div>
+        <div class="log-meta"><strong>${l.user}</strong> ${l.action} · ${fmtTs(l.ts)}</div>
+        ${l.changes.length
+          ? l.changes.map(c=>`<div class="log-change"><span class="log-field">${c.field}: </span><span class="log-from">${c.from}</span> → <span class="log-to">${c.to}</span></div>`).join('')
+          : `<div class="log-change" style="color:var(--muted)">Show ${l.action}.</div>`}
+      </div>
+    </div>`).join('');
+  document.getElementById('logModal').classList.add('open');
+}
+
+/* ── MODALS ── */
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-bg').forEach(bg=>bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('open');}));
+
+/* ── TOAST ── */
+function toast(msg,c='g') {
+  const wrap=document.getElementById('toastWrap');
+  const el=document.createElement('div'); el.className='toast';
+  el.innerHTML=`<span class="toast-dot ${c}"></span>${msg}`;
+  wrap.appendChild(el);
+  setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),350);},2800);
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    document.querySelectorAll('.modal-bg.open').forEach(m=>m.classList.remove('open'));
+    if(!document.getElementById('viewForm').classList.contains('hidden')) showList();
+  }
+});
+
+/* ── SHOW CODE ── */
+function genCode(name) {
+  if (!name) return '';
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  let namePart;
+  if (words.length === 1) {
+    // single word — take up to 5 chars, strip non-alpha
+    namePart = words[0].replace(/[^a-zA-Z0-9]/g,'').toUpperCase().slice(0,5);
+  } else {
+    // multiple words — take first letter of each word, up to 5
+    namePart = words.map(w=>w.replace(/[^a-zA-Z0-9]/g,'')[0]||'').join('').toUpperCase().slice(0,5);
+  }
+  return namePart;
+}
+
+/* ── CLOSE DROPDOWNS ON OUTSIDE CLICK ── */
+document.addEventListener('mousedown', (e) => {
+  document.querySelectorAll('.search-dd').forEach(dd => {
+    if (!dd.contains(e.target) && e.target !== dd.previousElementSibling) {
+      dd.style.display = 'none';
+    }
+  });
+});
+
+/* ── INIT ── */
+renderTable();
+</script>
+
+</body>
+</html>

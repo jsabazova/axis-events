@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suppliers — Axis Events</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --dark:#16181a;--dark2:#1e2124;--dark3:#2a2e32;
+  --green:#00c05a;--green-bg:rgba(0,192,90,.10);--green-dark:#007a35;--green-border:rgba(0,192,90,.22);
+  --white:#fff;--offwhite:#f5f5f3;--border:#eaeae8;--border2:#e0e0de;
+  --text:#111214;--muted:#6b7280;--faint:#b0b0b0;
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,.12);--amber-dark:#92400e;
+  --red:#ef4444;--red-bg:rgba(239,68,68,.08);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,.10);--blue-dark:#1d4ed8;
+  --sidebar-w:240px;--sidebar-col:60px;
+  --ease:cubic-bezier(.22,.68,0,1.2);--ease-std:cubic-bezier(.4,0,.2,1);
+}
+html,body{height:100%;overflow:hidden;background:var(--offwhite);color:var(--text);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased}
+.layout{display:grid;grid-template-columns:var(--sidebar-w) 1fr;height:100vh;transition:grid-template-columns .3s var(--ease-std)}
+.layout.collapsed{grid-template-columns:var(--sidebar-col) 1fr}
+.sidebar{background:var(--dark);display:flex;flex-direction:column;overflow:visible;position:relative;z-index:20;border-right:1px solid rgba(255,255,255,.05)}
+.collapse-tab{position:absolute;top:50%;right:-14px;transform:translateY(-50%);width:14px;height:48px;background:var(--dark);border:1px solid rgba(255,255,255,.09);border-left:none;border-radius:0 8px 8px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:30;transition:background .15s;padding:0}
+.collapse-tab:hover{background:var(--dark3)}
+.collapse-tab svg{width:8px;height:8px;color:rgba(255,255,255,.38);transition:transform .3s var(--ease-std)}
+.collapse-tab:hover svg{color:rgba(255,255,255,.75)}
+.layout.collapsed .collapse-tab svg{transform:rotate(180deg)}
+.sidebar-top{padding:18px 14px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;flex-shrink:0}
+.logo{display:flex;align-items:center;gap:10px;min-width:0;overflow:hidden}
+.logo-box{width:34px;height:34px;flex-shrink:0;background:var(--green);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:#000}
+.logo-words{overflow:hidden;white-space:nowrap;transition:opacity .22s,max-width .3s var(--ease-std);max-width:160px}
+.logo-words strong{font-family:'Syne',sans-serif;font-weight:700;font-size:13.5px;color:white;display:block;line-height:1.25}
+.logo-words small{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.28)}
+.sidebar-nav{flex:1}
+.layout.collapsed .logo-words,.layout.collapsed .user-info{opacity:0;max-width:0;pointer-events:none}
+.sidebar-bottom{padding:14px;border-top:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.user-row{display:flex;align-items:center;gap:10px;overflow:hidden}
+.user-avatar{width:30px;height:30px;flex-shrink:0;background:linear-gradient(135deg,var(--green),#00a84e);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#000}
+.user-info{overflow:hidden;transition:opacity .18s,max-width .3s var(--ease-std);max-width:160px;white-space:nowrap}
+.user-name{font-size:12px;color:rgba(255,255,255,.72);font-weight:500}
+.user-role{font-size:10px;color:rgba(255,255,255,.28)}
+.main{display:flex;flex-direction:column;overflow:hidden;min-width:0;position:relative}
+
+/* TOPBAR */
+.topbar{height:56px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 26px;background:var(--white);flex-shrink:0;gap:8px;z-index:5}
+.page-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15.5px;color:var(--text)}
+.back-btn{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;padding:5px 8px;border-radius:7px;transition:all .13s;border:none;background:none;font-family:'DM Sans',sans-serif}
+.back-btn:hover{color:var(--text);background:var(--offwhite)}
+.back-btn svg{width:14px;height:14px}
+.topbar-sep{color:var(--faint);font-size:16px;margin:0 2px}
+.entry-title-bar{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--text)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;border-radius:8px;padding:8px 16px;transition:all .15s}
+.btn-dark{background:var(--dark);color:white}
+.btn-dark:hover{background:var(--dark2)}
+.btn-outline{background:none;color:var(--muted);border:1.5px solid var(--border)}
+.btn-outline:hover{border-color:var(--text);color:var(--text)}
+.btn-green{background:var(--green);color:#000;font-weight:700}
+.btn-green:hover{background:#00a84e}
+.btn-red{background:var(--red-bg);color:var(--red);border:1.5px solid rgba(239,68,68,.2)}
+.btn-red:hover{background:rgba(239,68,68,.15)}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:7px}
+
+/* VIEWS */
+.view{position:absolute;inset:56px 0 0 0;overflow:hidden;display:flex;flex-direction:column}
+.view.hidden{display:none}
+.list-controls{flex-shrink:0;background:var(--white);border-bottom:1px solid var(--border)}
+.sup-tabs{display:flex;gap:0;padding:0 26px;background:var(--white)}
+.sup-tab{padding:10px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;user-select:none;white-space:nowrap}
+.sup-tab:hover{color:var(--text)}
+.sup-tab.active{color:var(--text);font-weight:600;border-bottom-color:var(--text)}
+.sup-tab-count{font-size:11px;font-weight:700;padding:1px 6px;border-radius:100px;background:var(--offwhite);color:var(--muted);margin-left:5px}
+.sup-tab.active .sup-tab-count{background:var(--green-bg);color:var(--green-dark)}
+.toolbar{display:flex;align-items:center;gap:10px;padding:14px 26px}
+.cards-grid-wrap{flex:1;overflow-y:auto;padding:20px 26px}
+
+/* LIST */
+#viewList{padding:26px}
+.search-wrap{position:relative;flex:1;max-width:340px}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--faint);pointer-events:none}
+.search-input{width:100%;padding:7px 12px 7px 32px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color .15s}
+.search-input:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-bg)}
+.search-input::placeholder{color:var(--faint)}
+.card-count{font-size:11.5px;color:var(--muted);font-weight:500;background:var(--offwhite);border:1px solid var(--border);padding:2px 9px;border-radius:100px;margin-left:8px}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.entry-card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:border-color .15s,box-shadow .15s;position:relative}
+.entry-card:hover{border-color:var(--border2);box-shadow:0 2px 14px rgba(0,0,0,.07)}
+.entry-avatar{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:white;margin-bottom:14px;flex-shrink:0}
+.entry-name{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--text);margin-bottom:3px}
+.entry-sub{font-size:12.5px;color:var(--muted);margin-bottom:12px}
+.entry-contacts{display:flex;flex-direction:column;gap:5px}
+.entry-contact-row{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted)}
+.entry-contact-row a{color:var(--blue-dark);text-decoration:none;font-weight:500}
+.entry-contact-row a:hover{text-decoration:underline}
+.empty-state{padding:60px 20px;text-align:center;color:var(--muted)}
+.empty-state p{font-size:14px}
+
+/* DETAIL VIEW */
+.page-body{position:absolute;inset:56px 0 0 0;display:flex;flex-direction:column;overflow:hidden}
+.detail-scroll{flex:1;overflow-y:auto;padding:28px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:860px}
+.dcard{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:0}
+.dcard.full{grid-column:1/-1}
+.dcard-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.dcard-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px}
+.dcard-body{padding:20px}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:9px 20px;align-items:baseline}
+.dt{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.dd{font-size:13.5px;color:var(--text)}
+.dd a{color:var(--blue-dark);text-decoration:none}
+.dd a:hover{text-decoration:underline}
+.notes-text{font-size:13.5px;color:var(--muted);line-height:1.65}
+.detail-avatar{width:52px;height:52px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:white;flex-shrink:0}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.28);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(3px)}
+.modal-bg.open{opacity:1;pointer-events:all}
+.modal{background:var(--white);border-radius:16px;width:520px;max-height:88vh;display:flex;flex-direction:column;border:1.5px solid var(--border);box-shadow:0 24px 80px rgba(0,0,0,.18);transform:translateY(14px);transition:transform .25s var(--ease)}
+.modal-bg.open .modal{transform:translateY(0)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);flex-shrink:0}
+.modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px}
+.modal-close{width:30px;height:30px;border-radius:7px;border:1.5px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:18px;line-height:1;transition:all .13s}
+.modal-close:hover{border-color:var(--text);color:var(--text)}
+.modal-body{flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:14px}
+.modal-foot{padding:16px 22px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.field-label{display:block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.fi{width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--border2);background:var(--white);font-family:'DM Sans',sans-serif;font-size:13.5px;color:var(--text);transition:border-color .15s,box-shadow .15s;outline:none}
+.fi:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-bg)}
+.fi::placeholder{color:var(--faint)}
+textarea.fi{resize:vertical;min-height:80px;line-height:1.55}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+
+/* STAFF TABLE */
+.staff-section{margin-top:0}
+.staff-head{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border)}
+.staff-row{display:grid;grid-template-columns:1fr 120px 150px 1fr 80px;gap:12px;align-items:center;padding:12px 20px;border-bottom:1px solid var(--border);font-size:13.5px}
+.staff-row:last-child{border-bottom:none}
+.staff-row.hdr{background:var(--offwhite);font-size:10.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:9px 20px}
+.staff-name{font-weight:600}
+.staff-empty{padding:24px 20px;font-size:13px;color:var(--faint);font-style:italic}
+
+
+/* TYPE TABS */
+.type-tabs{display:flex;gap:2px;padding:0 26px;background:var(--white);border-bottom:1px solid var(--border);flex-shrink:0}
+.type-tab{padding:13px 18px;font-size:13.5px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;user-select:none;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif}
+.type-tab:hover{color:var(--text)}
+.type-tab.active{color:var(--text);font-weight:600;border-bottom-color:var(--text)}
+.type-count{font-size:11px;font-weight:700;padding:1px 7px;border-radius:100px;background:var(--offwhite);color:var(--muted);margin-left:6px}
+.type-tab.active .type-count{background:var(--green-bg);color:var(--green-dark)}
+
+/* YN toggle */
+.yn-group{display:flex}
+.yn-btn{padding:7px 16px;border:1.5px solid var(--border);background:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:var(--muted);transition:all .13s}
+.yn-btn:first-child{border-radius:8px 0 0 8px;border-right:none}
+.yn-btn:last-child{border-radius:0 8px 8px 0}
+.yn-btn.yes{background:var(--green-bg);color:var(--green-dark);border-color:var(--green-border);font-weight:600}
+.yn-btn.no{background:var(--red-bg);color:var(--red);border-color:rgba(239,68,68,.25);font-weight:600}
+
+/* TYPE PICKER */
+.type-pick-btn{width:100%;display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:12px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--text);text-align:left;transition:border-color .15s,box-shadow .15s,background .15s}
+.type-pick-btn:hover{border-color:var(--green-border);background:var(--green-bg);box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.type-pick-btn .type-pick-sub{display:block;font-size:12px;font-weight:400;color:var(--muted);margin-top:2px}
+.type-pick-icon{width:38px;height:38px;border-radius:10px;background:var(--offwhite);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:background .15s,border-color .15s}
+.type-pick-btn:hover .type-pick-icon{background:rgba(0,192,90,.15);border-color:var(--green-border)}
+.type-pick-text{display:flex;flex-direction:column}
+
+/* SUPPLIER TABS */
+.sup-tabs{display:flex;border-bottom:1px solid var(--border);padding:0 26px;background:var(--white)}
+.sup-tab{padding:10px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;user-select:none;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.sup-tab:hover{color:var(--text)}
+.sup-tab.active{color:var(--text);font-weight:600;border-bottom-color:var(--text)}
+.sup-tab-count{font-size:11px;font-weight:700;padding:1px 6px;border-radius:100px;background:var(--offwhite);color:var(--muted)}
+.sup-tab.active .sup-tab-count{background:var(--green-bg);color:var(--green-dark)}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:28px;right:28px;z-index:300;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.toast{background:var(--dark);color:white;padding:11px 16px;border-radius:10px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.08);box-shadow:0 8px 32px rgba(0,0,0,.25);animation:toastIn .3s var(--ease) both}
+.toast-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+@keyframes toastIn{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+</style>
+</head>
+<body>
+<div class="layout" id="layout">
+  <aside class="sidebar">
+    <button class="collapse-tab" id="collapseTab">
+      <svg viewBox="0 0 8 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 1L2 6l4 5"/></svg>
+    </button>
+    <div class="sidebar-top">
+      <div class="logo">
+        <div class="logo-box">A</div>
+        <div class="logo-words"><strong>Axis Events</strong><small>Admin Panel</small></div>
+      </div>
+    </div>
+    <nav class="sidebar-nav"></nav>
+    <div class="sidebar-bottom">
+      <div class="user-row">
+        <div class="user-avatar">AE</div>
+        <div class="user-info"><div class="user-name">Axis Admin</div><div class="user-role">Super Admin</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+
+    <!-- LIST TOPBAR -->
+    <div class="topbar" id="topbarList">
+      <span class="page-title">Suppliers</span>
+      <div style="margin-left:auto">
+        <button class="btn btn-dark btn-sm" onclick="openTypeModal()">
+          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 2v12M2 8h12"/></svg>
+          Add Supplier
+        </button>
+      </div>
+    </div>
+
+    <!-- DETAIL TOPBAR -->
+    <div class="topbar" id="topbarDetail" style="display:none">
+      <button class="back-btn" onclick="showList()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>
+        Suppliers
+      </button>
+      <span class="topbar-sep">/</span>
+      <span class="entry-title-bar" id="detailTitleBar"></span>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="btn btn-outline btn-sm" id="detailEditBtn">Edit</button>
+        <button class="btn btn-red btn-sm" id="detailDeleteBtn">Delete</button>
+      </div>
+    </div>
+
+
+    <!-- LIST VIEW -->
+    <div class="view" id="viewList">
+      <div class="list-controls">
+        <div class="toolbar">
+          <div class="search-wrap">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10.5 10.5l3 3"/></svg>
+            <input class="search-input" id="searchInput" placeholder="Search suppliers…" oninput="renderList()">
+          </div>
+          <span style="font-size:13px;color:var(--muted)" id="listCount"></span>
+        </div>
+        <div class="sup-tabs">
+          <div class="sup-tab active" data-type="equipment" onclick="setTab(this)">Equipment <span class="sup-tab-count" id="cnt-equipment">0</span></div>
+          <div class="sup-tab" data-type="transport" onclick="setTab(this)">Transport <span class="sup-tab-count" id="cnt-transport">0</span></div>
+          <div class="sup-tab" data-type="venue" onclick="setTab(this)">Venues <span class="sup-tab-count" id="cnt-venue">0</span></div>
+          <div class="sup-tab" data-type="labour" onclick="setTab(this)">Labour <span class="sup-tab-count" id="cnt-labour">0</span></div>
+          <div class="sup-tab" data-type="staff" onclick="setTab(this)">Staff</div>
+        </div>
+      </div>
+      <div class="cards-grid-wrap"><div id="cardsGrid"></div></div>
+    </div>
+
+    <!-- DETAIL VIEW -->
+    <div class="page-body" id="viewDetail" style="display:none">
+      <div class="detail-scroll">
+        <div class="detail-grid" id="detailContent"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TYPE PICKER MODAL -->
+<div class="modal-bg" id="typePicker">
+  <div class="modal" style="width:420px">
+    <div class="modal-head">
+      <span class="modal-title">Add Supplier — Choose Type</span>
+      <button class="modal-close" onclick="document.getElementById('typePicker').classList.remove('open')">×</button>
+    </div>
+    <div class="modal-body" style="gap:10px">
+      <button class="type-pick-btn" onclick="openModal(null,'equipment')"><div class="type-pick-icon">📦</div><div class="type-pick-text">Equipment Supplier<span class="type-pick-sub">Forklift hire, pallet jacks, gas bottles…</span></div></button>
+      <button class="type-pick-btn" onclick="openModal(null,'transport')"><div class="type-pick-icon">🚛</div><div class="type-pick-text">Transport / Freight<span class="type-pick-sub">Trucks, couriers, freight companies…</span></div></button>
+      <button class="type-pick-btn" onclick="openModal(null,'venue')"><div class="type-pick-icon">🏛️</div><div class="type-pick-text">Venue<span class="type-pick-sub">Exhibition centres, convention facilities…</span></div></button>
+      <button class="type-pick-btn" onclick="openModal(null,'labour')"><div class="type-pick-icon">👷</div><div class="type-pick-text">Labour Agency<span class="type-pick-sub">Staff hire, casual labour…</span></div></button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal-bg" id="modal">
+  <div class="modal" style="width:580px">
+    <div class="modal-head">
+      <span class="modal-title" id="modalTitle">Add Supplier</span>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <!-- common fields -->
+      <div><label class="field-label">Name <span style="color:var(--red)">*</span></label><input class="fi" id="f-name" placeholder="e.g. Waverley Forklifts"></div>
+      <div class="fg2">
+        <div><label class="field-label">State</label>
+          <select class="fi" id="f-state">
+            <option value="">Select…</option>
+            <option>NSW</option><option>VIC</option><option>QLD</option>
+            <option>WA</option><option>SA</option><option>TAS</option>
+            <option>ACT</option><option>NT</option>
+          </select>
+        </div>
+        <div><label class="field-label">ABN</label><input class="fi" id="f-abn" placeholder="e.g. 12 345 678 901"></div>
+      </div>
+      <div class="fg2">
+        <div><label class="field-label">Phone</label><input class="fi" id="f-phone" inputmode="tel" placeholder="e.g. 02 9000 0000"></div>
+        <div><label class="field-label">Email</label><input class="fi" id="f-email" type="email" placeholder="e.g. info@supplier.com.au"></div>
+      </div>
+      <div class="fg2">
+        <div><label class="field-label">Website</label><input class="fi" id="f-website" placeholder="e.g. supplier.com.au"></div>
+        <div><label class="field-label">Address</label><input class="fi" id="f-address" placeholder="e.g. 12 Industrial Ave, Mascot NSW 2020"></div>
+      </div>
+
+      <!-- venue-only fields -->
+      <div id="venueFields" style="display:none">
+        <div style="height:1px;background:var(--border);margin:4px 0 14px"></div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Vehicle Access</div>
+        <div class="fg3" style="margin-bottom:14px">
+          <div>
+            <label class="field-label">Forklift Access</label>
+            <div class="yn-group">
+              <button class="yn-btn" id="vforkY" onclick="setVYN('vfork',true)">Yes</button>
+              <button class="yn-btn" id="vforkN" onclick="setVYN('vfork',false)">No</button>
+            </div>
+            <div class="field-hint">No = pallet jack only</div>
+          </div>
+          <div>
+            <label class="field-label">B-Double</label>
+            <div class="yn-group">
+              <button class="yn-btn" id="vbdY" onclick="setVYN('vbd',true)">Yes</button>
+              <button class="yn-btn" id="vbdN" onclick="setVYN('vbd',false)">No</button>
+            </div>
+          </div>
+          <div>
+            <label class="field-label">Semi</label>
+            <div class="yn-group">
+              <button class="yn-btn" id="vsemiY" onclick="setVYN('vsemi',true)">Yes</button>
+              <button class="yn-btn" id="vsemiN" onclick="setVYN('vsemi',false)">No</button>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Entry Point</div>
+        <div class="fg2" style="margin-bottom:14px">
+          <div><label class="field-label">Dock / Area</label><input class="fi" id="f-dock" placeholder="e.g. Lower Dock"></div>
+          <div><label class="field-label">Door / Gate</label><input class="fi" id="f-door" placeholder="e.g. 4, B, Hall 7"></div>
+        </div>
+        <div><label class="field-label">Drop-off Instructions</label><textarea class="fi" id="f-dropoff" rows="2" placeholder="e.g. Report to loading dock supervisor on arrival…"></textarea></div>
+      </div>
+
+      <div><label class="field-label">Notes</label><textarea class="fi" id="f-notes" placeholder="Anything useful…"></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-red btn-sm" id="modalDeleteBtn" onclick="deleteEntry()" style="display:none">Delete</button>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="btn btn-outline btn-sm" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-green btn-sm" onclick="saveEntry()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- STAFF MODAL -->
+<div class="modal-bg" id="staffModal">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="staffModalTitle">Add Staff</span>
+      <button class="modal-close" onclick="closeStaffModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg2">
+        <div><label class="field-label">Name</label><input class="fi" id="sf-name" placeholder="Full name"></div>
+        <div><label class="field-label">Role / Title</label><input class="fi" id="sf-role" placeholder="e.g. Event Director"></div>
+      </div>
+      <div class="fg2">
+        <div><label class="field-label">Phone</label><input class="fi" id="sf-phone" inputmode="tel" placeholder="e.g. 0412 000 111"></div>
+        <div><label class="field-label">Email</label><input class="fi" id="sf-email" type="email" placeholder="e.g. sarah@informa.com"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-red btn-sm" id="staffDeleteBtn" onclick="deleteStaff()" style="display:none">Delete</button>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="btn btn-outline btn-sm" onclick="closeStaffModal()">Cancel</button>
+        <button class="btn btn-green btn-sm" onclick="saveStaff()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+document.getElementById('collapseTab').addEventListener('click',function(){document.getElementById('layout').classList.toggle('collapsed');});
+
+/*
+ * SUPPLIERS — AXIS EVENTS
+ *
+ * FOR DEV:
+ *   TODO: GET /api/suppliers?type=equipment|transport|venue|labour → list
+ *   TODO: GET /api/suppliers/:id → single supplier + contacts
+ *   TODO: POST /api/suppliers → create (include type in body)
+ *   TODO: PATCH /api/suppliers/:id → update
+ *   TODO: DELETE /api/suppliers/:id → delete
+ *   TODO: POST /api/supplier-contacts → create contact
+ *   TODO: PATCH /api/supplier-contacts/:id → update
+ *   TODO: DELETE /api/supplier-contacts/:id → delete
+ *
+ * Data shape:
+ * {id, type:'equipment'|'transport'|'venue'|'labour',
+ *  name, state, phone, email, website, abn, address, notes,
+ *  // venue only:
+ *  forklift, bdouble, semi, dock, door, dropoff,
+ *  contacts:[{id, name, role, phone, email}]
+ * }
+ */
+
+/* ── SAMPLE DATA ── */
+var data = [
+  {id:1,type:'equipment',name:'Waverley Forklifts',state:'NSW',phone:'02 9700 0000',email:'info@waverley.com.au',website:'waverleyforklifts.com.au',abn:'12 345 678 901',address:'12 Industrial Ave, Mascot NSW 2020',notes:'Good availability for short notice. Call Dan directly.',
+   contacts:[{id:1,name:'Dan Waverley',role:'Owner',phone:'0404 040 040',email:'dan@waverley.com.au'}]},
+  {id:2,type:'transport',name:'Fast Freight Co',state:'VIC',phone:'03 9500 1234',email:'bookings@fastfreight.com.au',website:'fastfreight.com.au',abn:'98 765 432 100',address:'88 Freight Rd, Truganina VIC 3029',notes:'',
+   contacts:[{id:2,name:'Michelle Park',role:'Bookings',phone:'0413 111 222',email:'michelle@fastfreight.com.au'}]},
+  {id:3,type:'venue',name:'ICC Sydney',state:'NSW',phone:'02 9215 7100',email:'events@iccsydney.com.au',website:'iccsydney.com.au',abn:'',address:'14 Darling Drive, Sydney NSW 2000',notes:'',
+   forklift:true,bdouble:false,semi:true,dock:'Lower Dock',door:'4',dropoff:'Report to loading dock supervisor on arrival. Quote show name.',
+   contacts:[{id:3,name:'Mike Batinich',role:'Loading Dock Supervisor',phone:'02 9215 7120',email:'loading@iccsydney.com.au'}]},
+  {id:4,type:'labour',name:'Labour Solutions',state:'VIC',phone:'03 9000 1111',email:'bookings@laboursolutions.com.au',website:'laboursolutions.com.au',abn:'55 123 456 789',address:'Level 2, 123 Spencer St, Melbourne VIC 3000',notes:'',
+   contacts:[{id:4,name:'Michelle',role:'Bookings Manager',phone:'03 9000 1111',email:'michelle@laboursolutions.com.au'}]},
+];
+var nextId=5, nextContactId=5, editingId=null, editingContactId=null, editingContactSupplierId=null;
+var currentTab='equipment';
+var vynState={vfork:null,vbd:null,vsemi:null};
+
+function getInitials(name){return name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();}
+function avatarBg(name){var c=['#16181a','#1d4ed8','#007a35','#92400e','#5b21b6'];return c[name.charCodeAt(0)%c.length];}
+
+/* ── TABS ── */
+function setTab(el){
+  currentTab=el.dataset.type;
+  document.querySelectorAll('.sup-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderList();
+}
+
+/* ── RENDER LIST ── */
+function renderList(){
+  var s=document.getElementById('searchInput').value.trim().toLowerCase();
+  // update counts
+  ['equipment','transport','venue','labour'].forEach(type=>{
+    document.getElementById('cnt-'+type).textContent=data.filter(e=>e.type===type).length;
+  });
+  var filtered=data.filter(e=>e.type===currentTab);
+  if(s) filtered=filtered.filter(e=>{
+    var cText=(e.contacts||[]).map(c=>c.name+' '+c.role+' '+c.phone+' '+c.email).join(' ');
+    return [e.name,e.state,e.phone,e.email,e.website,e.abn,e.address,e.notes,cText].join(' ').toLowerCase().includes(s);
+  });
+  document.getElementById('listCount').textContent=filtered.length+' supplier'+(filtered.length!==1?'s':'');
+  var grid=document.getElementById('cardsGrid');
+  if(!filtered.length){grid.innerHTML='<div class="empty-state"><p>No suppliers found.</p></div>';return;}
+  grid.innerHTML='<div class="cards-grid">'+filtered.map(e=>`
+    <div class="entry-card" onclick="showDetail(${e.id})">
+      <div style="display:flex;align-items:flex-start;gap:13px;margin-bottom:14px">
+        <div class="entry-avatar" style="background:${avatarBg(e.name)}">${getInitials(e.name)}</div>
+        <div style="min-width:0;flex:1;padding-top:2px">
+          <div class="entry-name">${e.name}</div>
+          <div class="entry-sub">${e.state||''}${e.state&&e.contacts&&e.contacts.length?' · ':''}${e.contacts&&e.contacts.length?e.contacts.length+' contact'+(e.contacts.length!==1?'s':''):''}</div>
+        </div>
+      </div>
+      <div class="entry-contacts">
+        ${e.phone?`<div class="entry-contact-row">📞 <a href="tel:${e.phone.replace(/\s/g,'')}" onclick="event.stopPropagation()">${e.phone}</a></div>`:''}
+        ${e.email?`<div class="entry-contact-row">✉️ <a href="mailto:${e.email}" onclick="event.stopPropagation()">${e.email}</a></div>`:''}
+        ${e.type==='venue'&&e.forklift!==null&&e.forklift!==undefined?`<div class="entry-contact-row">🏗️ Forklift: ${e.forklift?'Yes':'No'} · B-Double: ${e.bdouble?'Yes':'No'} · Semi: ${e.semi?'Yes':'No'}</div>`:''}
+      </div>
+    </div>`).join('')+'</div>';
+}
+
+/* ── DETAIL ── */
+function showDetail(id){
+  var e=data.find(x=>x.id===id);
+  if(!e) return;
+  document.getElementById('topbarList').style.display='none';
+  document.getElementById('topbarDetail').style.display='flex';
+  document.getElementById('detailTitleBar').textContent=e.name;
+  document.getElementById('detailEditBtn').onclick=()=>openModal(id);
+  document.getElementById('detailDeleteBtn').onclick=()=>{if(confirm('Delete '+e.name+'?')){data=data.filter(x=>x.id!==id);showList();toast('Deleted');}};
+
+  var venueExtra = e.type==='venue'?`
+    <div class="dcard">
+      <div class="dcard-head"><span class="dcard-title">Access & Entry</span></div>
+      <div class="dcard-body"><div class="dl">
+        <span class="dt">Forklift</span><span class="dd">${e.forklift===true?'Yes':e.forklift===false?'No — pallet jack only':'—'}</span>
+        <span class="dt">B-Double</span><span class="dd">${e.bdouble===true?'Yes':e.bdouble===false?'No':'—'}</span>
+        <span class="dt">Semi</span><span class="dd">${e.semi===true?'Yes':e.semi===false?'No':'—'}</span>
+        <span class="dt">Dock / Area</span><span class="dd">${e.dock||'—'}</span>
+        <span class="dt">Door / Gate</span><span class="dd">${e.door||'—'}</span>
+        <span class="dt">Drop-off</span><span class="dd">${e.dropoff||'—'}</span>
+      </div></div>
+    </div>`:'' ;
+
+  var contactRows = e.contacts&&e.contacts.length
+    ?`<div class="staff-row hdr"><div>Name</div><div>Role</div><div>Phone</div><div>Email</div><div></div></div>
+      ${e.contacts.map(c=>`<div class="staff-row">
+        <div class="staff-name">${c.name}</div>
+        <div style="color:var(--muted);font-size:13px">${c.role||'—'}</div>
+        <div><a href="tel:${(c.phone||'').replace(/\s/g,'')}" style="color:var(--text);text-decoration:none;font-size:13px">${c.phone||'—'}</a></div>
+        <div><a href="mailto:${c.email}" style="color:var(--blue-dark);text-decoration:none;font-size:13px">${c.email||'—'}</a></div>
+        <div style="text-align:right"><button class="btn btn-outline btn-sm" onclick="openContactModal(${e.id},${c.id})">Edit</button></div>
+      </div>`).join('')}`
+    :`<div class="staff-empty">No contacts added yet.</div>`;
+
+  document.getElementById('detailContent').innerHTML=`
+    <div class="dcard">
+      <div class="dcard-head">
+        <div style="display:flex;align-items:center;gap:14px">
+          <div class="detail-avatar" style="background:${avatarBg(e.name)}">${getInitials(e.name)}</div>
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;margin-bottom:2px">${e.name}</div>
+            ${e.abn?`<div style="font-size:12px;color:var(--muted)">ABN ${e.abn}</div>`:''}
+          </div>
+        </div>
+      </div>
+      <div class="dcard-body"><div class="dl">
+        <span class="dt">State</span><span class="dd">${e.state||'—'}</span>
+        <span class="dt">Phone</span><span class="dd">${e.phone?`<a href="tel:${e.phone.replace(/\s/g,'')}">${e.phone}</a>`:'—'}</span>
+        <span class="dt">Email</span><span class="dd">${e.email?`<a href="mailto:${e.email}">${e.email}</a>`:'—'}</span>
+        <span class="dt">Website</span><span class="dd">${e.website||'—'}</span>
+        <span class="dt">Address</span><span class="dd">${e.address||'—'}</span>
+      </div></div>
+    </div>
+    ${venueExtra}
+    <div class="dcard full">
+      <div class="staff-head">
+        <span class="dcard-title">Contacts</span>
+        <button class="btn btn-dark btn-sm" onclick="openContactModal(${e.id})">
+          <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 2v12M2 8h12"/></svg>
+          Add Contact
+        </button>
+      </div>
+      ${contactRows}
+    </div>
+    ${e.notes?`<div class="dcard full"><div class="dcard-head"><span class="dcard-title">Notes</span></div><div class="dcard-body"><p class="notes-text">${e.notes}</p></div></div>`:''}`;
+
+  document.getElementById('viewList').classList.add('hidden');
+  document.getElementById('viewDetail').style.display='flex';
+}
+
+function showList(){
+  document.getElementById('viewDetail').style.display='none';
+  document.getElementById('viewList').classList.remove('hidden');
+  document.getElementById('topbarDetail').style.display='none';
+  document.getElementById('topbarList').style.display='flex';
+  renderList();
+}
+
+/* ── YN TOGGLES (venue) ── */
+function setVYN(key,val){
+  vynState[key]=val;
+  document.getElementById(key+'Y').className='yn-btn'+(val===true?' yes':'');
+  document.getElementById(key+'N').className='yn-btn'+(val===false?' no':'');
+}
+
+/* ── OPEN ADD MODAL ── */
+function typeLabel(t){return {equipment:'Equipment Supplier',transport:'Transport',venue:'Venue',labour:'Labour Agency'}[t]||'Supplier';}
+function setType(el){currentType=el.dataset.type;document.querySelectorAll('.type-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderList();}
+function openTypeModal(){document.getElementById('typePicker').classList.add('open');}
+function closeTypeModal(){document.getElementById('typePicker').classList.remove('open');}
+function openTypePicker(){openTypeModal();}
+
+function openModal(id,type){
+  document.getElementById('typePicker').classList.remove('open');
+  editingId=id||null;
+  var e=id?data.find(x=>x.id===id):null;
+  var t=type||(e?e.type:'equipment');
+  document.getElementById('modalTitle').textContent=(id?'Edit ':'Add ')+{equipment:'Equipment Supplier',transport:'Transport / Freight',venue:'Venue',labour:'Labour Agency'}[t];
+  document.getElementById('modalDeleteBtn').style.display=id?'inline-flex':'none';
+  document.getElementById('venueFields').style.display=t==='venue'?'block':'none';
+  document.getElementById('modal').dataset.type=t;
+  // fill fields
+  document.getElementById('f-name').value=e?.name||'';
+  document.getElementById('f-state').value=e?.state||'';
+  document.getElementById('f-phone').value=e?.phone||'';
+  document.getElementById('f-email').value=e?.email||'';
+  document.getElementById('f-website').value=e?.website||'';
+  document.getElementById('f-abn').value=e?.abn||'';
+  document.getElementById('f-address').value=e?.address||'';
+  document.getElementById('f-notes').value=e?.notes||'';
+  if(t==='venue'){
+    ['f-dock','f-door','f-dropoff'].forEach(id=>{document.getElementById(id).value=e?.[id.replace('f-','')]||'';});
+    setVYN('vfork',e?.forklift??null);setVYN('vbd',e?.bdouble??null);setVYN('vsemi',e?.semi??null);
+  }
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(){document.getElementById('modal').classList.remove('open');editingId=null;}
+
+function saveEntry(){
+  var name=document.getElementById('f-name').value.trim();
+  if(!name){document.getElementById('f-name').focus();return;}
+  var t=document.getElementById('modal').dataset.type;
+  var d={id:editingId||nextId++,type:t,name,state:document.getElementById('f-state').value,phone:document.getElementById('f-phone').value.trim(),email:document.getElementById('f-email').value.trim(),website:document.getElementById('f-website').value.trim(),abn:document.getElementById('f-abn').value.trim(),address:document.getElementById('f-address').value.trim(),notes:document.getElementById('f-notes').value.trim()};
+  if(t==='venue'){d.forklift=vynState.vfork;d.bdouble=vynState.vbd;d.semi=vynState.vsemi;d.dock=document.getElementById('f-dock').value.trim();d.door=document.getElementById('f-door').value.trim();d.dropoff=document.getElementById('f-dropoff').value.trim();}
+  if(editingId){var old=data.find(x=>x.id===editingId);d.contacts=old.contacts||[];var i=data.findIndex(x=>x.id===editingId);data[i]=d;toast('Saved');}
+  else{d.contacts=[];data.push(d);toast('Supplier added');}
+  closeModal();
+  if(document.getElementById('viewDetail').style.display!=='none') showDetail(d.id);
+  else renderList();
+}
+
+function deleteEntry(){data=data.filter(x=>x.id!==editingId);closeModal();showList();toast('Deleted');}
+
+/* ── CONTACTS ── */
+function openContactModal(supplierId,contactId){
+  editingContactSupplierId=supplierId;editingContactId=contactId||null;
+  document.getElementById('staffModalTitle').textContent=contactId?'Edit Contact':'Add Contact';
+  document.getElementById('staffDeleteBtn').style.display=contactId?'inline-flex':'none';
+  if(contactId){var o=data.find(x=>x.id===supplierId),c=o.contacts.find(x=>x.id===contactId);document.getElementById('sf-name').value=c.name;document.getElementById('sf-role').value=c.role||'';document.getElementById('sf-phone').value=c.phone||'';document.getElementById('sf-email').value=c.email||'';}
+  else{['sf-name','sf-role','sf-phone','sf-email'].forEach(id=>document.getElementById(id).value='');}
+  document.getElementById('staffModal').classList.add('open');
+}
+function closeStaffModal(){document.getElementById('staffModal').classList.remove('open');editingContactId=null;editingContactSupplierId=null;}
+function saveStaff(){
+  var name=document.getElementById('sf-name').value.trim();if(!name){document.getElementById('sf-name').focus();return;}
+  var d={name,role:document.getElementById('sf-role').value.trim(),phone:document.getElementById('sf-phone').value.trim(),email:document.getElementById('sf-email').value.trim()};
+  var o=data.find(x=>x.id===editingContactSupplierId);
+  if(editingContactId){d.id=editingContactId;var i=o.contacts.findIndex(x=>x.id===editingContactId);o.contacts[i]=d;toast('Contact updated');}
+  else{d.id=nextContactId++;o.contacts.push(d);toast('Contact added');}
+  var sid=o.id;closeStaffModal();showDetail(sid);
+}
+function deleteStaff(){var o=data.find(x=>x.id===editingContactSupplierId);var sid=o.id;o.contacts=o.contacts.filter(x=>x.id!==editingContactId);closeStaffModal();showDetail(sid);toast('Contact removed');}
+
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.getElementById('typePicker').addEventListener('click',function(e){if(e.target===this)closeTypeModal();});
+document.getElementById('staffModal').addEventListener('click',function(e){if(e.target===this)closeStaffModal();});
+document.getElementById('typePicker').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeModal();closeStaffModal();document.getElementById('typePicker').classList.remove('open');}});
+
+function toast(msg){var wrap=document.getElementById('toastWrap');var el=document.createElement('div');el.className='toast';el.innerHTML='<span class="toast-dot"></span>'+msg;wrap.appendChild(el);setTimeout(()=>el.remove(),2500);}
+
+renderList();
+</script>
+</body>
+</html>

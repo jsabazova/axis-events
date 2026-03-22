@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>On-Site Logistics & Services — Axis Events</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green:        #00b050;
+      --green-hover:  #009140;
+      --green-dark:   #007a35;
+      --green-bg:     #e8f9ef;
+      --green-border: rgba(0,176,80,0.22);
+      --dark:         #1a1c1e;
+      --white:        #ffffff;
+      --off-white:    #f5f5f3;
+      --border:       #e5e5e3;
+      --text:         #141414;
+      --text-muted:   #6b7280;
+      --text-faint:   #a0a0a0;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--text); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+    /* HERO */
+    .page-hero { background: var(--dark); position: relative; overflow: hidden; }
+    .page-hero::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(0,176,80,0.06) 1px, transparent 1px); background-size: 38px 38px; pointer-events: none; }
+    .hero-lines { position: absolute; top: 0; right: 0; width: 50%; height: 100%; pointer-events: none; overflow: hidden; }
+    .hero-lines svg { position: absolute; top: 0; right: 0; width: 100%; height: 100%; }
+    .page-hero-inner { max-width: 1200px; margin: 0 auto; padding: 64px 40px 72px; position: relative; z-index: 2; }
+    .page-hero-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); background: rgba(0,176,80,0.12); border: 1px solid rgba(0,176,80,0.25); padding: 4px 12px; border-radius: 100px; margin-bottom: 20px; }
+    .page-hero-tag::before { content: ''; width: 5px; height: 5px; background: var(--green); border-radius: 50%; }
+    .page-hero h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(30px, 3.8vw, 50px); line-height: 1.06; color: var(--white); letter-spacing: -0.028em; margin-bottom: 18px; max-width: 680px; }
+    .page-hero h1 em { font-style: normal; color: var(--green); }
+    .page-hero-sub { font-size: 16px; line-height: 1.72; color: rgba(255,255,255,0.45); max-width: 580px; margin-bottom: 36px; }
+    .hero-ctas { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+    /* BUTTONS */
+    .btn-solid { display: inline-flex; align-items: center; gap: 7px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--white); background: var(--green); border: 1.8px solid var(--green); padding: 13px 24px; border-radius: 8px; text-decoration: none; transition: background 0.18s, transform 0.15s; }
+    .btn-solid:hover { background: var(--green-hover); transform: translateY(-1px); }
+    .btn-solid svg { width: 13px; height: 13px; }
+    .btn-ghost { display: inline-flex; align-items: center; gap: 7px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.5); background: transparent; border: 1.8px solid rgba(255,255,255,0.15); padding: 13px 24px; border-radius: 8px; text-decoration: none; transition: border-color 0.18s, color 0.18s; }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.4); color: rgba(255,255,255,0.8); }
+    .btn-outline { display: inline-flex; align-items: center; gap: 7px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-muted); background: transparent; border: 1.8px solid var(--border); padding: 13px 24px; border-radius: 8px; text-decoration: none; transition: background 0.18s; }
+    .btn-outline:hover { background: var(--off-white); }
+    .btn-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
+
+    /* SHARED */
+    .section { padding: 80px 40px; }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-white { background: var(--white); }
+    .section-grey { background: var(--off-white); border-top: 1.5px solid var(--border); border-bottom: 1.5px solid var(--border); }
+    .eyebrow { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green-dark); margin-bottom: 12px; }
+    .section-h { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(24px, 2.8vw, 36px); letter-spacing: -0.02em; line-height: 1.1; color: var(--text); margin-bottom: 14px; }
+    .section-p { font-size: 15.5px; line-height: 1.72; color: var(--text-muted); max-width: 600px; }
+
+    /* INTRO STRIP */
+    .intro-strip { border-bottom: 1.5px solid var(--border); }
+    .intro-strip-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+    .intro-item { padding: 26px 30px; border-right: 1.5px solid var(--border); }
+    .intro-item:last-child { border-right: none; }
+    .intro-item strong { display: block; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 5px; }
+    .intro-item span { font-size: 12.5px; color: var(--text-muted); line-height: 1.55; }
+
+    /* TWO COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+
+    /* SERVICES LIST */
+    .services-list { margin-top: 52px; }
+    .svc-row { display: grid; grid-template-columns: 200px 1fr; gap: 40px; padding: 28px 0; border-bottom: 1.5px solid var(--border); align-items: start; }
+    .svc-row:first-child { border-top: 1.5px solid var(--border); }
+    .svc-label { display: flex; align-items: center; gap: 8px; padding-top: 3px; }
+    .svc-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
+    .svc-label strong { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13.5px; color: var(--text); }
+    .svc-desc { font-size: 14.5px; line-height: 1.75; color: var(--text-muted); }
+
+    /* IMAGE */
+    .page-img { width: 100%; border-radius: 18px; overflow: hidden; }
+    .page-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .page-img-tall { height: 320px; }
+
+    /* PORTAL */
+    .portal-wrap { background: var(--dark); border-radius: 20px; overflow: hidden; display: grid; grid-template-columns: 1.2fr 0.8fr; margin-top: 48px; }
+    .portal-content { padding: 52px 48px; }
+    .portal-content h3 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; color: var(--white); margin-bottom: 14px; letter-spacing: -0.02em; line-height: 1.2; }
+    .portal-content > p { font-size: 14.5px; line-height: 1.75; color: rgba(255,255,255,0.38); margin-bottom: 32px; }
+    .portal-feats { display: flex; flex-direction: column; gap: 16px; }
+    .portal-feat { display: flex; gap: 12px; align-items: flex-start; }
+    .pfeat-tick { width: 20px; height: 20px; background: rgba(0,176,80,0.15); border: 1px solid rgba(0,176,80,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .pfeat-tick svg { width: 10px; height: 10px; color: var(--green); }
+    .pfeat-body strong { display: block; font-size: 13.5px; font-weight: 600; color: rgba(255,255,255,0.8); margin-bottom: 2px; }
+    .pfeat-body span { font-size: 12.5px; color: rgba(255,255,255,0.3); line-height: 1.5; }
+    .portal-img { overflow: hidden; }
+    .portal-img img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.5; }
+
+    /* PRICING MODELS */
+    .model-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 44px; }
+    .model-card { border: 1.5px solid var(--border); border-radius: 20px; padding: 40px 36px; }
+    .model-card.highlight { border-color: var(--green); background: var(--green-bg); }
+    .model-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green-dark); background: var(--white); border: 1px solid var(--green-border); padding: 4px 10px; border-radius: 100px; margin-bottom: 18px; }
+    .model-card.highlight .model-tag { background: var(--green); color: var(--white); border-color: var(--green); }
+    .model-card h3 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 21px; color: var(--text); margin-bottom: 12px; letter-spacing: -0.02em; }
+    .model-card > p { font-size: 14.5px; line-height: 1.75; color: var(--text-muted); padding-bottom: 24px; margin-bottom: 24px; border-bottom: 1.5px solid var(--border); }
+    .model-card.highlight > p { border-color: rgba(0,176,80,0.2); }
+    .model-points { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+    .model-points li { display: flex; align-items: flex-start; gap: 9px; font-size: 13.5px; color: var(--text-muted); line-height: 1.58; }
+    .model-points li::before { content: ''; width: 5px; height: 5px; background: var(--green); border-radius: 50%; flex-shrink: 0; margin-top: 8px; }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .fu { animation: fadeUp 0.55s ease both; }
+    .fu1{animation-delay:0.04s} .fu2{animation-delay:0.13s} .fu3{animation-delay:0.22s}
+
+    /* RESPONSIVE */
+    @media (max-width: 1080px) {
+      .intro-strip-inner { grid-template-columns: 1fr 1fr; }
+      .intro-item:nth-child(2) { border-right: none; }
+      .intro-item { border-bottom: 1.5px solid var(--border); }
+      .two-col { grid-template-columns: 1fr; gap: 40px; }
+      .portal-wrap { grid-template-columns: 1fr; }
+      .portal-img { height: 240px; }
+      .model-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .page-hero-inner { padding: 44px 20px 52px; }
+      .section { padding: 56px 20px; }
+      .intro-strip-inner { grid-template-columns: 1fr; }
+      .intro-item { border-right: none; }
+      .svc-row { grid-template-columns: 1fr; gap: 6px; }
+      .portal-content { padding: 32px 24px; }
+      .model-card { padding: 28px 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="hero-lines">
+    <svg viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMid meet">
+      <path d="M 600 40 L 500 40 Q 480 40 480 60 L 480 140" stroke="#00b050" stroke-width="1.5" stroke-opacity="0.35" fill="none"/>
+      <path d="M 600 200 L 540 200 Q 520 200 520 220 L 520 300 Q 520 320 500 320 L 420 320" stroke="#00b050" stroke-width="1.5" stroke-opacity="0.2" fill="none"/>
+      <path d="M 600 80 L 560 80" stroke="#00b050" stroke-width="1.5" stroke-opacity="0.5" fill="none"/>
+    </svg>
+  </div>
+  <div class="page-hero-inner">
+    <div class="page-hero-tag fu fu1">For Event Organisers</div>
+    <h1 class="fu fu2">The show is yours.<br>The logistics <em>are ours.</em></h1>
+    <p class="page-hero-sub fu fu2">From the first truck on the dock to the last pallet out the door — we build the right team around your show and run it.</p>
+    <div class="hero-ctas fu fu3">
+      <a href="quote-page.html?type=services" class="btn-solid">Request a Quote <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg></a>
+      <a href="contact.html" class="btn-ghost">Talk to us first</a>
+    </div>
+  </div>
+</section>
+
+<!-- SUMMARY STRIP -->
+<div class="intro-strip">
+  <div class="intro-strip-inner">
+    <div class="intro-item">
+      <strong>Advisory first</strong>
+      <span>We tell you what you actually need — not what makes us the most money.</span>
+    </div>
+    <div class="intro-item">
+      <strong>Crew & equipment</strong>
+      <span>Scaled to your event. From one forklift to a full floor operation.</span>
+    </div>
+    <div class="intro-item">
+      <strong>Dock management</strong>
+      <span>Pre-booked truck slots. Controlled flow. No chaos at bump-in.</span>
+    </div>
+    <div class="intro-item">
+      <strong>Storage & handling</strong>
+      <span>Suitcases to pallets — picked up, stored, delivered back to stand.</span>
+    </div>
+  </div>
+</div>
+
+<!-- WHAT WE DO -->
+<section class="section section-white">
+  <div class="section-inner">
+    <div class="two-col">
+      <div>
+        <span class="eyebrow">What's included</span>
+        <h2 class="section-h">No two shows are the same. We don't treat them that way.</h2>
+        <p class="section-p">Whether you need a basic forklift crew for bump-in or a full show management operation — we handle everything that happens behind the scenes. Dock management, crew, equipment, storage, the lot. Tell us about your show and we'll put the right operation together around it.</p>
+      </div>
+      <div class="page-img page-img-tall">
+        <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&q=80" alt="Event floor operations" />
+      </div>
+    </div>
+
+    <div class="services-list">
+      <div class="svc-row">
+        <div class="svc-label"><span class="svc-dot"></span><strong>Expertise & Advisory</strong></div>
+        <div class="svc-desc">We've run logistics on events of all sizes. Before your show, we'll advise on the equipment and crew you actually need — based on your freight volume, venue, and schedule. So you're not over or under-resourced on the day.</div>
+      </div>
+      <div class="svc-row">
+        <div class="svc-label"><span class="svc-dot"></span><strong>Equipment</strong></div>
+        <div class="svc-desc">Forklifts, cranes, elevated work platforms — we source and sort everything required. If specialist attachments or additional equipment are needed during the show, we'll get them to site. Pallet jacks and trolleys are available where included or required.</div>
+      </div>
+      <div class="svc-row">
+        <div class="svc-label"><span class="svc-dot"></span><strong>On-Site Crew</strong></div>
+        <div class="svc-desc">Experienced forklift operators, spotters, site managers, supervisors, dock managers, porters, and general labour. We scale the team to your event. A basic crew handles deliveries — a full team manages the whole operation.</div>
+      </div>
+      <div class="svc-row">
+        <div class="svc-label"><span class="svc-dot"></span><strong>Dock & Delivery Management</strong></div>
+        <div class="svc-desc">We run a dock management system — truck slots are pre-booked to control traffic flow, reducing congestion and wait times during bump-in and bump-out. We run the dock so it doesn't become your problem.</div>
+      </div>
+      <div class="svc-row">
+        <div class="svc-label"><span class="svc-dot"></span><strong>Storage</strong></div>
+        <div class="svc-desc">From suitcases and small goods through to pallets and large crates — we handle pickup from and delivery back to stands. If space is tight, we can offer storage solutions to handle any surplus.</div>
+      </div>
+      <div class="svc-row">
+        <div class="svc-label"><span class="svc-dot"></span><strong>Safety & Compliance</strong></div>
+        <div class="svc-desc">All work is performed legally, safely, and to venue requirements. We handle all required inductions, certifications, and compliance — so nothing gets held up on the day.</div>
+      </div>
+      <div class="svc-row">
+        <div class="svc-label"><span class="svc-dot"></span><strong>Supplies</strong></div>
+        <div class="svc-desc">Things get forgotten or run out — pallet wrap, tape, markers, vests and everything else you might need on the day is always available on-site for purchase.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTAL -->
+<section class="section section-grey">
+  <div class="section-inner">
+    <span class="eyebrow">On-site service desk</span>
+    <h2 class="section-h">Every delivery.<br>Accounted for.</h2>
+    <p class="section-p">For shows with a full service setup, we run an on-site service desk. Everything that comes through the dock is logged, tracked, and confirmed — automatically.</p>
+    <div class="portal-wrap">
+      <div class="portal-content">
+        <h3>Every delivery. Tracked. Confirmed. Visible.</h3>
+        <p>Every delivery that comes through — couriers, pallets, signage, boxes — is logged and itemised. Exhibitors get a text and email confirmation with photos the moment their items arrive at their stand. Organisers have live access to monitor all activity at any time.</p>
+        <div class="portal-feats">
+          <div class="portal-feat">
+            <div class="pfeat-tick"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg></div>
+            <div class="pfeat-body"><strong>Live delivery log</strong><span>Every item in, itemised as it happens</span></div>
+          </div>
+          <div class="portal-feat">
+            <div class="pfeat-tick"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg></div>
+            <div class="pfeat-body"><strong>Photo confirmations</strong><span>Sent to exhibitors when items hit their stand</span></div>
+          </div>
+          <div class="portal-feat">
+            <div class="pfeat-tick"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg></div>
+            <div class="pfeat-body"><strong>SMS & email alerts</strong><span>Automatic — exhibitors don't need to chase anyone</span></div>
+          </div>
+          <div class="portal-feat">
+            <div class="pfeat-tick"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg></div>
+            <div class="pfeat-body"><strong>Organiser dashboard</strong><span>Live access, activity history, and priority requests</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="portal-img">
+        <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80" alt="Event operations" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW WE WORK WITH YOU -->
+<section class="section section-white">
+  <div class="section-inner">
+    <span class="eyebrow">How we work with you</span>
+    <h2 class="section-h">Two ways to engage us.<br>Every show is different.</h2>
+    
+    <div class="model-grid">
+      <div class="model-card">
+        <div class="model-tag">Organiser-Managed</div>
+        <h3>You're in control.</h3>
+        <p>You engage Axis and pay for the crew and equipment you need. Works well for smaller shows — sometimes just a forklift operator and a spotter. It scales for larger shows too, though as complexity grows, so does the investment. We put together the right team based on your show size and predicted freight volume.</p>
+        <ul class="model-points">
+          <li>Pay for exactly what you need — nothing more</li>
+          <li>Tailored to your show size and freight volume</li>
+          <li>Clear pricing upfront — no surprises after the event</li>
+        </ul>
+      </div>
+      <div class="model-card highlight">
+        <div class="model-tag">Exhibitor-Funded</div>
+        <h3>Full service. No cost to you.</h3>
+        <p>The organiser gets a fully managed on-site logistics service at no cost. The service is funded by charging exhibitors directly for forklifting, storage, porterage, and any labour they require. Extras are added or removed based on what's needed to keep operations running efficiently. A minimum freight volume needs to be met — not sure if your show qualifies? We'll work it out with you.</p>
+        <ul class="model-points">
+          <li>Zero cost to the organiser</li>
+          <li>Exhibitors charged only for what they actually use</li>
+          <li>Includes service desk, dock management & real-time freight notifications</li>
+          <li>Minimum freight volume applies — ask us if you qualify</li>
+        </ul>
+      </div>
+    </div>
+    <div class="btn-row">
+      <a href="quote-page.html?type=services" class="btn-solid">Request a Services Quote <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg></a>
+      <a href="contact.html" class="btn-outline">Not sure where to start? Talk to us.</a>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

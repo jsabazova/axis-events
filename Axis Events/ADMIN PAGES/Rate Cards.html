@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rate Cards — Axis Events</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --dark:#16181a;--dark2:#1e2124;--dark3:#2a2e32;
+  --green:#00c05a;--green-bg:rgba(0,192,90,.10);--green-dark:#007a35;--green-border:rgba(0,192,90,.22);
+  --white:#fff;--offwhite:#f5f5f3;--border:#eaeae8;--border2:#e0e0de;
+  --text:#111214;--muted:#6b7280;--faint:#b0b0b0;
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,.12);--amber-dark:#92400e;
+  --red:#ef4444;--red-bg:rgba(239,68,68,.08);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,.10);--blue-dark:#1d4ed8;
+  --sidebar-w:240px;--sidebar-col:60px;
+  --ease:cubic-bezier(.22,.68,0,1.2);--ease-std:cubic-bezier(.4,0,.2,1);
+}
+html,body{height:100%;overflow:hidden;background:var(--offwhite);color:var(--text);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased}
+.layout{display:grid;grid-template-columns:var(--sidebar-w) 1fr;height:100vh;transition:grid-template-columns .3s var(--ease-std)}
+.layout.collapsed{grid-template-columns:var(--sidebar-col) 1fr}
+.sidebar{background:var(--dark);display:flex;flex-direction:column;overflow:visible;position:relative;z-index:20;border-right:1px solid rgba(255,255,255,.05)}
+.collapse-tab{position:absolute;top:50%;right:-14px;transform:translateY(-50%);width:14px;height:48px;background:var(--dark);border:1px solid rgba(255,255,255,.09);border-left:none;border-radius:0 8px 8px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:30;transition:background .15s;padding:0}
+.collapse-tab:hover{background:var(--dark3)}
+.collapse-tab svg{width:8px;height:8px;color:rgba(255,255,255,.38);transition:transform .3s var(--ease-std)}
+.collapse-tab:hover svg{color:rgba(255,255,255,.75)}
+.layout.collapsed .collapse-tab svg{transform:rotate(180deg)}
+.sidebar-top{padding:18px 14px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;flex-shrink:0}
+.logo{display:flex;align-items:center;gap:10px;min-width:0;overflow:hidden}
+.logo-box{width:34px;height:34px;flex-shrink:0;background:var(--green);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:#000}
+.logo-words{overflow:hidden;white-space:nowrap;transition:opacity .22s,max-width .3s var(--ease-std);max-width:160px}
+.logo-words strong{font-family:'Syne',sans-serif;font-weight:700;font-size:13.5px;color:white;display:block;line-height:1.25}
+.logo-words small{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.28)}
+.sidebar-nav{flex:1}
+.layout.collapsed .logo-words,.layout.collapsed .user-info{opacity:0;max-width:0;pointer-events:none}
+.sidebar-bottom{padding:14px;border-top:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.user-row{display:flex;align-items:center;gap:10px;overflow:hidden}
+.user-avatar{width:30px;height:30px;flex-shrink:0;background:linear-gradient(135deg,var(--green),#00a84e);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#000}
+.user-info{overflow:hidden;transition:opacity .18s,max-width .3s var(--ease-std);max-width:160px;white-space:nowrap}
+.user-name{font-size:12px;color:rgba(255,255,255,.72);font-weight:500}
+.user-role{font-size:10px;color:rgba(255,255,255,.28)}
+.main{display:flex;flex-direction:column;overflow:hidden;min-width:0;position:relative}
+
+/* TOPBAR */
+.topbar{height:56px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 26px;background:var(--white);flex-shrink:0;gap:8px;z-index:5}
+.page-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15.5px;color:var(--text)}
+.back-btn{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;padding:5px 8px;border-radius:7px;transition:all .13s;border:none;background:none;font-family:'DM Sans',sans-serif}
+.back-btn:hover{color:var(--text);background:var(--offwhite)}
+.back-btn svg{width:14px;height:14px}
+.topbar-sep{color:var(--faint);font-size:16px;margin:0 2px}
+.entry-title-bar{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--text)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;border-radius:8px;padding:8px 16px;transition:all .15s}
+.btn-dark{background:var(--dark);color:white}
+.btn-dark:hover{background:var(--dark2)}
+.btn-outline{background:none;color:var(--muted);border:1.5px solid var(--border)}
+.btn-outline:hover{border-color:var(--text);color:var(--text)}
+.btn-green{background:var(--green);color:#000;font-weight:700}
+.btn-green:hover{background:#00a84e}
+.btn-red{background:var(--red-bg);color:var(--red);border:1.5px solid rgba(239,68,68,.2)}
+.btn-red:hover{background:rgba(239,68,68,.15)}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:7px}
+
+/* VIEWS */
+.view{position:absolute;inset:56px 0 0 0;overflow-y:auto}
+.view.hidden{display:none}
+
+/* LIST */
+#viewList{padding:26px}
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.search-wrap{position:relative;flex:1;max-width:340px}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--faint);pointer-events:none}
+.search-input{width:100%;padding:7px 12px 7px 32px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color .15s}
+.search-input:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-bg)}
+.search-input::placeholder{color:var(--faint)}
+.card-count{font-size:11.5px;color:var(--muted);font-weight:500;background:var(--offwhite);border:1px solid var(--border);padding:2px 9px;border-radius:100px;margin-left:8px}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.entry-card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:border-color .15s,box-shadow .15s;position:relative}
+.entry-card:hover{border-color:var(--border2);box-shadow:0 2px 14px rgba(0,0,0,.07)}
+.entry-avatar{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:white;margin-bottom:14px;flex-shrink:0}
+.entry-name{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--text);margin-bottom:3px}
+.entry-sub{font-size:12.5px;color:var(--muted);margin-bottom:12px}
+.entry-contacts{display:flex;flex-direction:column;gap:5px}
+.entry-contact-row{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted)}
+.entry-contact-row a{color:var(--blue-dark);text-decoration:none;font-weight:500}
+.entry-contact-row a:hover{text-decoration:underline}
+.empty-state{padding:60px 20px;text-align:center;color:var(--muted)}
+.empty-state p{font-size:14px}
+
+/* DETAIL VIEW */
+.page-body{position:absolute;inset:56px 0 0 0;display:flex;flex-direction:column;overflow:hidden}
+.detail-scroll{flex:1;overflow-y:auto;padding:28px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:860px}
+.dcard{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:0}
+.dcard.full{grid-column:1/-1}
+.dcard-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.dcard-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px}
+.dcard-body{padding:20px}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:9px 20px;align-items:baseline}
+.dt{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.dd{font-size:13.5px;color:var(--text)}
+.dd a{color:var(--blue-dark);text-decoration:none}
+.dd a:hover{text-decoration:underline}
+.notes-text{font-size:13.5px;color:var(--muted);line-height:1.65}
+.detail-avatar{width:52px;height:52px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:white;flex-shrink:0}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.28);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(3px)}
+.modal-bg.open{opacity:1;pointer-events:all}
+.modal{background:var(--white);border-radius:16px;width:520px;max-height:88vh;display:flex;flex-direction:column;border:1.5px solid var(--border);box-shadow:0 24px 80px rgba(0,0,0,.18);transform:translateY(14px);transition:transform .25s var(--ease)}
+.modal-bg.open .modal{transform:translateY(0)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);flex-shrink:0}
+.modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px}
+.modal-close{width:30px;height:30px;border-radius:7px;border:1.5px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:18px;line-height:1;transition:all .13s}
+.modal-close:hover{border-color:var(--text);color:var(--text)}
+.modal-body{flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:14px}
+.modal-foot{padding:16px 22px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.field-label{display:block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.fi{width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--border2);background:var(--white);font-family:'DM Sans',sans-serif;font-size:13.5px;color:var(--text);transition:border-color .15s,box-shadow .15s;outline:none}
+.fi:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-bg)}
+.fi::placeholder{color:var(--faint)}
+textarea.fi{resize:vertical;min-height:80px;line-height:1.55}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+
+
+/* RATE CARD DETAIL */
+.rc-card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px}
+.rc-card-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.rc-card-name{font-family:'Syne',sans-serif;font-weight:700;font-size:14px}
+.rc-section-label{font-size:10.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.rc-table{width:100%;border-collapse:collapse;max-width:380px}
+.rc-table th{padding:7px 14px;text-align:left;font-size:10.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);background:var(--offwhite);border-bottom:1px solid var(--border)}
+.rc-table td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:13.5px}
+.rc-table tr:last-child td{border-bottom:none}
+.rc-price{font-weight:700;color:var(--green-dark)}
+.rc-storage-price{font-size:15px;font-weight:700;color:var(--green-dark)}
+/* tier input */
+.tier-header{display:grid;grid-template-columns:80px 16px 80px 1fr 32px;gap:8px;align-items:center;padding:0 4px 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.tier-header span{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.tier-row{display:grid;grid-template-columns:80px 16px 80px 1fr 32px;gap:8px;align-items:center;margin-bottom:6px}
+.tier-sep{font-size:13px;color:var(--faint);text-align:center}
+.tier-del{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--border);background:none;cursor:pointer;color:var(--faint);font-size:15px;transition:all .13s;display:flex;align-items:center;justify-content:center;padding:0}
+.tier-del:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+.tier-add-btn{font-size:12.5px;font-weight:600;color:var(--green-dark);background:none;border:1.5px dashed var(--green-border);border-radius:8px;padding:7px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .13s;width:100%;text-align:left;margin-top:4px}
+.tier-add-btn:hover{background:var(--green-bg)}
+.price-input-wrap{position:relative;display:flex;align-items:center}
+.price-prefix{position:absolute;left:12px;font-size:13.5px;color:var(--muted);pointer-events:none}
+.price-input{padding-left:24px!important}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:28px;right:28px;z-index:300;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.toast{background:var(--dark);color:white;padding:11px 16px;border-radius:10px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.08);box-shadow:0 8px 32px rgba(0,0,0,.25);animation:toastIn .3s var(--ease) both}
+.toast-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+@keyframes toastIn{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+</style>
+</head>
+<body>
+<div class="layout" id="layout">
+  <aside class="sidebar">
+    <button class="collapse-tab" id="collapseTab">
+      <svg viewBox="0 0 8 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 1L2 6l4 5"/></svg>
+    </button>
+    <div class="sidebar-top">
+      <div class="logo">
+        <div class="logo-box">A</div>
+        <div class="logo-words"><strong>Axis Events</strong><small>Admin Panel</small></div>
+      </div>
+    </div>
+    <nav class="sidebar-nav"></nav>
+    <div class="sidebar-bottom">
+      <div class="user-row">
+        <div class="user-avatar">AE</div>
+        <div class="user-info"><div class="user-name">Axis Admin</div><div class="user-role">Super Admin</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+
+    <!-- LIST TOPBAR -->
+    <div class="topbar" id="topbarList">
+      <span class="page-title">Rate Cards</span>
+      <div style="margin-left:auto">
+        <button class="btn btn-dark btn-sm" onclick="openModal()">
+          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 2v12M2 8h12"/></svg>
+          Add Rate Card
+        </button>
+      </div>
+    </div>
+
+    <!-- DETAIL TOPBAR -->
+    <div class="topbar" id="topbarDetail" style="display:none">
+      <button class="back-btn" onclick="showList()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>
+        Rate Cards
+      </button>
+      <span class="topbar-sep">/</span>
+      <span class="entry-title-bar" id="detailTitleBar"></span>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="btn btn-outline btn-sm" id="detailEditBtn">Edit</button>
+        <button class="btn btn-red btn-sm" id="detailDeleteBtn">Delete</button>
+      </div>
+    </div>
+
+    <!-- LIST VIEW -->
+    <div class="view" id="viewList">
+      <div class="toolbar">
+        <div class="search-wrap">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10.5 10.5l3 3"/></svg>
+          <input class="search-input" id="searchInput" placeholder="Search rate cards…" oninput="renderList()">
+        </div>
+        <span style="font-size:13px;color:var(--muted)" id="listCount"></span>
+      </div>
+      <div id="cardsGrid"></div>
+    </div>
+
+    <!-- DETAIL VIEW -->
+    <div class="page-body" id="viewDetail" style="display:none">
+      <div class="detail-scroll">
+        <div class="detail-grid" id="detailContent"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal">
+  <div class="modal" style="width:560px">
+    <div class="modal-head">
+      <span class="modal-title" id="modalTitle">Add Rate Card</span>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg2">
+        <div><label class="field-label">Rate Card Name <span style="color:var(--red)">*</span></label><input class="fi" id="f-name" placeholder="e.g. GEL — Standard 2026"></div>
+        <div><label class="field-label">Provider <span style="color:var(--red)">*</span></label><input class="fi" id="f-provider" placeholder="e.g. GEL, Axis Events"></div>
+      </div>
+      <div style="height:1px;background:var(--border);margin:2px 0"></div>
+      <div>
+        <label class="field-label">Forklifting Tiers <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--faint)">price per lift</span></label>
+        <div class="tier-header"><span>From</span><span></span><span>To</span><span>Price / lift</span><span></span></div>
+        <div id="rcTiers"></div>
+        <button class="tier-add-btn" onclick="addTier()">+ Add tier</button>
+      </div>
+      <div style="height:1px;background:var(--border);margin:2px 0"></div>
+      <div>
+        <label class="field-label">Storage — Price per Pallet Space</label>
+        <div class="price-input-wrap"><span class="price-prefix">$</span><input class="fi price-input" id="f-storagePrice" type="number" min="0" step="0.01" placeholder="0.00"></div>
+      </div>
+      <div><label class="field-label">Notes</label><input class="fi" id="f-notes" placeholder="e.g. Negotiated Feb 2026, applies to shows over 200 sqm"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-red btn-sm" id="modalDeleteBtn" onclick="deleteEntry()" style="display:none">Delete</button>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="btn btn-outline btn-sm" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-green btn-sm" onclick="saveEntry()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+document.getElementById('collapseTab').addEventListener('click',function(){document.getElementById('layout').classList.toggle('collapsed');});
+
+/*
+ * RATE CARDS — AXIS EVENTS
+ * TODO: GET /api/ratecards, POST, PATCH /api/ratecards/:id, DELETE /api/ratecards/:id
+ * Data shape: { id, name, provider, forkTiers:[{from,to,price}], storagePrice, notes }
+ * Empty 'to' in a fork tier = open-ended (e.g. 11+)
+ * Assigned to a show via shows.fork_rate / shows.storage_rate
+ */
+
+var data=[
+  {id:1,name:'GEL — Standard 2026',provider:'GEL',notes:'Standard rate for most shows.',forkTiers:[{from:'1',to:'4',price:'75.00'},{from:'5',to:'10',price:'65.00'},{from:'11',to:'',price:'55.00'}],storagePrice:'60.00'},
+  {id:2,name:'GEL — DesignEx Special',provider:'GEL',notes:'Negotiated rate for DesignEx Sydney Feb 2026.',forkTiers:[{from:'1',to:'9',price:'70.00'},{from:'10',to:'',price:'58.00'}],storagePrice:'55.00'},
+  {id:3,name:'Axis — Standard',provider:'Axis Events',notes:'',forkTiers:[{from:'1',to:'5',price:'80.00'},{from:'6',to:'',price:'70.00'}],storagePrice:'50.00'},
+];
+var nextId=4,editingId=null;
+
+function getInitials(n){return n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();}
+function avatarBg(n){var c=['#16181a','#1d4ed8','#007a35','#92400e','#5b21b6'];return c[n.charCodeAt(0)%c.length];}
+
+function renderList(){
+  var s=document.getElementById('searchInput').value.trim().toLowerCase();
+  var filtered=s?data.filter(e=>[e.name,e.provider,e.notes].join(' ').toLowerCase().includes(s)):data;
+  document.getElementById('listCount').textContent=filtered.length+' rate card'+(filtered.length!==1?'s':'');
+  var grid=document.getElementById('cardsGrid');
+  if(!filtered.length){grid.innerHTML='<div class="empty-state"><p>No rate cards found.</p></div>';return;}
+  grid.innerHTML='<div class="cards-grid">'+filtered.map(e=>`
+    <div class="entry-card" onclick="showDetail(${e.id})">
+      <div style="display:flex;align-items:flex-start;gap:13px;margin-bottom:14px">
+        <div class="entry-avatar" style="background:${avatarBg(e.provider)}">${getInitials(e.provider)}</div>
+        <div style="min-width:0;flex:1;padding-top:2px">
+          <div class="entry-name">${e.name}</div>
+          <div class="entry-sub">${e.provider}</div>
+        </div>
+      </div>
+      <div class="entry-contacts">
+        <div class="entry-contact-row">&#127959;&#65039; ${e.forkTiers&&e.forkTiers.length?e.forkTiers.length+' fork tier'+(e.forkTiers.length!==1?'s':''):'No fork tiers'}</div>
+        <div class="entry-contact-row">&#128230; Storage: ${e.storagePrice?'$'+parseFloat(e.storagePrice).toFixed(2)+' / pallet':'—'}</div>
+        ${e.notes?`<div class="entry-contact-row" style="color:var(--faint);font-size:12px">${e.notes}</div>`:''}
+      </div>
+    </div>`).join('')+'</div>';
+}
+
+function showDetail(id){
+  var e=data.find(x=>x.id===id);if(!e)return;
+  document.getElementById('topbarList').style.display='none';
+  document.getElementById('topbarDetail').style.display='flex';
+  document.getElementById('detailTitleBar').textContent=e.name;
+  document.getElementById('detailEditBtn').onclick=()=>openModal(id);
+  document.getElementById('detailDeleteBtn').onclick=()=>{if(confirm('Delete '+e.name+'?')){data=data.filter(x=>x.id!==id);showList();toast('Deleted');}};
+  var forkTable=e.forkTiers&&e.forkTiers.length
+    ?`<table class="rc-table"><thead><tr><th>From</th><th>To</th><th>Price per lift</th></tr></thead><tbody>${e.forkTiers.map(t=>`<tr><td>${t.from}</td><td>${t.to||'+'}</td><td class="rc-price">$${parseFloat(t.price||0).toFixed(2)}</td></tr>`).join('')}</tbody></table>`
+    :`<span style="color:var(--faint);font-style:italic;font-size:13px">No tiers set</span>`;
+  document.getElementById('detailContent').innerHTML=`
+    <div class="dcard">
+      <div class="dcard-head">
+        <div style="display:flex;align-items:center;gap:14px">
+          <div class="detail-avatar" style="background:${avatarBg(e.provider)}">${getInitials(e.provider)}</div>
+          <div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;margin-bottom:2px">${e.name}</div>
+          <div style="font-size:12.5px;color:var(--muted)">${e.provider}</div></div>
+        </div>
+      </div>
+      <div class="dcard-body">
+        <div class="rc-section-label">Forklifting</div>
+        ${forkTable}
+        <div style="height:1px;background:var(--border);margin:16px 0"></div>
+        <div class="rc-section-label">Storage</div>
+        <div style="font-size:15px">Price per pallet space: <span class="rc-storage-price">${e.storagePrice?'$'+parseFloat(e.storagePrice).toFixed(2):'—'}</span></div>
+        ${e.notes?`<div style="margin-top:16px;font-size:13px;color:var(--muted);font-style:italic">${e.notes}</div>`:''}
+      </div>
+    </div>`;
+  document.getElementById('viewList').classList.add('hidden');
+  document.getElementById('viewDetail').style.display='flex';
+}
+
+function showList(){
+  document.getElementById('viewDetail').style.display='none';
+  document.getElementById('viewList').classList.remove('hidden');
+  document.getElementById('topbarDetail').style.display='none';
+  document.getElementById('topbarList').style.display='flex';
+  renderList();
+}
+
+function addTier(from,to,price){
+  var row=document.createElement('div');row.className='tier-row';
+  row.innerHTML=`<input class="fi" type="number" min="0" placeholder="1" value="${from||''}" data-t="from"><span class="tier-sep">–</span><input class="fi" type="number" min="0" placeholder="4" value="${to||''}" data-t="to"><div class="price-input-wrap"><span class="price-prefix">$</span><input class="fi price-input" type="number" min="0" step="0.01" placeholder="0.00" value="${price||''}" data-t="price"></div><button class="tier-del" onclick="this.closest('.tier-row').remove()">×</button>`;
+  document.getElementById('rcTiers').appendChild(row);
+}
+function getTiers(){return [...document.getElementById('rcTiers').querySelectorAll('.tier-row')].map(r=>({from:r.querySelector('[data-t=from]').value.trim(),to:r.querySelector('[data-t=to]').value.trim(),price:r.querySelector('[data-t=price]').value.trim()})).filter(r=>r.from||r.to||r.price);}
+
+function openModal(id){
+  editingId=id||null;
+  var e=id?data.find(x=>x.id===id):null;
+  document.getElementById('modalTitle').textContent=id?'Edit Rate Card':'Add Rate Card';
+  document.getElementById('modalDeleteBtn').style.display=id?'inline-flex':'none';
+  document.getElementById('f-name').value=e?.name||'';
+  document.getElementById('f-provider').value=e?.provider||'';
+  document.getElementById('f-storagePrice').value=e?.storagePrice||'';
+  document.getElementById('f-notes').value=e?.notes||'';
+  document.getElementById('rcTiers').innerHTML='';
+  if(e?.forkTiers)e.forkTiers.forEach(t=>addTier(t.from,t.to,t.price));
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open');editingId=null;}
+function saveEntry(){
+  var name=document.getElementById('f-name').value.trim();if(!name){document.getElementById('f-name').focus();return;}
+  var d={id:editingId||nextId++,name,provider:document.getElementById('f-provider').value.trim(),forkTiers:getTiers(),storagePrice:document.getElementById('f-storagePrice').value.trim(),notes:document.getElementById('f-notes').value.trim()};
+  if(editingId){data[data.findIndex(x=>x.id===editingId)]=d;toast('Saved');}
+  else{data.push(d);toast('Rate card added');}
+  closeModal();
+  if(document.getElementById('viewDetail').style.display!=='none')showDetail(d.id);
+  else renderList();
+}
+function deleteEntry(){data=data.filter(x=>x.id!==editingId);closeModal();showList();toast('Deleted');}
+
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+function toast(msg){var w=document.getElementById('toastWrap');var el=document.createElement('div');el.className='toast';el.innerHTML='<span class="toast-dot"></span>'+msg;w.appendChild(el);setTimeout(()=>el.remove(),2500);}
+
+renderList();
+</script>
+</body>
+</html>

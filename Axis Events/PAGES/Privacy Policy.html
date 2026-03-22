@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Axis Events</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green:        #00b050;
+      --green-hover:  #009140;
+      --green-dark:   #007a35;
+      --green-mid:    #00c45a;
+      --green-bg:     #e8f9ef;
+      --green-border: rgba(0,176,80,0.22);
+      --dark:         #1a1c1e;
+      --dark-2:       #222527;
+      --dark-card:    #1f2123;
+      --white:        #ffffff;
+      --off-white:    #f5f5f3;
+      --border:       #e5e5e3;
+      --text:         #141414;
+      --text-muted:   #6b7280;
+      --text-faint:   #a0a0a0;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--text); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(14px);
+      border-bottom: 1.5px solid var(--border); height: 64px;
+      display: flex; align-items: center; padding: 0 40px;
+    }
+    .nav-inner { width: 100%; max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-box { width: 32px; height: 32px; background: var(--dark); border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .logo-box span { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 17px; color: var(--green); line-height: 1; }
+    .logo-words { display: flex; flex-direction: column; line-height: 1.2; }
+    .logo-words strong { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14.5px; color: var(--dark); }
+    .logo-words small { font-size: 10px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); }
+    .nav-links { display: flex; align-items: center; gap: 2px; list-style: none; }
+    .nav-links > li { position: relative; }
+    .nav-links a, .nav-links button { display: inline-flex; align-items: center; gap: 5px; font-size: 14px; font-weight: 500; color: var(--text-muted); background: none; border: none; cursor: pointer; padding: 7px 12px; border-radius: 7px; transition: color 0.18s, background 0.18s; text-decoration: none; white-space: nowrap; }
+    .nav-links a:hover, .nav-links button:hover { color: var(--text); background: var(--off-white); }
+    .nav-links a.active { color: var(--green-dark); font-weight: 600; }
+    .nav-caret { width: 12px; height: 12px; opacity: 0.4; transition: transform 0.2s; flex-shrink: 0; }
+    .has-dropdown.open .nav-caret { transform: rotate(180deg); }
+    .nav-dropdown { display: none; position: absolute; top: calc(100% + 6px); left: 0; min-width: 230px; background: var(--white); border: 1.5px solid var(--border); border-radius: 14px; padding: 7px; box-shadow: 0 12px 40px rgba(0,0,0,0.1); z-index: 300; }
+    .has-dropdown.open .nav-dropdown { display: block; }
+    .nav-dropdown a { display: flex; align-items: center; gap: 9px; font-size: 13.5px; padding: 9px 12px; border-radius: 8px; color: var(--text); width: 100%; }
+    .nav-dropdown a:hover { background: var(--green-bg); color: var(--green-dark); }
+    .dd-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
+    .nav-btns { display: flex; align-items: center; gap: 8px; }
+    .btn-nav-solid { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--white); background: var(--green); border: 1.5px solid var(--green); padding: 8px 18px; border-radius: 7px; text-decoration: none; white-space: nowrap; transition: background 0.18s; }
+    .btn-nav-solid:hover { background: var(--green-hover); border-color: var(--green-hover); }
+
+    /* HERO */
+    .page-hero { background: var(--dark); position: relative; overflow: hidden; padding-top: 64px; }
+    .page-hero::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(0,176,80,0.055) 1px, transparent 1px); background-size: 36px 36px; pointer-events: none; }
+    .page-hero::after { content: ''; position: absolute; top: -80px; right: -120px; width: 520px; height: 520px; background: radial-gradient(ellipse at center, rgba(0,176,80,0.08) 0%, transparent 70%); pointer-events: none; }
+    .page-hero-inner { max-width: 1200px; margin: 0 auto; padding: 64px 40px 72px; position: relative; z-index: 2; }
+    .page-hero-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); background: rgba(0,176,80,0.12); border: 1px solid rgba(0,176,80,0.25); padding: 4px 12px; border-radius: 100px; margin-bottom: 22px; }
+    .page-hero-tag::before { content: ''; width: 5px; height: 5px; background: var(--green); border-radius: 50%; }
+    .page-hero h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(28px, 3.5vw, 46px); line-height: 1.06; color: var(--white); letter-spacing: -0.03em; margin-bottom: 18px; }
+    .page-hero h1 em { font-style: normal; color: var(--green); }
+    .page-hero-sub { font-size: 15px; line-height: 1.72; color: rgba(255,255,255,0.38); max-width: 560px; }
+    .hero-meta { display: flex; align-items: center; gap: 24px; margin-top: 28px; }
+    .hero-meta-item { font-size: 12.5px; color: rgba(255,255,255,0.25); display: flex; align-items: center; gap: 7px; }
+    .hero-meta-item::before { content: ''; width: 4px; height: 4px; background: var(--green); border-radius: 50%; opacity: 0.7; }
+
+    /* CONTENT */
+    .content-section { padding: 80px 40px; }
+    .content-layout { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 220px 1fr; gap: 64px; align-items: start; }
+    .toc { position: sticky; top: 88px; }
+    .toc-label { font-size: 10px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 14px; }
+    .toc-list { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+    .toc-list a { font-size: 13px; color: var(--text-muted); text-decoration: none; padding: 5px 10px; border-radius: 6px; display: block; line-height: 1.45; transition: color 0.15s, background 0.15s; }
+    .toc-list a:hover { color: var(--green-dark); background: var(--green-bg); }
+
+    /* PROSE */
+    .prose { display: flex; flex-direction: column; gap: 48px; }
+    .prose-section { display: flex; flex-direction: column; gap: 16px; }
+    .prose-section h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.015em; color: var(--text); padding-bottom: 12px; border-bottom: 1.5px solid var(--border); margin-bottom: 4px; }
+    .prose-section h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; color: var(--text); margin-top: 8px; }
+    .prose-section p { font-size: 15px; line-height: 1.78; color: var(--text-muted); }
+    .prose-section p strong { color: var(--text); font-weight: 600; }
+    .prose-section ul { padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+    .prose-section ul li { font-size: 15px; line-height: 1.72; color: var(--text-muted); display: flex; align-items: flex-start; gap: 10px; }
+    .prose-section ul li::before { content: ''; width: 5px; height: 5px; background: var(--green); border-radius: 50%; flex-shrink: 0; margin-top: 8px; }
+    .notice-box { background: var(--off-white); border: 1.5px solid var(--border); border-left: 3px solid var(--green); border-radius: 10px; padding: 18px 20px; }
+    .notice-box p { font-size: 14px; line-height: 1.72; color: var(--text-muted); }
+    .notice-box p strong { color: var(--text); }
+
+    /* CTA */
+    .cta-section { background: var(--dark); padding: 80px 40px; position: relative; overflow: hidden; }
+    .cta-section::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(0,176,80,0.055) 1px, transparent 1px); background-size: 32px 32px; pointer-events: none; }
+    .cta-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 40px; position: relative; z-index: 1; }
+    .cta-text h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(22px, 2.8vw, 34px); color: var(--white); letter-spacing: -0.02em; margin-bottom: 10px; }
+    .cta-text p { font-size: 15px; color: rgba(255,255,255,0.38); line-height: 1.65; max-width: 460px; }
+    .cta-btns { display: flex; gap: 12px; flex-shrink: 0; }
+    .btn-solid { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; color: var(--dark); background: var(--green); border: 1.5px solid var(--green); padding: 12px 24px; border-radius: 9px; text-decoration: none; white-space: nowrap; transition: background 0.18s; }
+    .btn-solid:hover { background: var(--green-mid); border-color: var(--green-mid); }
+    .btn-ghost { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.55); background: transparent; border: 1.5px solid rgba(255,255,255,0.1); padding: 12px 24px; border-radius: 9px; text-decoration: none; white-space: nowrap; transition: border-color 0.18s, color 0.18s; }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.28); color: var(--white); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    .fu { animation: fadeUp 0.55s ease both; }
+    .fu1{animation-delay:0.04s} .fu2{animation-delay:0.14s} .fu3{animation-delay:0.24s}
+
+    @media (max-width: 1080px) {
+      .content-layout { grid-template-columns: 1fr; }
+      .toc { display: none; }
+    }
+    @media (max-width: 760px) {
+      .page-hero-inner { padding: 48px 20px 56px; }
+      .content-section { padding: 56px 20px; }
+      .cta-inner { flex-direction: column; align-items: flex-start; }
+      .cta-btns { flex-wrap: wrap; }
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hero-meta { flex-direction: column; align-items: flex-start; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-box"><span>A</span></div>
+      <div class="logo-words">
+        <strong>Axis Events</strong>
+        <small>Event Logistics</small>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li class="has-dropdown" id="dd-services">
+        <button onclick="toggleDrop('dd-services')">
+          Services
+          <svg class="nav-caret" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+        </button>
+        <div class="nav-dropdown">
+          <a href="freight-services.html"><span class="dd-dot"></span>Domestic Freight</a>
+          <a href="international-freight.html"><span class="dd-dot"></span>International Freight</a>
+          <a href="site-services.html"><span class="dd-dot"></span>On-Site Logistics &amp; Services</a>
+        </div>
+      </li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="faq.html">FAQ</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-btns">
+      <a href="quote-page.html" class="btn-nav-solid">Get a Quote</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-hero-tag fu fu1">Legal</div>
+    <h1 class="fu fu2">Privacy <em>Policy</em></h1>
+    <p class="page-hero-sub fu fu3">We're committed to handling your personal information with care and transparency. This policy explains what we collect, how we use it, and your rights.</p>
+    <div class="hero-meta fu fu3">
+      <div class="hero-meta-item">Last updated: June 2025</div>
+      <div class="hero-meta-item">Axis Events Pty Ltd</div>
+      <div class="hero-meta-item">ABN: [INSERT ABN]</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTENT -->
+<section class="content-section">
+  <div class="content-layout">
+
+    <aside class="toc">
+      <div class="toc-label">On this page</div>
+      <ul class="toc-list">
+        <li><a href="#overview">1. Overview</a></li>
+        <li><a href="#what-we-collect">2. What We Collect</a></li>
+        <li><a href="#how-we-collect">3. How We Collect It</a></li>
+        <li><a href="#how-we-use">4. How We Use It</a></li>
+        <li><a href="#disclosure">5. Disclosure</a></li>
+        <li><a href="#storage">6. Storage &amp; Security</a></li>
+        <li><a href="#cookies">7. Cookies</a></li>
+        <li><a href="#your-rights">8. Your Rights</a></li>
+        <li><a href="#contact-privacy">9. Contact Us</a></li>
+      </ul>
+    </aside>
+
+    <div class="prose">
+
+      <div class="notice-box">
+        <p><strong>Note:</strong> This privacy policy is a working template prepared for pre-launch review. It will be finalised and reviewed by legal counsel before the site goes live. For any privacy enquiries in the meantime, contact us directly.</p>
+      </div>
+
+      <div class="prose-section" id="overview">
+        <h2>1. Overview</h2>
+        <p>Axis Events Pty Ltd (ABN: [INSERT ABN]) is committed to protecting your privacy. We are bound by the Australian Privacy Act 1988 (Cth) and the Australian Privacy Principles (APPs).</p>
+        <p>This Privacy Policy explains how we collect, use, hold, and disclose your personal information. By using our website or engaging our services, you consent to the practices described in this policy.</p>
+      </div>
+
+      <div class="prose-section" id="what-we-collect">
+        <h2>2. What We Collect</h2>
+        <p>We may collect the following types of personal information:</p>
+        <ul>
+          <li>Name, company name, and job title</li>
+          <li>Contact details including email address, phone number, and mailing address</li>
+          <li>Freight and shipment details (dimensions, weight, contents, origin, destination)</li>
+          <li>Payment information (processed securely via third-party payment systems — we do not store card details)</li>
+          <li>Event and exhibitor details relevant to your booking</li>
+          <li>Correspondence and communications with us</li>
+          <li>Website usage data (via cookies and analytics — see Section 7)</li>
+        </ul>
+        <p>We only collect information that is reasonably necessary for our services or as required by law.</p>
+      </div>
+
+      <div class="prose-section" id="how-we-collect">
+        <h2>3. How We Collect It</h2>
+        <p>We collect personal information in the following ways:</p>
+        <ul>
+          <li>Directly from you when you submit a quote request, make a booking, or contact us</li>
+          <li>From event organisers or venue operators who share exhibitor details with us for logistical purposes</li>
+          <li>Through our website via contact forms or quote tools</li>
+          <li>Automatically via cookies and website analytics tools when you visit our site</li>
+        </ul>
+        <p>Where reasonable, we will collect information directly from you rather than from third parties.</p>
+      </div>
+
+      <div class="prose-section" id="how-we-use">
+        <h2>4. How We Use It</h2>
+        <p>We use your personal information to:</p>
+        <ul>
+          <li>Provide and manage freight and logistics services</li>
+          <li>Process bookings, quotes, and invoices</li>
+          <li>Communicate with you about your booking, freight status, and event logistics</li>
+          <li>Coordinate with carriers, venues, and event organisers on your behalf</li>
+          <li>Improve our services and website experience</li>
+          <li>Comply with legal and regulatory obligations</li>
+          <li>Send relevant service updates or announcements (you can opt out at any time)</li>
+        </ul>
+        <p>We will not use your personal information for purposes beyond what is described here without your consent.</p>
+      </div>
+
+      <div class="prose-section" id="disclosure">
+        <h2>5. Disclosure of Your Information</h2>
+        <p>We may share your personal information with:</p>
+        <ul>
+          <li><strong>Carriers and transport providers</strong> — to fulfil freight and delivery services</li>
+          <li><strong>Event organisers and venues</strong> — where necessary to coordinate logistics access and operations</li>
+          <li><strong>Customs and government bodies</strong> — where required for international freight compliance</li>
+          <li><strong>IT and software service providers</strong> — who assist in running our systems and platforms, under confidentiality agreements</li>
+          <li><strong>Legal or regulatory authorities</strong> — where required by law</li>
+        </ul>
+        <p>We do not sell, rent, or trade your personal information to third parties for marketing purposes.</p>
+        <p>Where we disclose information to overseas parties (e.g. for international freight), we take reasonable steps to ensure your information is handled consistently with Australian privacy standards.</p>
+      </div>
+
+      <div class="prose-section" id="storage">
+        <h2>6. Storage &amp; Security</h2>
+        <p>We store personal information securely, using industry-standard measures to protect against unauthorised access, loss, misuse, or disclosure. This includes:</p>
+        <ul>
+          <li>Secure, password-protected systems with access controls</li>
+          <li>Encrypted data transmission (HTTPS) on our website</li>
+          <li>Regular reviews of our data handling practices</li>
+        </ul>
+        <p>We retain personal information for as long as is necessary to provide our services and comply with legal obligations, after which it is securely deleted or de-identified.</p>
+        <p>While we take reasonable precautions, no data transmission or storage system is 100% secure. If you have concerns about a potential data breach, please contact us immediately.</p>
+      </div>
+
+      <div class="prose-section" id="cookies">
+        <h2>7. Cookies &amp; Website Analytics</h2>
+        <p>Our website may use cookies and analytics tools (such as Google Analytics) to understand how visitors use our site. This data is aggregated and anonymised and is used solely to improve the website experience.</p>
+        <p>Cookies are small files stored on your device. You can disable cookies through your browser settings, but doing so may affect some website functionality.</p>
+        <p>We do not use cookies to collect personally identifiable information without your knowledge.</p>
+      </div>
+
+      <div class="prose-section" id="your-rights">
+        <h2>8. Your Rights</h2>
+        <p>Under the Australian Privacy Principles, you have the right to:</p>
+        <ul>
+          <li>Access the personal information we hold about you</li>
+          <li>Request corrections to inaccurate or outdated information</li>
+          <li>Request that we delete your information (subject to legal retention requirements)</li>
+          <li>Opt out of marketing communications at any time</li>
+          <li>Lodge a complaint with the Office of the Australian Information Commissioner (OAIC) if you believe your privacy rights have been breached</li>
+        </ul>
+        <p>To exercise any of these rights, please contact us using the details below. We will respond to requests within a reasonable timeframe.</p>
+      </div>
+
+      <div class="prose-section" id="contact-privacy">
+        <h2>9. Contact Us</h2>
+        <p>For any privacy-related enquiries, requests, or complaints, please contact:</p>
+        <p><strong>Axis Events Pty Ltd</strong><br>
+        Email: <strong>[INSERT EMAIL]</strong><br>
+        Phone: <strong>[INSERT PHONE]</strong><br>
+        ABN: <strong>[INSERT ABN]</strong></p>
+        <p>If you are not satisfied with our response, you can contact the Office of the Australian Information Commissioner (OAIC) at <strong>www.oaic.gov.au</strong>.</p>
+        <p>We reserve the right to update this Privacy Policy at any time. The current version will always be available on our website.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="cta-text">
+      <h2>Have a question about your data?</h2>
+      <p>Get in touch and we'll respond within one business day.</p>
+    </div>
+    <div class="cta-btns">
+      <a href="contact.html" class="btn-solid">Contact Us</a>
+      <a href="terms.html" class="btn-ghost">Terms &amp; Conditions</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  function toggleDrop(id) {
+    const el = document.getElementById(id);
+    const isOpen = el.classList.contains('open');
+    document.querySelectorAll('.has-dropdown').forEach(d => d.classList.remove('open'));
+    if (!isOpen) el.classList.add('open');
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.has-dropdown')) {
+      document.querySelectorAll('.has-dropdown').forEach(d => d.classList.remove('open'));
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>International Freight Enquiry — Axis Events</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green:        #00b050;
+      --green-hover:  #009140;
+      --green-dark:   #007a35;
+      --green-bg:     #e8f9ef;
+      --green-border: rgba(0,176,80,0.22);
+      --dark:         #1a1c1e;
+      --white:        #ffffff;
+      --off-white:    #f5f5f3;
+      --border:       #e5e5e3;
+      --text:         #141414;
+      --text-muted:   #6b7280;
+      --text-faint:   #a0a0a0;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--text); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+    .contact-page { min-height: 100vh; position: relative; overflow: hidden; padding: 80px 40px; }
+
+    .deco-lines { position: absolute; top: 0; right: 0; width: 480px; height: 480px; pointer-events: none; z-index: 0; }
+    .deco-lines svg { width: 100%; height: 100%; }
+    .deco-lines-bl { position: absolute; bottom: 0; left: 0; width: 320px; height: 320px; pointer-events: none; z-index: 0; opacity: 0.5; }
+    .deco-lines-bl svg { width: 100%; height: 100%; }
+
+    .contact-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 2; }
+
+    .contact-intro { margin-bottom: 64px; }
+    .eyebrow { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green-dark); margin-bottom: 14px; }
+    .contact-intro h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(32px, 4vw, 54px); letter-spacing: -0.028em; line-height: 1.06; color: var(--text); margin-bottom: 16px; }
+    .contact-intro h1 em { font-style: normal; color: var(--green); }
+    .contact-intro p { font-size: 15px; line-height: 1.72; color: var(--text-muted); max-width: 520px; margin-top: 6px; }
+
+    .contact-layout { display: grid; grid-template-columns: 1fr 340px; gap: 80px; align-items: start; }
+
+    .contact-form { display: flex; flex-direction: column; gap: 20px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field label { font-size: 12.5px; font-weight: 600; color: var(--text); letter-spacing: 0.02em; }
+    .field label .hint { font-weight: 400; color: var(--text-faint); font-size: 11px; margin-left: 4px; }
+    .field input, .field textarea, .field select {
+      font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text);
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 9px; padding: 12px 14px; outline: none;
+      transition: border-color 0.18s; appearance: none; -webkit-appearance: none;
+    }
+    .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2' stroke='%23a0a0a0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 15px; padding-right: 36px; }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--green); }
+    .field input::placeholder, .field textarea::placeholder { color: var(--text-faint); }
+    .field textarea { resize: vertical; min-height: 120px; }
+
+    /* Divider between sections */
+    .form-section-label { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); padding-bottom: 4px; border-bottom: 1.5px solid var(--border); margin-bottom: 4px; }
+
+    /* Mode toggle */
+    .mode-toggle { display: flex; gap: 10px; }
+    .mode-btn { flex: 1; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; color: var(--text-muted); background: var(--white); border: 1.5px solid var(--border); padding: 10px 14px; border-radius: 8px; cursor: pointer; transition: all 0.18s; text-align: center; }
+    .mode-btn:hover { border-color: var(--green); color: var(--green-dark); background: var(--green-bg); }
+    .mode-btn.selected { border-color: var(--green); color: var(--green-dark); background: var(--green-bg); }
+
+    .contact-type { display: flex; gap: 10px; }
+    .type-btn { flex: 1; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; color: var(--text-muted); background: var(--white); border: 1.5px solid var(--border); padding: 10px 14px; border-radius: 8px; cursor: pointer; transition: all 0.18s; text-align: center; }
+    .type-btn:hover { border-color: var(--green); color: var(--green-dark); background: var(--green-bg); }
+    .type-btn.selected { border-color: var(--green); color: var(--green-dark); background: var(--green-bg); }
+
+    .time-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .time-btn { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; color: var(--text-muted); background: var(--white); border: 1.5px solid var(--border); padding: 8px 14px; border-radius: 8px; cursor: pointer; transition: all 0.18s; }
+    .time-btn:hover { border-color: var(--green); color: var(--green-dark); background: var(--green-bg); }
+    .time-btn.selected { border-color: var(--green); color: var(--green-dark); background: var(--green-bg); }
+
+    .btn-submit { display: inline-flex; align-items: center; gap: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--white); background: var(--green); border: none; padding: 14px 28px; border-radius: 9px; cursor: pointer; transition: background 0.18s, transform 0.15s; margin-top: 4px; }
+    .btn-submit:hover { background: var(--green-hover); transform: translateY(-1px); }
+    .btn-submit svg { width: 13px; height: 13px; }
+
+    .contact-details { display: flex; flex-direction: column; gap: 24px; padding-top: 4px; }
+
+    .response-badge { display: flex; align-items: flex-start; gap: 12px; background: var(--green-bg); border: 1.5px solid var(--green-border); border-radius: 14px; padding: 18px 20px; }
+    .response-badge-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; flex-shrink: 0; margin-top: 5px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
+    .response-badge p { font-size: 13.5px; line-height: 1.6; color: var(--green-dark); }
+    .response-badge strong { font-weight: 600; }
+
+    .side-note { background: var(--off-white); border: 1.5px solid var(--border); border-radius: 14px; padding: 20px; }
+    .side-note h4 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 12px; }
+    .side-note-row { display: flex; align-items: flex-start; gap: 9px; margin-bottom: 10px; }
+    .side-note-row:last-child { margin-bottom: 0; }
+    .sn-dot { width: 5px; height: 5px; background: var(--green); border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+    .sn-text { font-size: 13px; line-height: 1.6; color: var(--text-muted); }
+
+    .back-link { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; color: var(--text-faint); text-decoration: none; margin-bottom: 40px; transition: color 0.18s; }
+    .back-link:hover { color: var(--text); }
+    .back-link svg { width: 13px; height: 13px; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .fu { animation: fadeUp 0.55s ease both; }
+    .fu1{animation-delay:0.04s} .fu2{animation-delay:0.13s} .fu3{animation-delay:0.22s}
+
+    @media (max-width: 1080px) { .contact-layout { grid-template-columns: 1fr; gap: 52px; } }
+    @media (max-width: 760px) {
+      .contact-page { padding: 60px 20px; }
+      .form-row { grid-template-columns: 1fr; }
+      .deco-lines { width: 260px; height: 260px; }
+      .deco-lines-bl { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="contact-page">
+
+  <div class="deco-lines">
+    <svg viewBox="0 0 480 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 480 40 L 380 40 Q 360 40 360 60 L 360 140" stroke="#00b050" stroke-width="1.5" stroke-opacity="0.3" fill="none"/>
+      <path d="M 480 120 L 420 120 Q 400 120 400 140 L 400 220 Q 400 240 380 240 L 300 240" stroke="#00b050" stroke-width="1.5" stroke-opacity="0.18" fill="none"/>
+      <path d="M 480 80 L 440 80" stroke="#00b050" stroke-width="1.5" stroke-opacity="0.5" fill="none"/>
+      <path d="M 480 200 L 460 200" stroke="#00b050" stroke-width="1" stroke-opacity="0.3" fill="none"/>
+      <path d="M 480 320 L 360 320 Q 340 320 340 300 L 340 260" stroke="#00b050" stroke-width="1" stroke-opacity="0.15" fill="none"/>
+      <circle cx="360" cy="140" r="3" fill="#00b050" fill-opacity="0.3"/>
+      <circle cx="400" cy="240" r="3" fill="#00b050" fill-opacity="0.2"/>
+    </svg>
+  </div>
+
+  <div class="deco-lines-bl">
+    <svg viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 0 280 L 100 280 Q 120 280 120 260 L 120 180" stroke="#00b050" stroke-width="1.5" stroke-opacity="0.25" fill="none"/>
+      <path d="M 0 200 L 60 200 Q 80 200 80 180 L 80 120" stroke="#00b050" stroke-width="1" stroke-opacity="0.15" fill="none"/>
+      <path d="M 0 320 L 40 320" stroke="#00b050" stroke-width="1.5" stroke-opacity="0.4" fill="none"/>
+    </svg>
+  </div>
+
+  <div class="contact-inner">
+
+    <a href="international-freight.html" class="back-link fu fu1">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
+      Back to International Freight
+    </a>
+
+    <div class="contact-intro fu fu1">
+      <span class="eyebrow">International Freight Enquiry</span>
+      <h1>Tell us what<br>you're <em>moving.</em></h1>
+      <p>The more detail you give us, the faster we can come back with a proper answer. Show date, origin, destination — even rough numbers help.</p>
+    </div>
+
+    <div class="contact-layout">
+
+      <form class="contact-form fu fu2">
+
+        <!-- YOUR DETAILS -->
+        <div class="form-section-label">Your details</div>
+        <div class="form-row">
+          <div class="field">
+            <label>Name</label>
+            <input type="text" placeholder="Your name" />
+          </div>
+          <div class="field">
+            <label>Company</label>
+            <input type="text" placeholder="Company name" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>Email</label>
+            <input type="email" placeholder="you@company.com" />
+          </div>
+          <div class="field">
+            <label>Phone <span class="hint">— optional</span></label>
+            <input type="tel" placeholder="+61" />
+          </div>
+        </div>
+
+        <!-- SHIPMENT DETAILS -->
+        <div class="form-section-label" style="margin-top: 8px;">Shipment details</div>
+
+        <div class="field">
+          <label>Freight mode</label>
+          <div class="mode-toggle">
+            <button type="button" class="mode-btn" onclick="selectMode(this)">Air freight</button>
+            <button type="button" class="mode-btn" onclick="selectMode(this)">Sea freight</button>
+            <button type="button" class="mode-btn" onclick="selectMode(this)">Not sure yet</button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label>Origin country / city</label>
+            <input type="text" placeholder="e.g. Germany, Frankfurt" />
+          </div>
+          <div class="field">
+            <label>Destination country / city</label>
+            <input type="text" placeholder="e.g. Australia, Melbourne" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label>What are you shipping?</label>
+            <select>
+              <option value="" disabled selected>Select type</option>
+              <option>Boxes / cartons</option>
+              <option>Pallets</option>
+              <option>Full container load (FCL)</option>
+              <option>Display stand / exhibit</option>
+              <option>Crates / flightcases</option>
+              <option>Machinery / equipment</option>
+              <option>Mixed / multiple types</option>
+              <option>Not sure yet</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Anything else we should know? <span class="hint">— optional</span></label>
+          <textarea placeholder="Fragile items, special handling requirements, tight deadlines, previous shipper issues — anything useful."></textarea>
+        </div>
+
+        <div>
+          <button type="submit" class="btn-submit">Send enquiry <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg></button>
+        </div>
+
+      </form>
+
+      <!-- SIDEBAR -->
+      <div class="contact-details fu fu3">
+        <div class="response-badge">
+          <div class="response-badge-dot"></div>
+          <p><strong>We'll get back to you by email within 24 hours.</strong> If it makes sense, we can arrange a video call to run through your requirements and put a proper plan together.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function selectMode(btn) {
+    btn.closest('.mode-toggle').querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+</script>
+
+</body>
+</html>
