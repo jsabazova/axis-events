@@ -1,95 +1,85 @@
 export const theme = {
   colors: {
-    // Brand colors based on actual logo and brand identity
-    primary: '#7CB518', // More professional green - better contrast
-    primaryLight: '#A8E533', // Original bright green for accents
-    primaryDark: '#5A8A0F',
+    green:       '#00b050',
+    greenHover:  '#009140',
+    greenDark:   '#007a35',
+    greenMid:    '#00c45a',
+    greenBg:     '#e8f9ef',
+    greenBorder: 'rgba(0,176,80,0.22)',
+    dark:        '#1a1c1e',
+    dark2:       '#222527',
+    dark3:       '#2a2d30',
+    darkCard:    '#1f2123',
+    white:       '#ffffff',
+    offWhite:    '#f5f5f3',
+    border:      '#e5e5e3',
+    text:        '#141414',
+    textMuted:   '#6b7280',
+    textFaint:   '#a0a0a0',
 
-    // Bright accent green for high visibility (equipment/onsite)
-    accent: '#D4FF00',
-
-    // Neutral colors
-    white: '#FFFFFF',
-    black: '#000000',
-    gray: {
-      50: '#F9FAFB',
-      100: '#F3F4F6',
-      200: '#E5E7EB',
-      300: '#D1D5DB',
-      400: '#9CA3AF',
-      500: '#6B7280',
-      600: '#4B5563',
-      700: '#374151',
-      800: '#1F2937',
-      900: '#111827'
-    },
-
-    // Status colors
-    success: '#10B981',
-    warning: '#F59E0B',
-    error: '#EF4444',
-    info: '#3B82F6',
+    // aliases for compatibility
+    primary:     '#00b050',
+    primaryDark: '#007a35',
   },
 
   fonts: {
-    primary: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif',
-    secondary: '"Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif',
+    display: "'Syne', sans-serif",
+    body:    "'DM Sans', sans-serif",
+    primary: "'DM Sans', sans-serif",
   },
 
   fontSizes: {
-    xs: '0.75rem',    // 12px
-    sm: '0.875rem',   // 14px
-    base: '1rem',     // 16px
-    lg: '1.125rem',   // 18px
-    xl: '1.25rem',    // 20px
-    '2xl': '1.5rem',  // 24px
-    '3xl': '1.875rem', // 30px
-    '4xl': '2.25rem', // 36px
-    '5xl': '3rem',    // 48px
+    xs:   '0.75rem',
+    sm:   '0.875rem',
+    base: '1rem',
+    lg:   '1.125rem',
+    xl:   '1.25rem',
+    '2xl': '1.5rem',
+    '3xl': '1.875rem',
+    '4xl': '2.25rem',
+    '5xl': '3rem',
   },
 
   fontWeights: {
-    normal: 400,
-    medium: 500,
+    normal:   400,
+    medium:   500,
     semibold: 600,
-    bold: 700,
+    bold:     700,
+    extrabold: 800,
   },
 
   spacing: {
-    xs: '0.25rem',   // 4px
-    sm: '0.5rem',    // 8px
-    md: '1rem',      // 16px
-    lg: '1.5rem',    // 24px
-    xl: '2rem',      // 32px
-    '2xl': '3rem',   // 48px
-    '3xl': '4rem',   // 64px
-    '4xl': '6rem',   // 96px
+    xs:   '0.25rem',
+    sm:   '0.5rem',
+    md:   '1rem',
+    lg:   '1.5rem',
+    xl:   '2rem',
+    '2xl': '3rem',
+    '3xl': '4rem',
+    '4xl': '5.5rem',
   },
 
   breakpoints: {
-    sm: '640px',
-    md: '768px',
-    lg: '1024px',
-    xl: '1280px',
+    sm:  '640px',
+    md:  '768px',
+    lg:  '1024px',
+    xl:  '1280px',
     '2xl': '1536px',
   },
 
   shadows: {
-    sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-    base: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-    md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-    lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-    xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+    sm:  '0 1px 2px 0 rgba(0,0,0,0.05)',
+    md:  '0 4px 6px -1px rgba(0,0,0,0.1)',
+    lg:  '0 10px 15px -3px rgba(0,0,0,0.1)',
+    xl:  '0 20px 25px -5px rgba(0,0,0,0.1)',
   },
 
   borderRadius: {
-    none: '0',
-    sm: '0.125rem',   // 2px
-    base: '0.25rem',  // 4px
-    md: '0.375rem',   // 6px
-    lg: '0.5rem',     // 8px
-    xl: '0.75rem',    // 12px
-    '2xl': '1rem',    // 16px
+    sm:   '0.25rem',
+    md:   '0.5rem',
+    lg:   '0.75rem',
+    xl:   '1rem',
+    '2xl': '1.25rem',
     full: '9999px',
   },
 };

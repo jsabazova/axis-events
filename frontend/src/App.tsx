@@ -11,6 +11,8 @@ import SiteServicesPage from './pages/public/SiteServicesPage';
 import FreightServicesPage from './pages/public/FreightServicesPage';
 import InternationalFreightPage from './pages/public/InternationalFreightPage';
 import FAQPage from './pages/public/FAQPage';
+import ContactPage from './pages/public/ContactPage';
+import OnsiteLogisticsPage from './pages/public/OnsiteLogisticsPage';
 import QuotePage from './pages/quote/QuotePage';
 
 function App() {
@@ -26,8 +28,9 @@ function App() {
             <Route path="/services/freight" element={<FreightServicesPage />} />
             <Route path="/services/international-freight" element={<InternationalFreightPage />} />
             <Route path="/faq" element={<FAQPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/services/onsite-logistics" element={<OnsiteLogisticsPage />} />
             <Route path="/quote" element={<QuotePage />} />
-            {/* Add more routes as needed */}
           </Routes>
         </Layout>
       </Router>
