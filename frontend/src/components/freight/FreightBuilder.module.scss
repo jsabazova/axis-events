@@ -1,0 +1,252 @@
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── CONTAINER ─────────────────────────────────────────────────────────────────
+.builderContainer {
+  max-width: 800px;
+  width: 100%;
+  background: white;
+  border-radius: 40px;
+  padding: 2.5rem;
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.3);
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #000000;
+}
+
+.subhead {
+  color: #333333;
+  margin-bottom: 2rem;
+  font-size: 1.2rem;
+}
+
+// ── IMAGE GRID / CARD ─────────────────────────────────────────────────────────
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.imageCard {
+  background: #ffffff;
+  border: 3px solid #dddddd;
+  border-radius: 28px;
+  padding: 2rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  color: #000000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-size: 1.2rem;
+
+  &:hover {
+    border-color: #00c05a;
+    background: #f9f9f9;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 168, 107, 0.15);
+  }
+
+  img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+  }
+
+  .itemEmoji {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+}
+
+// ── OPTION PANEL ──────────────────────────────────────────────────────────────
+.optionPanel {
+  background: #f9f9f9;
+  border-radius: 32px;
+  padding: 2rem;
+  border: 3px solid #00c05a;
+  color: #000000;
+  animation: slideUp 0.3s ease;
+  font-size: 1.1rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #000000;
+}
+
+// ── OPTION ROW / BUTTON ───────────────────────────────────────────────────────
+.optionRow {
+  display: flex;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+}
+
+.optionButton {
+  background: white;
+  border: 3px solid #dddddd;
+  border-radius: 50px;
+  padding: 1rem 2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1 1 auto;
+  color: #000000;
+  font-size: 1.1rem;
+
+  &:hover {
+    border-color: #00c05a;
+    background: #f0fdf4;
+  }
+
+  &.optionButtonActive {
+    background: #00c05a;
+    border-color: #00c05a;
+    color: white;
+
+    &:hover { background: #00a84e; }
+  }
+}
+
+// ── FORM GROUP ────────────────────────────────────────────────────────────────
+.formGroup {
+  margin-bottom: 1.5rem;
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #000000;
+    font-size: 1.1rem;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 3px solid #dddddd;
+    border-radius: 20px;
+    font-size: 1.1rem;
+    color: #000000;
+    background: white;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: #00c05a;
+    }
+  }
+
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+}
+
+// ── BACK BUTTON ───────────────────────────────────────────────────────────────
+.backButton {
+  background: none;
+  border: none;
+  color: #00c05a;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.75rem 0;
+  margin-bottom: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &:hover { text-decoration: underline; }
+}
+
+// ── PRIMARY BUTTON ────────────────────────────────────────────────────────────
+.primaryButton {
+  background: #00c05a;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 1.25rem 2rem;
+  font-weight: 700;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 100%;
+  margin-top: 1rem;
+
+  &:hover { background: #00a84e; }
+}
+
+// ── SUMMARY AREA ─────────────────────────────────────────────────────────────
+.summaryArea {
+  background: #f9f9f9;
+  border-radius: 28px;
+  padding: 2rem;
+  margin-top: 2rem;
+  color: #000000;
+  border: 2px solid #e5e7eb;
+}
+
+.summaryItem {
+  background: white;
+  border-radius: 20px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  border: 2px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.summaryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #00c05a;
+}
+
+.itemBadge {
+  background: #00c05a;
+  color: white;
+  padding: 0.25rem 1rem;
+  border-radius: 40px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.summaryDetails {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.summaryDesc {
+  color: #555;
+  font-size: 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed #ccc;
+}

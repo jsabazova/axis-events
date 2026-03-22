@@ -1,0 +1,77 @@
+Table,Column,Type,Required,Notes
+organisers,id,Auto ID,Auto,Primary key - auto generated
+organisers,name,Text,Yes,Full company name of the organiser
+organisers,state,Text,No,"State: NSW / VIC / QLD / SA / WA / TAS / ACT / NT"
+organisers,phone,Text,No,Main contact phone number
+organisers,email,Text,No,Main contact email
+organisers,website,Text,No,Website URL
+organisers,abn,Text,No,Australian Business Number (XX XXX XXX XXX)
+organisers,address,Text,No,Street / postal address
+organisers,notes,Text,No,Any internal notes about this organiser
+,,,,
+org_contacts,id,Auto ID,Auto,Primary key
+org_contacts,organiser_id,Reference,Auto,Links to organisers table
+org_contacts,name,Text,Yes,Staff member full name
+org_contacts,role,Text,No,"Job title / role e.g. Event Manager, Director"
+org_contacts,phone,Text,No,Direct phone number
+org_contacts,email,Text,No,Direct email
+,,,,
+suppliers,id,Auto ID,Auto,Primary key
+suppliers,type,Text,Yes,"One of: equipment / transport / venue / labour"
+suppliers,name,Text,Yes,Supplier company name
+suppliers,state,Text,No,"State: NSW / VIC / QLD / SA / WA / TAS / ACT / NT"
+suppliers,phone,Text,No,Main phone
+suppliers,email,Text,No,Main email
+suppliers,website,Text,No,Website
+suppliers,abn,Text,No,ABN
+suppliers,address,Text,No,Address
+suppliers,notes,Text,No,Internal notes
+suppliers,forklift,Yes/No,No,"VENUE ONLY - Does venue have forklift access? (Yes / No)"
+suppliers,bdouble,Yes/No,No,"VENUE ONLY - B-Double truck access allowed? (Yes / No)"
+suppliers,semi,Yes/No,No,"VENUE ONLY - Semi-trailer access allowed? (Yes / No)"
+suppliers,dock,Text,No,VENUE ONLY - Dock / loading bay details
+suppliers,door,Text,No,VENUE ONLY - Door / gate number or description
+suppliers,dropoff,Text,No,VENUE ONLY - Drop-off instructions
+,,,,
+supplier_contacts,id,Auto ID,Auto,Primary key
+supplier_contacts,supplier_id,Reference,Auto,Links to suppliers table
+supplier_contacts,name,Text,Yes,Contact full name
+supplier_contacts,role,Text,No,Role / job title
+supplier_contacts,phone,Text,No,Direct phone
+supplier_contacts,email,Text,No,Direct email
+,,,,
+rate_cards,id,Auto ID,Auto,Primary key
+rate_cards,name,Text,Yes,"Rate card name e.g. ""ICC Standard 2026"""
+rate_cards,provider,Text,No,"Provider name e.g. ""ICC"" or ""MCEC"""
+rate_cards,storage_price,Number,No,Storage price per day (dollars)
+rate_cards,notes,Text,No,Internal notes
+,,,,
+rate_card_tiers,id,Auto ID,Auto,Primary key
+rate_card_tiers,rate_card_id,Reference,Auto,Links to rate_cards table
+rate_card_tiers,from_count,Number,Yes,"Starting lift count for this tier e.g. 1"
+rate_card_tiers,to_count,Number,No,"Ending lift count for this tier e.g. 4 (leave blank for open-ended e.g. 11+)"
+rate_card_tiers,price,Number,Yes,Price per lift at this tier (dollars)
+rate_card_tiers,sort_order,Number,No,Display order (0 = first)
+,,,,
+shows,id,Auto ID,Auto,Primary key
+shows,name,Text,Yes,"Full show name e.g. ""Sydney Build 2026"""
+shows,code,Text,No,"Short code e.g. ""SYD-BUILD-26"" (must be unique)"
+shows,status,Text,No,"draft / active / completed (default: draft)"
+shows,organiser_id,Reference,No,Link to organisers table
+shows,venue_id,Reference,No,Link to suppliers table (venues only)
+shows,show_start,Date,No,Show open date
+shows,show_end,Date,No,Show close date
+shows,bump_in_start,Date,No,First bump-in day
+shows,bump_in_end,Date,No,Last bump-in day
+shows,bump_out_start,Date,No,First bump-out day
+shows,bump_out_end,Date,No,Last bump-out day
+shows,fork_payment,Text,No,"rate = charge per rate card / free = no charge"
+shows,rate_card_id,Reference,No,Which rate card applies (if fork_payment = rate)
+shows,storage_payment,Text,No,"rate = charge per storage_price / free = no charge"
+shows,storage_price,Number,No,Custom storage price per day for this show (overrides rate card)
+shows,notes,Text,No,Internal notes about this show
+,,,,
+quotes,id,Auto ID,Auto,Primary key
+quotes,show_id,Reference,No,Links to shows table
+quotes,status,Text,No,"draft / sent / accepted / rejected (default: draft)"
+quotes,notes,Text,No,Quote notes

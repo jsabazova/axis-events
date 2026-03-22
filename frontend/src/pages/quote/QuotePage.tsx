@@ -1,263 +1,6 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styles from './QuotePage.module.scss';
 import FreightBuilder, { type FreightItem } from '../../components/freight/FreightBuilder';
-
-const QuoteWrapper = styled.div`
-  background: #f3f4f6;
-  min-height: calc(100vh - 80px);
-  width: 100%;
-  max-width: 100vw;
-  overflow-x: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-`;
-
-const Container = styled.div`
-  max-width: 900px;
-  width: 100%;
-  background: white;
-  border-radius: 40px;
-  padding: 2.5rem;
-  box-shadow: 0 30px 60px -15px rgba(0,0,0,0.3);
-  margin: 0 auto;
-`;
-
-const Title = styled.h1`
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: #000000;
-`;
-
-const QuoteBadge = styled.div`
-  background: ${({ theme }) => theme.colors.primary};
-  color: white;
-  padding: 0.5rem 1.5rem;
-  border-radius: 50px;
-  display: inline-block;
-  margin-bottom: 2rem;
-  font-weight: 600;
-  font-size: 1.1rem;
-`;
-
-const ProgressSteps = styled.div`
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-`;
-
-const StepIndicator = styled.div<{ active?: boolean; completed?: boolean }>`
-  flex: 1;
-  height: 8px;
-  background: ${({ active, completed, theme }) =>
-    active || completed ? theme.colors.primary : '#dddddd'};
-  border-radius: 4px;
-  transition: background 0.3s ease;
-`;
-
-const Section = styled.div`
-  background: #f9f9f9;
-  border-radius: 28px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  border: 2px solid #e5e7eb;
-  animation: fadeIn 0.3s ease;
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  &.hidden {
-    display: none;
-  }
-`;
-
-const SectionTitle = styled.div`
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  color: #000000;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`;
-
-const ShowGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const ShowCard = styled.div<{ selected?: boolean }>`
-  background: white;
-  border: 3px solid ${({ selected, theme }) => selected ? theme.colors.primary : '#dddddd'};
-  border-radius: 24px;
-  padding: 2rem 1.5rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  background: ${({ selected }) => selected ? '#f0fdf4' : 'white'};
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.primary};
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 168, 107, 0.15);
-  }
-`;
-
-const ShowEmoji = styled.div`
-  font-size: 3rem;
-  margin-bottom: 1rem;
-`;
-
-const ShowName = styled.div`
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: #000;
-`;
-
-const ShowVenue = styled.div`
-  color: #555;
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
-`;
-
-const ShowDates = styled.div`
-  color: ${({ theme }) => theme.colors.primary};
-  font-weight: 600;
-  font-size: 1rem;
-`;
-
-const FormGroup = styled.div`
-  margin-bottom: 1.5rem;
-
-  label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: #000000;
-    font-size: 1.1rem;
-  }
-
-  input {
-    width: 100%;
-    padding: 1rem 1.25rem;
-    border: 3px solid #dddddd;
-    border-radius: 20px;
-    font-size: 1.1rem;
-    color: #000000;
-    background: white;
-
-    &:focus {
-      outline: none;
-      border-color: ${({ theme }) => theme.colors.primary};
-    }
-  }
-`;
-
-const OptionRow = styled.div`
-  display: flex;
-  gap: 1rem;
-  margin: 1rem 0;
-  flex-wrap: wrap;
-`;
-
-const OptionButton = styled.button<{ active?: boolean }>`
-  background: ${({ active, theme }) => active ? theme.colors.primary : 'white'};
-  border: 3px solid ${({ active, theme }) => active ? theme.colors.primary : '#dddddd'};
-  border-radius: 50px;
-  padding: 1rem 2rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  flex: 1 1 auto;
-  color: ${({ active }) => active ? 'white' : '#000000'};
-  font-size: 1.1rem;
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.primary};
-    background: ${({ active, theme }) => active ? theme.colors.primaryDark : '#f0fdf4'};
-  }
-`;
-
-const PrimaryButton = styled.button`
-  background: ${({ theme }) => theme.colors.primary};
-  color: white;
-  border: none;
-  border-radius: 50px;
-  padding: 1.25rem 2rem;
-  font-weight: 700;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: background 0.2s;
-  width: 100%;
-  margin-top: 1rem;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.primaryDark};
-  }
-`;
-
-const LoadingScreen = styled.div`
-  background: #f9f9f9;
-  border-radius: 28px;
-  padding: 3rem;
-  text-align: center;
-  margin: 2rem 0;
-  border: 3px solid ${({ theme }) => theme.colors.primary};
-`;
-
-const LoadingSpinner = styled.div`
-  width: 60px;
-  height: 60px;
-  border: 5px solid #ddd;
-  border-top-color: ${({ theme }) => theme.colors.primary};
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 2rem auto;
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-`;
-
-const QuoteSummary = styled.div`
-  background: white;
-  border: 3px solid ${({ theme }) => theme.colors.primary};
-  border-radius: 28px;
-  padding: 2rem;
-  margin: 2rem 0;
-`;
-
-const SummaryRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 1rem 0;
-  border-bottom: 1px solid #eee;
-  font-size: 1.1rem;
-
-  &:last-child {
-    border-bottom: none;
-  }
-`;
-
-const TotalPrice = styled.div`
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: ${({ theme }) => theme.colors.primary};
-  text-align: center;
-  margin: 1.5rem 0;
-`;
-
 
 interface Show {
   id: string;
@@ -406,26 +149,25 @@ const QuotePage: React.FC = () => {
   };
 
   return (
-    <QuoteWrapper>
-      <Container>
-        <ProgressSteps>
+    <div className={styles.quoteWrapper}>
+      <div className={styles.container}>
+        <div className={styles.progressSteps}>
           {[1,2,3,4,5,6].map(step => (
-            <StepIndicator
+            <div
               key={step}
-              active={currentStep === step}
-              completed={currentStep > step}
+              className={`${styles.stepIndicator} ${currentStep === step ? styles.stepActive : ''} ${currentStep > step ? styles.stepCompleted : ''}`}
             />
           ))}
-        </ProgressSteps>
+        </div>
 
-        <Title>Quote Details</Title>
-        <QuoteBadge>Quote ID: #{quoteId}</QuoteBadge>
+        <h1 className={styles.title}>Quote Details</h1>
+        <div className={styles.quoteBadge}>Quote ID: #{quoteId}</div>
 
         {/* Step 1: Show Selection */}
         {currentStep === 1 && (
-          <Section>
-            <SectionTitle>🎪 Select your show</SectionTitle>
-            <FormGroup>
+          <div className={styles.section}>
+            <div className={styles.sectionTitle}>🎪 Select your show</div>
+            <div className={styles.formGroup}>
               <label>Search shows</label>
               <input
                 type="text"
@@ -433,46 +175,46 @@ const QuotePage: React.FC = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-            </FormGroup>
-            <ShowGrid>
+            </div>
+            <div className={styles.showGrid}>
               {filteredShows.map(show => (
-                <ShowCard
+                <div
                   key={show.id}
-                  selected={selectedShow?.id === show.id}
+                  className={`${styles.showCard} ${selectedShow?.id === show.id ? styles.showCardSelected : ''}`}
                   onClick={() => handleShowSelect(show)}
                 >
-                  <ShowEmoji>{show.emoji}</ShowEmoji>
-                  <ShowName>{show.name}</ShowName>
-                  <ShowVenue>{show.venue}</ShowVenue>
-                  <ShowDates>{show.dates}</ShowDates>
-                </ShowCard>
+                  <div className={styles.showEmoji}>{show.emoji}</div>
+                  <div className={styles.showName}>{show.name}</div>
+                  <div className={styles.showVenue}>{show.venue}</div>
+                  <div className={styles.showDates}>{show.dates}</div>
+                </div>
               ))}
-            </ShowGrid>
-          </Section>
+            </div>
+          </div>
         )}
 
         {/* Step 2: Freight In */}
         {currentStep === 2 && (
-          <Section>
-            <SectionTitle>📦 Freight into show?</SectionTitle>
-            <OptionRow>
-              <OptionButton
-                active={freightIn === true}
+          <div className={styles.section}>
+            <div className={styles.sectionTitle}>📦 Freight into show?</div>
+            <div className={styles.optionRow}>
+              <button
+                className={`${styles.optionButton} ${freightIn === true ? styles.optionButtonActive : ''}`}
                 onClick={() => handleFreightInResponse(true)}
               >
                 Yes, I need pickup
-              </OptionButton>
-              <OptionButton
-                active={freightIn === false}
+              </button>
+              <button
+                className={`${styles.optionButton} ${freightIn === false ? styles.optionButtonActive : ''}`}
                 onClick={() => handleFreightInResponse(false)}
               >
                 No
-              </OptionButton>
-            </OptionRow>
+              </button>
+            </div>
 
             {freightIn === true && (
               <div>
-                <FormGroup>
+                <div className={styles.formGroup}>
                   <label>Pickup address</label>
                   <input
                     type="text"
@@ -480,68 +222,68 @@ const QuotePage: React.FC = () => {
                     value={pickupAddress}
                     onChange={(e) => setPickupAddress(e.target.value)}
                   />
-                </FormGroup>
-                <FormGroup>
+                </div>
+                <div className={styles.formGroup}>
                   <label>Forklift at pickup?</label>
-                  <OptionRow>
-                    <OptionButton
-                      active={pickupForklift === true}
+                  <div className={styles.optionRow}>
+                    <button
+                      className={`${styles.optionButton} ${pickupForklift === true ? styles.optionButtonActive : ''}`}
                       onClick={() => {
                         setPickupForklift(true);
                         setTimeout(handlePickupComplete, 100);
                       }}
                     >
                       Yes, they have forklift
-                    </OptionButton>
-                    <OptionButton
-                      active={pickupForklift === false}
+                    </button>
+                    <button
+                      className={`${styles.optionButton} ${pickupForklift === false ? styles.optionButtonActive : ''}`}
                       onClick={() => {
                         setPickupForklift(false);
                         setTimeout(handlePickupComplete, 100);
                       }}
                     >
                       No (tailgate truck required)
-                    </OptionButton>
-                  </OptionRow>
-                </FormGroup>
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
-          </Section>
+          </div>
         )}
 
         {/* Step 3: Freight Builder (Pickup Items) */}
         {currentStep === 3 && (
-          <Section>
-            <SectionTitle>🔨 What are you sending to the show?</SectionTitle>
+          <div className={styles.section}>
+            <div className={styles.sectionTitle}>🔨 What are you sending to the show?</div>
             <FreightBuilder
               onItemsChange={setFreightItems}
               onContinue={handleFreightItemsComplete}
             />
-          </Section>
+          </div>
         )}
 
         {/* Step 4: Freight Out */}
         {currentStep === 4 && (
-          <Section>
-            <SectionTitle>📦 Freight out of show?</SectionTitle>
-            <OptionRow>
-              <OptionButton
-                active={freightOut === true}
+          <div className={styles.section}>
+            <div className={styles.sectionTitle}>📦 Freight out of show?</div>
+            <div className={styles.optionRow}>
+              <button
+                className={`${styles.optionButton} ${freightOut === true ? styles.optionButtonActive : ''}`}
                 onClick={() => handleFreightOutResponse(true)}
               >
                 Yes, need delivery
-              </OptionButton>
-              <OptionButton
-                active={freightOut === false}
+              </button>
+              <button
+                className={`${styles.optionButton} ${freightOut === false ? styles.optionButtonActive : ''}`}
                 onClick={() => handleFreightOutResponse(false)}
               >
                 No
-              </OptionButton>
-            </OptionRow>
+              </button>
+            </div>
 
             {freightOut === true && (
               <div>
-                <FormGroup>
+                <div className={styles.formGroup}>
                   <label>Delivery address</label>
                   <input
                     type="text"
@@ -549,118 +291,121 @@ const QuotePage: React.FC = () => {
                     value={deliveryAddress}
                     onChange={(e) => setDeliveryAddress(e.target.value)}
                   />
-                </FormGroup>
-                <FormGroup>
+                </div>
+                <div className={styles.formGroup}>
                   <label>Forklift at delivery?</label>
-                  <OptionRow>
-                    <OptionButton
-                      active={deliveryForklift === true}
+                  <div className={styles.optionRow}>
+                    <button
+                      className={`${styles.optionButton} ${deliveryForklift === true ? styles.optionButtonActive : ''}`}
                       onClick={() => {
                         setDeliveryForklift(true);
                         setTimeout(handleDeliveryComplete, 100);
                       }}
                     >
                       Yes, they have forklift
-                    </OptionButton>
-                    <OptionButton
-                      active={deliveryForklift === false}
+                    </button>
+                    <button
+                      className={`${styles.optionButton} ${deliveryForklift === false ? styles.optionButtonActive : ''}`}
                       onClick={() => {
                         setDeliveryForklift(false);
                         setTimeout(handleDeliveryComplete, 100);
                       }}
                     >
                       No (tailgate truck required)
-                    </OptionButton>
-                  </OptionRow>
-                </FormGroup>
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
-          </Section>
+          </div>
         )}
 
         {/* Step 5: Freight Builder (Delivery Items) */}
         {currentStep === 5 && (
-          <Section>
-            <SectionTitle>🔨 What items are coming back from the show?</SectionTitle>
+          <div className={styles.section}>
+            <div className={styles.sectionTitle}>🔨 What items are coming back from the show?</div>
             <FreightBuilder
               onItemsChange={setFreightItems}
               onContinue={() => startLoading()}
             />
-          </Section>
+          </div>
         )}
 
         {/* Step 6: Loading & Quote */}
         {currentStep === 6 && (
           <div>
             {isLoading && (
-              <LoadingScreen>
-                <LoadingSpinner />
+              <div className={styles.loadingScreen}>
+                <div className={styles.loadingSpinner} />
                 <div style={{ fontSize: '1.3rem', color: '#333', margin: '1rem 0' }}>
                   Building your quote...
                 </div>
                 <div style={{ color: '#666', fontStyle: 'italic' }}>
                   Analyzing requirements
                 </div>
-              </LoadingScreen>
+              </div>
             )}
 
             {showQuote && (
               <div>
-                <QuoteSummary>
+                <div className={styles.quoteSummary}>
                   <h2 style={{ marginBottom: '1.5rem' }}>Your Quote</h2>
 
-                  <SummaryRow>
+                  <div className={styles.summaryRow}>
                     <span style={{ fontWeight: '600', color: '#333' }}>Show:</span>
                     <span style={{ color: '#000' }}>{selectedShow?.name}</span>
-                  </SummaryRow>
-                  <SummaryRow>
+                  </div>
+                  <div className={styles.summaryRow}>
                     <span style={{ fontWeight: '600', color: '#333' }}>Venue:</span>
                     <span style={{ color: '#000' }}>{selectedShow?.venue}</span>
-                  </SummaryRow>
-                  <SummaryRow>
+                  </div>
+                  <div className={styles.summaryRow}>
                     <span style={{ fontWeight: '600', color: '#333' }}>Dates:</span>
                     <span style={{ color: '#000' }}>{selectedShow?.dates}</span>
-                  </SummaryRow>
-
-                  <div style={{ background: '#f9f9f9', borderRadius: '20px', padding: '1.5rem', margin: '1.5rem 0' }}>
-                    <SummaryRow>
-                      <span style={{ fontWeight: '600', color: '#333' }}>Freight into show:</span>
-                      <span style={{ color: '#000' }}>${freightIn ? '450' : '0'}</span>
-                    </SummaryRow>
-                    <SummaryRow>
-                      <span style={{ fontWeight: '600', color: '#333' }}>Freight out of show:</span>
-                      <span style={{ color: '#000' }}>${freightOut ? '450' : '0'}</span>
-                    </SummaryRow>
-                    <SummaryRow>
-                      <span style={{ fontWeight: '600', color: '#333' }}>Items (estimated):</span>
-                      <span style={{ color: '#000' }}>${freightItems.length * 150}</span>
-                    </SummaryRow>
-                    <SummaryRow>
-                      <span style={{ fontWeight: '600', color: '#333' }}>Tailgate surcharge:</span>
-                      <span style={{ color: '#000' }}>${(pickupForklift === false ? 65 : 0) + (deliveryForklift === false ? 65 : 0)}</span>
-                    </SummaryRow>
-                    <SummaryRow>
-                      <span style={{ fontWeight: '600', color: '#333' }}>Insurance (basic):</span>
-                      <span style={{ color: '#000' }}>$85</span>
-                    </SummaryRow>
                   </div>
 
-                  <TotalPrice>${calculateTotal()}</TotalPrice>
+                  <div style={{ background: '#f9f9f9', borderRadius: '20px', padding: '1.5rem', margin: '1.5rem 0' }}>
+                    <div className={styles.summaryRow}>
+                      <span style={{ fontWeight: '600', color: '#333' }}>Freight into show:</span>
+                      <span style={{ color: '#000' }}>${freightIn ? '450' : '0'}</span>
+                    </div>
+                    <div className={styles.summaryRow}>
+                      <span style={{ fontWeight: '600', color: '#333' }}>Freight out of show:</span>
+                      <span style={{ color: '#000' }}>${freightOut ? '450' : '0'}</span>
+                    </div>
+                    <div className={styles.summaryRow}>
+                      <span style={{ fontWeight: '600', color: '#333' }}>Items (estimated):</span>
+                      <span style={{ color: '#000' }}>${freightItems.length * 150}</span>
+                    </div>
+                    <div className={styles.summaryRow}>
+                      <span style={{ fontWeight: '600', color: '#333' }}>Tailgate surcharge:</span>
+                      <span style={{ color: '#000' }}>${(pickupForklift === false ? 65 : 0) + (deliveryForklift === false ? 65 : 0)}</span>
+                    </div>
+                    <div className={styles.summaryRow}>
+                      <span style={{ fontWeight: '600', color: '#333' }}>Insurance (basic):</span>
+                      <span style={{ color: '#000' }}>$85</span>
+                    </div>
+                  </div>
+
+                  <div className={styles.totalPrice}>${calculateTotal()}</div>
 
                   <div style={{ textAlign: 'center', color: '#666', marginTop: '1rem' }}>
                     <p>Quote valid for 7 days • Includes basic cargo insurance • GST included</p>
                   </div>
-                </QuoteSummary>
+                </div>
 
-                <PrimaryButton onClick={() => alert('Quote accepted! Thank you for choosing Axis Events.')}>
+                <button
+                  className={styles.primaryButton}
+                  onClick={() => alert('Quote accepted! Thank you for choosing Axis Events.')}
+                >
                   Accept Quote & Proceed →
-                </PrimaryButton>
+                </button>
               </div>
             )}
           </div>
         )}
-      </Container>
-    </QuoteWrapper>
+      </div>
+    </div>
   );
 };
 

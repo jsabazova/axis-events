@@ -1,0 +1,450 @@
+// ── LAYOUT ────────────────────────────────────────────────────────────────────
+.layoutWrap {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  height: 100vh;
+  overflow: hidden;
+  transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #f5f5f3;
+  font-family: 'DM Sans', sans-serif;
+
+  &.collapsed {
+    grid-template-columns: 56px 1fr;
+  }
+}
+
+// ── SIDEBAR ───────────────────────────────────────────────────────────────────
+.sidebar {
+  background: #16181a;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  position: relative;
+  z-index: 20;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.collapseTab {
+  position: absolute;
+  top: 50%;
+  right: -18px;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 56px;
+  background: #16181a;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-left: none;
+  border-radius: 0 10px 10px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+  padding: 0;
+  transition: background 0.15s, width 0.15s;
+
+  svg {
+    width: 9px;
+    height: 9px;
+    color: #00c05a;
+    transition: transform 0.3s;
+  }
+
+  &:hover {
+    background: #2a2e32;
+    width: 22px;
+  }
+}
+
+.sidebarTop {
+  padding: 18px 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  flex-shrink: 0;
+
+  &.collapsed {
+    padding: 14px 0;
+    justify-content: center;
+  }
+}
+
+.logoBox {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  background: #00c05a;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 17px;
+  color: #000;
+}
+
+.logoWords {
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 1;
+  max-width: 160px;
+  transition: opacity 0.22s, max-width 0.3s;
+
+  strong {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13.5px;
+    color: white;
+    display: block;
+    line-height: 1.25;
+  }
+
+  small {
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.28);
+  }
+
+  &.collapsed {
+    opacity: 0;
+    max-width: 0;
+  }
+}
+
+.sidebarNav {
+  flex: 1;
+  padding: 12px 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.navSection {
+  margin-bottom: 4px;
+}
+
+.sectionLabel {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.2);
+  padding: 8px 8px 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.18s;
+
+  &.collapsed {
+    opacity: 0;
+  }
+}
+
+.sectionLabelCollapsible {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.2);
+  padding: 8px 8px 5px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: opacity 0.18s, color 0.15s;
+  opacity: 1;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  svg {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+    color: #00c05a;
+    opacity: 0.5;
+    transform: none;
+    transition: transform 0.2s;
+  }
+
+  &.collapsed {
+    opacity: 0;
+  }
+
+  &.open svg {
+    transform: rotate(180deg);
+  }
+}
+
+.sectionItems {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s;
+
+  &.open {
+    max-height: 400px;
+    opacity: 1;
+    pointer-events: all;
+  }
+}
+
+// nav item base styles — shared between .navItem and .navItemWithTooltip
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.15s;
+  margin-bottom: 1px;
+  white-space: nowrap;
+  position: relative;
+  user-select: none;
+  justify-content: flex-start;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.78);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  &.active {
+    color: white;
+    background: rgba(0, 192, 90, 0.16);
+
+    .navIcon {
+      color: #00c05a;
+    }
+  }
+
+  &.collapsed {
+    justify-content: center;
+    padding: 9px 0;
+  }
+
+  // show tooltip on hover when collapsed
+  &:hover .tooltip {
+    opacity: 1;
+    transition: opacity 0.15s 0.08s;
+  }
+}
+
+.navIcon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.navLabel {
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 1;
+  max-width: 160px;
+  transition: opacity 0.18s, max-width 0.3s;
+
+  &.collapsed {
+    opacity: 0;
+    max-width: 0;
+  }
+}
+
+.tooltip {
+  position: absolute;
+  left: calc(100% + 16px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: #1e2124;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 7px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 200;
+
+  &::before {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-right-color: #1e2124;
+  }
+}
+
+// ── BOTTOM USER AREA ──────────────────────────────────────────────────────────
+.sidebarBottom {
+  padding: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+
+  &.collapsed {
+    padding: 10px 0;
+    justify-content: center;
+  }
+}
+
+.userRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 9px;
+  transition: background 0.15s;
+  margin: -8px -10px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.07);
+  }
+}
+
+.userAvatar {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #00c05a, #00a84e);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #000;
+}
+
+.userInfo {
+  overflow: hidden;
+  opacity: 1;
+  max-width: 160px;
+  transition: opacity 0.18s, max-width 0.3s;
+  white-space: nowrap;
+
+  &.collapsed {
+    opacity: 0;
+    max-width: 0;
+  }
+}
+
+.userMenu {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 10px;
+  right: 10px;
+  background: #1e2124;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 11px;
+  overflow: hidden;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: opacity 0.18s, transform 0.18s;
+  z-index: 50;
+
+  &.open {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0);
+  }
+
+  &.collapsed {
+    left: calc(100% + 10px);
+    bottom: 0;
+    right: auto;
+    width: 180px;
+  }
+}
+
+.userMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 13px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  &.danger:hover {
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+  }
+}
+
+// ── MAIN AREA ─────────────────────────────────────────────────────────────────
+.main {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.topbar {
+  height: 56px;
+  border-bottom: 1px solid #eaeae8;
+  display: flex;
+  align-items: center;
+  padding: 0 26px;
+  background: #ffffff;
+  flex-shrink: 0;
+  gap: 10px;
+}
+
+.pageTitle {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 15.5px;
+  color: #111214;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+}

@@ -1,0 +1,342 @@
+@use '../../styles/shared/variables' as *;
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+// ── Page wrapper ──────────────────────────────────────────────────────────────
+
+.page {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  padding: calc(80px + 64px) 40px 80px;
+  background: #fff;
+
+  @media (max-width: 760px) {
+    padding: calc(60px + 64px) 20px 60px;
+  }
+}
+
+// ── Decorative SVG containers ─────────────────────────────────────────────────
+
+.decoTR {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 480px;
+  height: 480px;
+  pointer-events: none;
+  z-index: 0;
+
+  @media (max-width: 760px) {
+    width: 260px;
+    height: 260px;
+  }
+}
+
+.decoBL {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 320px;
+  height: 320px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+
+  @media (max-width: 760px) {
+    display: none;
+  }
+}
+
+// ── Inner content ─────────────────────────────────────────────────────────────
+
+.inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+// ── Back link ─────────────────────────────────────────────────────────────────
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #a0a0a0;
+  text-decoration: none;
+  margin-bottom: 40px;
+  transition: color 0.18s;
+  animation: fadeUp 0.55s ease 0.04s both;
+
+  svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  &:hover {
+    color: #141414;
+  }
+}
+
+// ── Intro ─────────────────────────────────────────────────────────────────────
+
+.intro {
+  margin-bottom: 64px;
+  animation: fadeUp 0.55s ease 0.04s both;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #007a35;
+  margin-bottom: 14px;
+}
+
+.h1 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(32px, 4vw, 54px);
+  letter-spacing: -0.028em;
+  line-height: 1.06;
+  color: #141414;
+
+  em {
+    font-style: normal;
+    color: #00b050;
+  }
+}
+
+// ── Layout ────────────────────────────────────────────────────────────────────
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 80px;
+  align-items: start;
+
+  @media (max-width: 1080px) {
+    grid-template-columns: 1fr;
+    gap: 52px;
+  }
+}
+
+// ── Form ──────────────────────────────────────────────────────────────────────
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: fadeUp 0.55s ease 0.13s both;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #141414;
+    letter-spacing: 0.02em;
+
+    span {
+      font-weight: 400;
+      color: #a0a0a0;
+      font-size: 11px;
+      margin-left: 4px;
+    }
+  }
+
+  input,
+  textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: #141414;
+    background: #fff;
+    border: 1.5px solid #e5e5e3;
+    border-radius: 9px;
+    padding: 12px 14px;
+    outline: none;
+    transition: border-color 0.18s;
+
+    &:focus {
+      border-color: #00b050;
+    }
+
+    &::placeholder {
+      color: #a0a0a0;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 110px;
+  }
+}
+
+// ── Contact type toggle ───────────────────────────────────────────────────────
+
+.typeRow {
+  display: flex;
+  gap: 10px;
+}
+
+.typeBtn {
+  flex: 1;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.18s;
+  color: #6b7280;
+  background: #fff;
+  border: 1.5px solid #e5e5e3;
+
+  &:hover {
+    border-color: #00b050;
+    color: #007a35;
+    background: #e8f9ef;
+  }
+
+  &.typeBtnSelected {
+    color: #007a35;
+    background: #e8f9ef;
+    border-color: #00b050;
+  }
+}
+
+// ── Time selection ────────────────────────────────────────────────────────────
+
+.timeOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.timeBtn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.18s;
+  color: #6b7280;
+  background: #fff;
+  border: 1.5px solid #e5e5e3;
+
+  &:hover {
+    border-color: #00b050;
+    color: #007a35;
+    background: #e8f9ef;
+  }
+
+  &.timeBtnSelected {
+    color: #007a35;
+    background: #e8f9ef;
+    border-color: #00b050;
+  }
+}
+
+// ── Submit button ─────────────────────────────────────────────────────────────
+
+.submitBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: #00b050;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.15s;
+  margin-top: 4px;
+
+  svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  &:hover {
+    background: #009140;
+    transform: translateY(-1px);
+  }
+}
+
+// ── Sidebar ───────────────────────────────────────────────────────────────────
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-top: 4px;
+  animation: fadeUp 0.55s ease 0.22s both;
+}
+
+.responseBadge {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #e8f9ef;
+  border: 1.5px solid rgba(0, 176, 80, 0.22);
+  border-radius: 14px;
+  padding: 18px 20px;
+
+  p {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #007a35;
+
+    strong {
+      font-weight: 600;
+    }
+  }
+}
+
+.pulseDot {
+  width: 8px;
+  height: 8px;
+  background: #00b050;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+  animation: pulse 2s infinite;
+}

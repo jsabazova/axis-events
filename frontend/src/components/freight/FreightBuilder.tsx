@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styles from './FreightBuilder.module.scss';
 
 interface FreightItem {
   id: string;
@@ -16,245 +16,6 @@ interface FreightBuilderProps {
   onItemsChange: (items: FreightItem[]) => void;
   onContinue: (items: FreightItem[]) => void;
 }
-
-const BuilderContainer = styled.div`
-  max-width: 800px;
-  width: 100%;
-  background: white;
-  border-radius: 40px;
-  padding: 2.5rem;
-  box-shadow: 0 30px 60px -15px rgba(0,0,0,0.3);
-  margin: 0 auto;
-`;
-
-const Title = styled.h1`
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: #000000;
-`;
-
-const Subhead = styled.div`
-  color: #333333;
-  margin-bottom: 2rem;
-  font-size: 1.2rem;
-`;
-
-const ImageGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const ImageCard = styled.div`
-  background: #ffffff;
-  border: 3px solid #dddddd;
-  border-radius: 28px;
-  padding: 2rem 1rem;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 600;
-  color: #000000;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  font-size: 1.2rem;
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.primary};
-    background: #f9f9f9;
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 168, 107, 0.15);
-  }
-
-  img {
-    width: 100px;
-    height: 100px;
-    object-fit: contain;
-    margin-bottom: 1rem;
-  }
-
-  .item-emoji {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-    display: block;
-  }
-`;
-
-const OptionPanel = styled.div`
-  background: #f9f9f9;
-  border-radius: 32px;
-  padding: 2rem;
-  border: 3px solid ${({ theme }) => theme.colors.primary};
-  color: #000000;
-  animation: slideUp 0.3s ease;
-  font-size: 1.1rem;
-
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-`;
-
-const SectionTitle = styled.div`
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  color: #000000;
-`;
-
-const OptionRow = styled.div`
-  display: flex;
-  gap: 1rem;
-  margin: 1.5rem 0;
-  flex-wrap: wrap;
-`;
-
-const OptionButton = styled.button<{ active?: boolean }>`
-  background: ${({ active, theme }) => active ? theme.colors.primary : 'white'};
-  border: 3px solid ${({ active, theme }) => active ? theme.colors.primary : '#dddddd'};
-  border-radius: 50px;
-  padding: 1rem 2rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  flex: 1 1 auto;
-  color: ${({ active }) => active ? 'white' : '#000000'};
-  font-size: 1.1rem;
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.primary};
-    background: ${({ active, theme }) => active ? theme.colors.primaryDark : '#f0fdf4'};
-  }
-`;
-
-const FormGroup = styled.div`
-  margin-bottom: 1.5rem;
-
-  label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: #000000;
-    font-size: 1.1rem;
-  }
-
-  input, textarea {
-    width: 100%;
-    padding: 1rem 1.25rem;
-    border: 3px solid #dddddd;
-    border-radius: 20px;
-    font-size: 1.1rem;
-    color: #000000;
-    background: white;
-
-    &:focus {
-      outline: none;
-      border-color: ${({ theme }) => theme.colors.primary};
-    }
-  }
-
-  textarea {
-    min-height: 100px;
-    resize: vertical;
-  }
-`;
-
-const BackButton = styled.button`
-  background: none;
-  border: none;
-  color: ${({ theme }) => theme.colors.primary};
-  font-weight: 700;
-  font-size: 1.1rem;
-  cursor: pointer;
-  padding: 0.75rem 0;
-  margin-bottom: 1.5rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
-const PrimaryButton = styled.button`
-  background: ${({ theme }) => theme.colors.primary};
-  color: white;
-  border: none;
-  border-radius: 50px;
-  padding: 1.25rem 2rem;
-  font-weight: 700;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: background 0.2s;
-  width: 100%;
-  margin-top: 1rem;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.primaryDark};
-  }
-`;
-
-const SummaryArea = styled.div`
-  background: #f9f9f9;
-  border-radius: 28px;
-  padding: 2rem;
-  margin-top: 2rem;
-  color: #000000;
-  border: 2px solid #e5e7eb;
-`;
-
-const SummaryItem = styled.div`
-  background: white;
-  border-radius: 20px;
-  padding: 1.25rem;
-  margin-bottom: 1rem;
-  border: 2px solid #e5e7eb;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-`;
-
-const SummaryHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: ${({ theme }) => theme.colors.primary};
-`;
-
-const ItemBadge = styled.span`
-  background: ${({ theme }) => theme.colors.primary};
-  color: white;
-  padding: 0.25rem 1rem;
-  border-radius: 40px;
-  font-size: 0.9rem;
-  font-weight: 600;
-`;
-
-const SummaryDetails = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin-bottom: 0.75rem;
-  font-size: 1.1rem;
-`;
-
-const SummaryDesc = styled.div`
-  color: #555;
-  font-size: 1rem;
-  padding-top: 0.5rem;
-  border-top: 1px dashed #ccc;
-`;
 
 const itemTypes = [
   { type: 'pallet', label: 'Pallet', emoji: '🟦' },
@@ -310,12 +71,12 @@ const FreightBuilder: React.FC<FreightBuilderProps> = ({ onItemsChange, onContin
     if (!typeConfig) return null;
 
     return (
-      <OptionPanel>
-        <BackButton onClick={handleBackClick}>
+      <div className={styles.optionPanel}>
+        <button className={styles.backButton} onClick={handleBackClick}>
           ← Back to items
-        </BackButton>
+        </button>
 
-        <SectionTitle>{typeConfig.emoji} {typeConfig.label}</SectionTitle>
+        <div className={styles.sectionTitle}>{typeConfig.emoji} {typeConfig.label}</div>
 
         {currentType === 'pallet' && (
           <PalletForm onAdd={addItem} />
@@ -340,51 +101,51 @@ const FreightBuilder: React.FC<FreightBuilderProps> = ({ onItemsChange, onContin
         {currentType === 'custom' && (
           <CustomForm onAdd={addItem} />
         )}
-      </OptionPanel>
+      </div>
     );
   };
 
   return (
-    <BuilderContainer>
-      <Title>Freight Builder</Title>
-      <Subhead>What are you sending? Click an image to start</Subhead>
+    <div className={styles.builderContainer}>
+      <h1 className={styles.title}>Freight Builder</h1>
+      <div className={styles.subhead}>What are you sending? Click an image to start</div>
 
       {showGrid && (
-        <ImageGrid>
+        <div className={styles.imageGrid}>
           {itemTypes.map((item) => (
-            <ImageCard key={item.type} onClick={() => handleItemTypeClick(item.type)}>
-              <span className="item-emoji">{item.emoji}</span>
+            <div key={item.type} className={styles.imageCard} onClick={() => handleItemTypeClick(item.type)}>
+              <span className={styles.itemEmoji}>{item.emoji}</span>
               <div>{item.label}</div>
-            </ImageCard>
+            </div>
           ))}
-        </ImageGrid>
+        </div>
       )}
 
       {!showGrid && renderItemForm()}
 
       {items.length > 0 && (
-        <SummaryArea>
-          <SectionTitle>📋 Items added</SectionTitle>
+        <div className={styles.summaryArea}>
+          <div className={styles.sectionTitle}>📋 Items added</div>
           {items.map((item) => (
-            <SummaryItem key={item.id}>
-              <SummaryHeader>
+            <div key={item.id} className={styles.summaryItem}>
+              <div className={styles.summaryHeader}>
                 <span>{item.icon} {item.type}</span>
-                <ItemBadge>Qty: {item.qty}</ItemBadge>
-              </SummaryHeader>
-              <SummaryDetails>
+                <span className={styles.itemBadge}>Qty: {item.qty}</span>
+              </div>
+              <div className={styles.summaryDetails}>
                 <div><strong>Weight:</strong> {item.weight}</div>
                 <div><strong>Dimensions:</strong> {item.dimensions || '—'}</div>
                 <div><strong>Total:</strong> {item.totalWeight || item.weight}</div>
-              </SummaryDetails>
-              {item.desc && <SummaryDesc>📝 {item.desc}</SummaryDesc>}
-            </SummaryItem>
+              </div>
+              {item.desc && <div className={styles.summaryDesc}>📝 {item.desc}</div>}
+            </div>
           ))}
-          <PrimaryButton onClick={handleContinue}>
+          <button className={styles.primaryButton} onClick={handleContinue}>
             Continue to quote →
-          </PrimaryButton>
-        </SummaryArea>
+          </button>
+        </div>
       )}
-    </BuilderContainer>
+    </div>
   );
 };
 
@@ -414,90 +175,102 @@ const PalletForm = ({ onAdd }: { onAdd: Function }) => {
 
   return (
     <div>
-      <OptionRow>
-        <OptionButton
-          active={palletSize === 'single'}
+      <div className={styles.optionRow}>
+        <button
+          className={`${styles.optionButton} ${palletSize === 'single' ? styles.optionButtonActive : ''}`}
           onClick={() => setPalletSize('single')}
         >
           Single pallet
-        </OptionButton>
-        <OptionButton
-          active={palletSize === 'double'}
+        </button>
+        <button
+          className={`${styles.optionButton} ${palletSize === 'double' ? styles.optionButtonActive : ''}`}
           onClick={() => setPalletSize('double')}
         >
           Double pallet
-        </OptionButton>
-      </OptionRow>
+        </button>
+      </div>
 
       {palletSize && (
         <div>
-          <FormGroup>
+          <div className={styles.formGroup}>
             <label>Within {palletSize === 'single' ? '1200x1200x1800mm' : '2400x1200x1800mm'}?</label>
-            <OptionRow>
-              <OptionButton active={withinSize === true} onClick={() => setWithinSize(true)}>
+            <div className={styles.optionRow}>
+              <button
+                className={`${styles.optionButton} ${withinSize === true ? styles.optionButtonActive : ''}`}
+                onClick={() => setWithinSize(true)}
+              >
                 Yes
-              </OptionButton>
-              <OptionButton active={withinSize === false} onClick={() => setWithinSize(false)}>
+              </button>
+              <button
+                className={`${styles.optionButton} ${withinSize === false ? styles.optionButtonActive : ''}`}
+                onClick={() => setWithinSize(false)}
+              >
                 No
-              </OptionButton>
-            </OptionRow>
-          </FormGroup>
+              </button>
+            </div>
+          </div>
 
           {withinSize === true && (
-            <FormGroup>
+            <div className={styles.formGroup}>
               <label>Under 1000kg?</label>
-              <OptionRow>
-                <OptionButton active={underWeight === true} onClick={() => setUnderWeight(true)}>
+              <div className={styles.optionRow}>
+                <button
+                  className={`${styles.optionButton} ${underWeight === true ? styles.optionButtonActive : ''}`}
+                  onClick={() => setUnderWeight(true)}
+                >
                   Yes
-                </OptionButton>
-                <OptionButton active={underWeight === false} onClick={() => setUnderWeight(false)}>
+                </button>
+                <button
+                  className={`${styles.optionButton} ${underWeight === false ? styles.optionButtonActive : ''}`}
+                  onClick={() => setUnderWeight(false)}
+                >
                   No
-                </OptionButton>
-              </OptionRow>
-            </FormGroup>
+                </button>
+              </div>
+            </div>
           )}
 
           {withinSize === false && (
             <>
-              <FormGroup>
+              <div className={styles.formGroup}>
                 <label>Length (mm)</label>
                 <input
                   type="number"
                   value={dimensions.length}
                   onChange={(e) => setDimensions({...dimensions, length: e.target.value})}
                 />
-              </FormGroup>
-              <FormGroup>
+              </div>
+              <div className={styles.formGroup}>
                 <label>Width (mm)</label>
                 <input
                   type="number"
                   value={dimensions.width}
                   onChange={(e) => setDimensions({...dimensions, width: e.target.value})}
                 />
-              </FormGroup>
-              <FormGroup>
+              </div>
+              <div className={styles.formGroup}>
                 <label>Height (mm)</label>
                 <input
                   type="number"
                   value={dimensions.height}
                   onChange={(e) => setDimensions({...dimensions, height: e.target.value})}
                 />
-              </FormGroup>
+              </div>
             </>
           )}
 
           {((withinSize === true && underWeight === false) || withinSize === false) && (
-            <FormGroup>
+            <div className={styles.formGroup}>
               <label>Weight (kg) per pallet</label>
               <input
                 type="number"
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
               />
-            </FormGroup>
+            </div>
           )}
 
-          <FormGroup>
+          <div className={styles.formGroup}>
             <label>Quantity</label>
             <input
               type="number"
@@ -505,11 +278,11 @@ const PalletForm = ({ onAdd }: { onAdd: Function }) => {
               value={qty}
               onChange={(e) => setQty(parseInt(e.target.value) || 1)}
             />
-          </FormGroup>
+          </div>
 
-          <PrimaryButton onClick={handleAdd}>
+          <button className={styles.primaryButton} onClick={handleAdd}>
             Add pallet
-          </PrimaryButton>
+          </button>
         </div>
       )}
     </div>
@@ -517,7 +290,6 @@ const PalletForm = ({ onAdd }: { onAdd: Function }) => {
 };
 
 const CrateForm = ({ onAdd }: { onAdd: Function }) => {
-  // Similar to PalletForm but for crates
   const [crateSize, setCrateSize] = useState<'single' | 'double' | null>(null);
   const [withinSize, setWithinSize] = useState<boolean | null>(null);
   const [underWeight, setUnderWeight] = useState<boolean | null>(null);
@@ -542,90 +314,102 @@ const CrateForm = ({ onAdd }: { onAdd: Function }) => {
 
   return (
     <div>
-      <OptionRow>
-        <OptionButton
-          active={crateSize === 'single'}
+      <div className={styles.optionRow}>
+        <button
+          className={`${styles.optionButton} ${crateSize === 'single' ? styles.optionButtonActive : ''}`}
           onClick={() => setCrateSize('single')}
         >
           Single crate
-        </OptionButton>
-        <OptionButton
-          active={crateSize === 'double'}
+        </button>
+        <button
+          className={`${styles.optionButton} ${crateSize === 'double' ? styles.optionButtonActive : ''}`}
           onClick={() => setCrateSize('double')}
         >
           Double crate
-        </OptionButton>
-      </OptionRow>
+        </button>
+      </div>
 
       {crateSize && (
         <div>
-          <FormGroup>
+          <div className={styles.formGroup}>
             <label>Within {crateSize === 'single' ? '1200x1200x1800mm' : '2400x1200x1800mm'}?</label>
-            <OptionRow>
-              <OptionButton active={withinSize === true} onClick={() => setWithinSize(true)}>
+            <div className={styles.optionRow}>
+              <button
+                className={`${styles.optionButton} ${withinSize === true ? styles.optionButtonActive : ''}`}
+                onClick={() => setWithinSize(true)}
+              >
                 Yes
-              </OptionButton>
-              <OptionButton active={withinSize === false} onClick={() => setWithinSize(false)}>
+              </button>
+              <button
+                className={`${styles.optionButton} ${withinSize === false ? styles.optionButtonActive : ''}`}
+                onClick={() => setWithinSize(false)}
+              >
                 No
-              </OptionButton>
-            </OptionRow>
-          </FormGroup>
+              </button>
+            </div>
+          </div>
 
           {withinSize === true && (
-            <FormGroup>
+            <div className={styles.formGroup}>
               <label>Under 1000kg?</label>
-              <OptionRow>
-                <OptionButton active={underWeight === true} onClick={() => setUnderWeight(true)}>
+              <div className={styles.optionRow}>
+                <button
+                  className={`${styles.optionButton} ${underWeight === true ? styles.optionButtonActive : ''}`}
+                  onClick={() => setUnderWeight(true)}
+                >
                   Yes
-                </OptionButton>
-                <OptionButton active={underWeight === false} onClick={() => setUnderWeight(false)}>
+                </button>
+                <button
+                  className={`${styles.optionButton} ${underWeight === false ? styles.optionButtonActive : ''}`}
+                  onClick={() => setUnderWeight(false)}
+                >
                   No
-                </OptionButton>
-              </OptionRow>
-            </FormGroup>
+                </button>
+              </div>
+            </div>
           )}
 
           {withinSize === false && (
             <>
-              <FormGroup>
+              <div className={styles.formGroup}>
                 <label>Length (mm)</label>
                 <input
                   type="number"
                   value={dimensions.length}
                   onChange={(e) => setDimensions({...dimensions, length: e.target.value})}
                 />
-              </FormGroup>
-              <FormGroup>
+              </div>
+              <div className={styles.formGroup}>
                 <label>Width (mm)</label>
                 <input
                   type="number"
                   value={dimensions.width}
                   onChange={(e) => setDimensions({...dimensions, width: e.target.value})}
                 />
-              </FormGroup>
-              <FormGroup>
+              </div>
+              <div className={styles.formGroup}>
                 <label>Height (mm)</label>
                 <input
                   type="number"
                   value={dimensions.height}
                   onChange={(e) => setDimensions({...dimensions, height: e.target.value})}
                 />
-              </FormGroup>
+              </div>
             </>
           )}
 
           {((withinSize === true && underWeight === false) || withinSize === false) && (
-            <FormGroup>
+            <div className={styles.formGroup}>
               <label>Weight (kg) per crate</label>
               <input
                 type="number"
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
               />
-            </FormGroup>
+            </div>
           )}
 
-          <FormGroup>
+          <div className={styles.formGroup}>
             <label>Quantity</label>
             <input
               type="number"
@@ -633,11 +417,11 @@ const CrateForm = ({ onAdd }: { onAdd: Function }) => {
               value={qty}
               onChange={(e) => setQty(parseInt(e.target.value) || 1)}
             />
-          </FormGroup>
+          </div>
 
-          <PrimaryButton onClick={handleAdd}>
+          <button className={styles.primaryButton} onClick={handleAdd}>
             Add crate
-          </PrimaryButton>
+          </button>
         </div>
       )}
     </div>
@@ -659,7 +443,7 @@ const MachineForm = ({ onAdd }: { onAdd: Function }) => {
 
   return (
     <div>
-      <FormGroup>
+      <div className={styles.formGroup}>
         <label>Quantity</label>
         <input
           type="number"
@@ -667,56 +451,56 @@ const MachineForm = ({ onAdd }: { onAdd: Function }) => {
           value={qty}
           onChange={(e) => setQty(parseInt(e.target.value) || 1)}
         />
-      </FormGroup>
+      </div>
 
-      <FormGroup>
+      <div className={styles.formGroup}>
         <label>Length (mm)</label>
         <input
           type="number"
           value={dimensions.length}
           onChange={(e) => setDimensions({...dimensions, length: e.target.value})}
         />
-      </FormGroup>
+      </div>
 
-      <FormGroup>
+      <div className={styles.formGroup}>
         <label>Width (mm)</label>
         <input
           type="number"
           value={dimensions.width}
           onChange={(e) => setDimensions({...dimensions, width: e.target.value})}
         />
-      </FormGroup>
+      </div>
 
-      <FormGroup>
+      <div className={styles.formGroup}>
         <label>Height (mm)</label>
         <input
           type="number"
           value={dimensions.height}
           onChange={(e) => setDimensions({...dimensions, height: e.target.value})}
         />
-      </FormGroup>
+      </div>
 
-      <FormGroup>
+      <div className={styles.formGroup}>
         <label>Weight (kg) per unit</label>
         <input
           type="number"
           value={weight}
           onChange={(e) => setWeight(e.target.value)}
         />
-      </FormGroup>
+      </div>
 
-      <FormGroup>
+      <div className={styles.formGroup}>
         <label>Description (optional)</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="e.g., printing press, industrial oven..."
         />
-      </FormGroup>
+      </div>
 
-      <PrimaryButton onClick={handleAdd}>
+      <button className={styles.primaryButton} onClick={handleAdd}>
         Add machine
-      </PrimaryButton>
+      </button>
     </div>
   );
 };
@@ -734,7 +518,7 @@ const BoxesForm = ({ onAdd }: { onAdd: Function }) => {
 
   return (
     <div>
-      <FormGroup>
+      <div className={styles.formGroup}>
         <label>Number of boxes</label>
         <input
           type="number"
@@ -742,29 +526,29 @@ const BoxesForm = ({ onAdd }: { onAdd: Function }) => {
           value={qty}
           onChange={(e) => setQty(parseInt(e.target.value) || 1)}
         />
-      </FormGroup>
+      </div>
 
-      <FormGroup>
+      <div className={styles.formGroup}>
         <label>Total approx weight (kg)</label>
         <input
           type="number"
           value={weight}
           onChange={(e) => setWeight(e.target.value)}
         />
-      </FormGroup>
+      </div>
 
-      <FormGroup>
+      <div className={styles.formGroup}>
         <label>Description (optional)</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="e.g., cardboard boxes, mixed sizes..."
         />
-      </FormGroup>
+      </div>
 
-      <PrimaryButton onClick={handleAdd}>
+      <button className={styles.primaryButton} onClick={handleAdd}>
         Add boxes
-      </PrimaryButton>
+      </button>
     </div>
   );
 };
@@ -782,7 +566,7 @@ const LooseForm = ({ onAdd }: { onAdd: Function }) => {
 
   return (
     <div>
-      <FormGroup>
+      <div className={styles.formGroup}>
         <label>Number of items</label>
         <input
           type="number"
@@ -790,29 +574,29 @@ const LooseForm = ({ onAdd }: { onAdd: Function }) => {
           value={qty}
           onChange={(e) => setQty(parseInt(e.target.value) || 1)}
         />
-      </FormGroup>
+      </div>
 
-      <FormGroup>
+      <div className={styles.formGroup}>
         <label>Total approx weight (kg)</label>
         <input
           type="number"
           value={weight}
           onChange={(e) => setWeight(e.target.value)}
         />
-      </FormGroup>
+      </div>
 
-      <FormGroup>
+      <div className={styles.formGroup}>
         <label>Description</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="e.g., furniture, artwork, poles..."
         />
-      </FormGroup>
+      </div>
 
-      <PrimaryButton onClick={handleAdd}>
+      <button className={styles.primaryButton} onClick={handleAdd}>
         Add items
-      </PrimaryButton>
+      </button>
     </div>
   );
 };
@@ -832,7 +616,7 @@ const CustomForm = ({ onAdd }: { onAdd: Function }) => {
 
   return (
     <div>
-      <FormGroup>
+      <div className={styles.formGroup}>
         <label>Quantity</label>
         <input
           type="number"
@@ -840,56 +624,56 @@ const CustomForm = ({ onAdd }: { onAdd: Function }) => {
           value={qty}
           onChange={(e) => setQty(parseInt(e.target.value) || 1)}
         />
-      </FormGroup>
+      </div>
 
-      <FormGroup>
+      <div className={styles.formGroup}>
         <label>Length (mm)</label>
         <input
           type="number"
           value={dimensions.length}
           onChange={(e) => setDimensions({...dimensions, length: e.target.value})}
         />
-      </FormGroup>
+      </div>
 
-      <FormGroup>
+      <div className={styles.formGroup}>
         <label>Width (mm)</label>
         <input
           type="number"
           value={dimensions.width}
           onChange={(e) => setDimensions({...dimensions, width: e.target.value})}
         />
-      </FormGroup>
+      </div>
 
-      <FormGroup>
+      <div className={styles.formGroup}>
         <label>Height (mm)</label>
         <input
           type="number"
           value={dimensions.height}
           onChange={(e) => setDimensions({...dimensions, height: e.target.value})}
         />
-      </FormGroup>
+      </div>
 
-      <FormGroup>
+      <div className={styles.formGroup}>
         <label>Weight (kg) per unit</label>
         <input
           type="number"
           value={weight}
           onChange={(e) => setWeight(e.target.value)}
         />
-      </FormGroup>
+      </div>
 
-      <FormGroup>
+      <div className={styles.formGroup}>
         <label>Description</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Describe the item..."
         />
-      </FormGroup>
+      </div>
 
-      <PrimaryButton onClick={handleAdd}>
+      <button className={styles.primaryButton} onClick={handleAdd}>
         Add custom item
-      </PrimaryButton>
+      </button>
     </div>
   );
 };
