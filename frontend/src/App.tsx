@@ -26,6 +26,7 @@ import OrganisersPage from './pages/admin/OrganisersPage';
 import SuppliersPage from './pages/admin/SuppliersPage';
 import RateCardsPage from './pages/admin/RateCardsPage';
 import ShowsPage from './pages/admin/ShowsPage';
+import AdminQuotesPage from './pages/admin/AdminQuotesPage';
 
 function App() {
   return (
@@ -56,7 +57,7 @@ function App() {
               <Route path="overview" element={<AdminDashboard />} />
               <Route path="bookings" element={<AdminDashboard />} />
               <Route path="shows" element={<ShowsPage />} />
-              <Route path="quotes" element={<AdminDashboard />} />
+              <Route path="quotes" element={<AdminQuotesPage />} />
               <Route path="jobs" element={<AdminDashboard />} />
               <Route path="organisers" element={<OrganisersPage />} />
               <Route path="suppliers" element={<SuppliersPage />} />
